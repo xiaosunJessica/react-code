@@ -5,15 +5,44 @@
   }
 
   ReactRoot.prototype.legacy_renderSubtreeIntoContainer = function(parentComponent, children, callback) {
-    var root = this._internalRoot;
     var work = new ReactWork();
-    updateContainer(children, root, parentComponent, work._onCommit);
     return work;
-  }
+	}
+	ReactRoot.prototype.render = function (children, callback) {
+    var work = new ReactWork();
+    callback = callback === undefined ? null : callback;
+   
+    if (callback !== null) {
+      work.then(callback);
+    }
+    return work;
+  };
+
+	function ReactWork() {
+	  this._callbacks = null;
+    this._didCommit = false;
+		this._onCommit = this._onCommit.bind(this);
+	}
+
+	ReactWork.prototype._onCommit = function () {
+    if (this._didCommit) {
+      return;
+    }
+    this._didCommit = true;
+    var callbacks = this._callbacks;
+    if (callbacks === null) {
+      return;
+    }
+    // TODO: Error handling.
+    for (var i = 0; i < callbacks.length; i++) {
+      var _callback2 = callbacks[i];
+      _callback2();
+    }
+  };
 
   function createContainer(container, isConcurrent, hydrate) {
     return createFiberRoot(container, isConcurrent, hydrate)
-  }
+	}
 
   function createFiberRoot(containerInfo, isConcurrent, hydrate) {
     var uninitializedFiber = createHostRootFiber(isConcurrent);
@@ -104,7 +133,8 @@
     console.info(container, 'container', container._reactRootContainer)
     var root = container._reactRootContainer;
     if (!root) {
-      root = container._reactRootContainer = legacyCreateRootFromDOMContainer(container, forceHydrate);
+			root = container._reactRootContainer = legacyCreateRootFromDOMContainer(container, forceHydrate);
+			console.info(root, '---root--------')
       unbatchedUpdates(function() {
         if (parentComponent !== null) {
           root.legacy_renderSubtreeIntoContainer(parentComponent, children, callback);
@@ -114,6 +144,18 @@
 
       })
     }
+	}
+	
+	function unbatchedUpdates(fn, a) {
+    // if (isBatchingUpdates && !isUnbatchingUpdates) {
+    //   isUnbatchingUpdates = true;
+    //   try {
+    //     return fn(a);
+    //   } finally {
+    //     isUnbatchingUpdates = false;
+    //   }
+    // }
+    return fn(a);
   }
 
   var legacyCreateRootFromDOMContainer = function(container, forceHydrate) {

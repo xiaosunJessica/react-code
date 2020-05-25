@@ -1,45 +1,32 @@
-/** @license React v16.7.0
- * react-dom.development.js
- *
- * Copyright (c) Facebook, Inc. and its affiliates.
- *
- * This source code is licensed under the MIT license found in the
- * LICENSE file in the root directory of this source tree.
- */
-
-'use strict';
-
-
-
-(function() {
-  'use strict';
-  
   var React = require('react');
   var _assign = require('object-assign');
   var checkPropTypes = require('prop-types/checkPropTypes');
   var scheduler = require('scheduler');
-  var tracing = require('scheduler/tracing');
+	var tracing = require('scheduler/tracing');
+	var properties = require('./PropertyInfoRecord');
+	var constant = require('./contant');
+	var util = require('./util');
+	var UIevent = require('./SyntheticUIEvent')
+	const { normalizeKey, translateToKey} = constant;
+	const { shallowEqual, shouldPreventMouseEvent, isTextInputElement } = util;
+	const { 
+		SyntheticEvent,
+		SyntheticWheelEvent,
+		SyntheticClipboardEvent,
+		SyntheticMouseEvent,
+		SyntheticPointerEvent,
+		SyntheticFocusEvent,
+		SyntheticKeyboardEvent,
+		SyntheticDragEvent,
+		SyntheticTouchEvent,
+		SyntheticAnimationEvent,
+		SyntheticTransitionEvent,
+		SyntheticUIEvent,
+		getEventCharCode
+	 } = UIevent;
   
-  /**
-   * Use invariant() to assert state which your program assumes to be true.
-   *
-   * Provide sprintf-style format (only %s is supported) and arguments
-   * to provide information about what broke and what you were
-   * expecting.
-   *
-   * The invariant message will be stripped in production, but the invariant
-   * will remain to ensure logic does not differ in production.
-   */
   
   var validateFormat = function () {};
-  
-  {
-    validateFormat = function (format) {
-      if (format === undefined) {
-        throw new Error('invariant requires an error message argument');
-      }
-    };
-  }
   
   function invariant(condition, format, a, b, c, d, e, f) {
     validateFormat(format);
@@ -65,8 +52,6 @@
   // Relying on the `invariant()` implementation lets us
   // preserve the format and params in the www builds.
   
-  !React ? invariant(false, 'ReactDOM was loaded before React. Make sure you load the React package before loading ReactDOM.') : void 0;
-  
   var invokeGuardedCallbackImpl = function (name, func, context, a, b, c, d, e, f) {
     var funcArgs = Array.prototype.slice.call(arguments, 3);
     try {
@@ -75,150 +60,7 @@
       this.onError(error);
     }
   };
-  
-  {
-    // In DEV mode, we swap out invokeGuardedCallback for a special version
-    // that plays more nicely with the browser's DevTools. The idea is to preserve
-    // "Pause on exceptions" behavior. Because React wraps all user-provided
-    // functions in invokeGuardedCallback, and the production version of
-    // invokeGuardedCallback uses a try-catch, all user exceptions are treated
-    // like caught exceptions, and the DevTools won't pause unless the developer
-    // takes the extra step of enabling pause on caught exceptions. This is
-    // untintuitive, though, because even though React has caught the error, from
-    // the developer's perspective, the error is uncaught.
-    //
-    // To preserve the expected "Pause on exceptions" behavior, we don't use a
-    // try-catch in DEV. Instead, we synchronously dispatch a fake event to a fake
-    // DOM node, and call the user-provided callback from inside an event handler
-    // for that fake event. If the callback throws, the error is "captured" using
-    // a global event handler. But because the error happens in a different
-    // event loop context, it does not interrupt the normal program flow.
-    // Effectively, this gives us try-catch behavior without actually using
-    // try-catch. Neat!
-  
-    // Check that the browser supports the APIs we need to implement our special
-    // DEV version of invokeGuardedCallback
-    if (typeof window !== 'undefined' && typeof window.dispatchEvent === 'function' && typeof document !== 'undefined' && typeof document.createEvent === 'function') {
-      var fakeNode = document.createElement('react');
-  
-      var invokeGuardedCallbackDev = function (name, func, context, a, b, c, d, e, f) {
-        // If document doesn't exist we know for sure we will crash in this method
-        // when we call document.createEvent(). However this can cause confusing
-        // errors: https://github.com/facebookincubator/create-react-app/issues/3482
-        // So we preemptively throw with a better message instead.
-        !(typeof document !== 'undefined') ? invariant(false, 'The `document` global was defined when React was initialized, but is not defined anymore. This can happen in a test environment if a component schedules an update from an asynchronous callback, but the test has already finished running. To solve this, you can either unmount the component at the end of your test (and ensure that any asynchronous operations get canceled in `componentWillUnmount`), or you can change the test itself to be asynchronous.') : void 0;
-        var evt = document.createEvent('Event');
-  
-        // Keeps track of whether the user-provided callback threw an error. We
-        // set this to true at the beginning, then set it to false right after
-        // calling the function. If the function errors, `didError` will never be
-        // set to false. This strategy works even if the browser is flaky and
-        // fails to call our global error handler, because it doesn't rely on
-        // the error event at all.
-        var didError = true;
-  
-        // Keeps track of the value of window.event so that we can reset it
-        // during the callback to let user code access window.event in the
-        // browsers that support it.
-        var windowEvent = window.event;
-  
-        // Keeps track of the descriptor of window.event to restore it after event
-        // dispatching: https://github.com/facebook/react/issues/13688
-        var windowEventDescriptor = Object.getOwnPropertyDescriptor(window, 'event');
-  
-        // Create an event handler for our fake event. We will synchronously
-        // dispatch our fake event using `dispatchEvent`. Inside the handler, we
-        // call the user-provided callback.
-        var funcArgs = Array.prototype.slice.call(arguments, 3);
-        function callCallback() {
-          // We immediately remove the callback from event listeners so that
-          // nested `invokeGuardedCallback` calls do not clash. Otherwise, a
-          // nested call would trigger the fake event handlers of any call higher
-          // in the stack.
-          fakeNode.removeEventListener(evtType, callCallback, false);
-  
-          // We check for window.hasOwnProperty('event') to prevent the
-          // window.event assignment in both IE <= 10 as they throw an error
-          // "Member not found" in strict mode, and in Firefox which does not
-          // support window.event.
-          if (typeof window.event !== 'undefined' && window.hasOwnProperty('event')) {
-            window.event = windowEvent;
-          }
-  
-          func.apply(context, funcArgs);
-          didError = false;
-        }
-  
-        // Create a global error event handler. We use this to capture the value
-        // that was thrown. It's possible that this error handler will fire more
-        // than once; for example, if non-React code also calls `dispatchEvent`
-        // and a handler for that event throws. We should be resilient to most of
-        // those cases. Even if our error event handler fires more than once, the
-        // last error event is always used. If the callback actually does error,
-        // we know that the last error event is the correct one, because it's not
-        // possible for anything else to have happened in between our callback
-        // erroring and the code that follows the `dispatchEvent` call below. If
-        // the callback doesn't error, but the error event was fired, we know to
-        // ignore it because `didError` will be false, as described above.
-        var error = void 0;
-        // Use this to track whether the error event is ever called.
-        var didSetError = false;
-        var isCrossOriginError = false;
-  
-        function handleWindowError(event) {
-          error = event.error;
-          didSetError = true;
-          if (error === null && event.colno === 0 && event.lineno === 0) {
-            isCrossOriginError = true;
-          }
-          if (event.defaultPrevented) {
-            // Some other error handler has prevented default.
-            // Browsers silence the error report if this happens.
-            // We'll remember this to later decide whether to log it or not.
-            if (error != null && typeof error === 'object') {
-              try {
-                error._suppressLogging = true;
-              } catch (inner) {
-                // Ignore.
-              }
-            }
-          }
-        }
-  
-        // Create a fake event type.
-        var evtType = 'react-' + (name ? name : 'invokeguardedcallback');
-  
-        // Attach our event handlers
-        window.addEventListener('error', handleWindowError);
-        fakeNode.addEventListener(evtType, callCallback, false);
-  
-        // Synchronously dispatch our fake event. If the user-provided function
-        // errors, it will trigger our global error handler.
-        evt.initEvent(evtType, false, false);
-        fakeNode.dispatchEvent(evt);
-  
-        if (windowEventDescriptor) {
-          Object.defineProperty(window, 'event', windowEventDescriptor);
-        }
-  
-        if (didError) {
-          if (!didSetError) {
-            // The callback errored, but the error event never fired.
-            error = new Error('An error was thrown inside one of your components, but React ' + "doesn't know what it was. This is likely due to browser " + 'flakiness. React does its best to preserve the "Pause on ' + 'exceptions" behavior of the DevTools, which requires some ' + "DEV-mode only tricks. It's possible that these don't work in " + 'your browser. Try triggering the error in production mode, ' + 'or switching to a modern browser. If you suspect that this is ' + 'actually an issue with React, please file an issue.');
-          } else if (isCrossOriginError) {
-            error = new Error("A cross-origin error was thrown. React doesn't have access to " + 'the actual error object in development. ' + 'See https://fb.me/react-crossorigin-error for more information.');
-          }
-          this.onError(error);
-        }
-  
-        // Remove our event listeners
-        window.removeEventListener('error', handleWindowError);
-      };
-  
-      invokeGuardedCallbackImpl = invokeGuardedCallbackDev;
-    }
-  }
-  
+
   var invokeGuardedCallbackImpl$1 = invokeGuardedCallbackImpl;
   
   // Used by Fiber to simulate a try-catch.
@@ -687,27 +529,8 @@
     return executeDispatchesAndRelease(e);
   };
   
-  function isInteractive(tag) {
-    return tag === 'button' || tag === 'input' || tag === 'select' || tag === 'textarea';
-  }
-  
-  function shouldPreventMouseEvent(name, type, props) {
-    switch (name) {
-      case 'onClick':
-      case 'onClickCapture':
-      case 'onDoubleClick':
-      case 'onDoubleClickCapture':
-      case 'onMouseDown':
-      case 'onMouseDownCapture':
-      case 'onMouseMove':
-      case 'onMouseMoveCapture':
-      case 'onMouseUp':
-      case 'onMouseUpCapture':
-        return !!(props.disabled && isInteractive(type));
-      default:
-        return false;
-    }
-  }
+
+
   
   /**
    * This is a unified interface for event plugins to be installed and configured.
@@ -1399,36 +1222,36 @@
   
   /* eslint valid-typeof: 0 */
   
-  var EVENT_POOL_SIZE = 10;
+  // var EVENT_POOL_SIZE = 10;
   
   /**
    * @interface Event
    * @see http://www.w3.org/TR/DOM-Level-3-Events/
    */
-  var EventInterface = {
-    type: null,
-    target: null,
-    // currentTarget is set when dispatching; no use in copying it here
-    currentTarget: function () {
-      return null;
-    },
-    eventPhase: null,
-    bubbles: null,
-    cancelable: null,
-    timeStamp: function (event) {
-      return event.timeStamp || Date.now();
-    },
-    defaultPrevented: null,
-    isTrusted: null
-  };
+  // var EventInterface = {
+  //   type: null,
+  //   target: null,
+  //   // currentTarget is set when dispatching; no use in copying it here
+  //   currentTarget: function () {
+  //     return null;
+  //   },
+  //   eventPhase: null,
+  //   bubbles: null,
+  //   cancelable: null,
+  //   timeStamp: function (event) {
+  //     return event.timeStamp || Date.now();
+  //   },
+  //   defaultPrevented: null,
+  //   isTrusted: null
+  // };
   
-  function functionThatReturnsTrue() {
-    return true;
-  }
+  // function functionThatReturnsTrue() {
+  //   return true;
+  // }
   
-  function functionThatReturnsFalse() {
-    return false;
-  }
+  // function functionThatReturnsFalse() {
+  //   return false;
+  // }
   
   /**
    * Synthetic events are dispatched by event plugins, typically in response to a
@@ -1448,156 +1271,156 @@
    * @param {object} nativeEvent Native browser event.
    * @param {DOMEventTarget} nativeEventTarget Target node.
    */
-  function SyntheticEvent(dispatchConfig, targetInst, nativeEvent, nativeEventTarget) {
-    {
-      // these have a getter/setter for warnings
-      delete this.nativeEvent;
-      delete this.preventDefault;
-      delete this.stopPropagation;
-      delete this.isDefaultPrevented;
-      delete this.isPropagationStopped;
-    }
+  // function SyntheticEvent(dispatchConfig, targetInst, nativeEvent, nativeEventTarget) {
+  //   {
+  //     // these have a getter/setter for warnings
+  //     delete this.nativeEvent;
+  //     delete this.preventDefault;
+  //     delete this.stopPropagation;
+  //     delete this.isDefaultPrevented;
+  //     delete this.isPropagationStopped;
+  //   }
   
-    this.dispatchConfig = dispatchConfig;
-    this._targetInst = targetInst;
-    this.nativeEvent = nativeEvent;
+  //   this.dispatchConfig = dispatchConfig;
+  //   this._targetInst = targetInst;
+  //   this.nativeEvent = nativeEvent;
   
-    var Interface = this.constructor.Interface;
-    for (var propName in Interface) {
-      if (!Interface.hasOwnProperty(propName)) {
-        continue;
-      }
-      {
-        delete this[propName]; // this has a getter/setter for warnings
-      }
-      var normalize = Interface[propName];
-      if (normalize) {
-        this[propName] = normalize(nativeEvent);
-      } else {
-        if (propName === 'target') {
-          this.target = nativeEventTarget;
-        } else {
-          this[propName] = nativeEvent[propName];
-        }
-      }
-    }
+  //   var Interface = this.constructor.Interface;
+  //   for (var propName in Interface) {
+  //     if (!Interface.hasOwnProperty(propName)) {
+  //       continue;
+  //     }
+  //     {
+  //       delete this[propName]; // this has a getter/setter for warnings
+  //     }
+  //     var normalize = Interface[propName];
+  //     if (normalize) {
+  //       this[propName] = normalize(nativeEvent);
+  //     } else {
+  //       if (propName === 'target') {
+  //         this.target = nativeEventTarget;
+  //       } else {
+  //         this[propName] = nativeEvent[propName];
+  //       }
+  //     }
+  //   }
   
-    var defaultPrevented = nativeEvent.defaultPrevented != null ? nativeEvent.defaultPrevented : nativeEvent.returnValue === false;
-    if (defaultPrevented) {
-      this.isDefaultPrevented = functionThatReturnsTrue;
-    } else {
-      this.isDefaultPrevented = functionThatReturnsFalse;
-    }
-    this.isPropagationStopped = functionThatReturnsFalse;
-    return this;
-  }
+  //   var defaultPrevented = nativeEvent.defaultPrevented != null ? nativeEvent.defaultPrevented : nativeEvent.returnValue === false;
+  //   if (defaultPrevented) {
+  //     this.isDefaultPrevented = functionThatReturnsTrue;
+  //   } else {
+  //     this.isDefaultPrevented = functionThatReturnsFalse;
+  //   }
+  //   this.isPropagationStopped = functionThatReturnsFalse;
+  //   return this;
+  // }
   
-  _assign(SyntheticEvent.prototype, {
-    preventDefault: function () {
-      this.defaultPrevented = true;
-      var event = this.nativeEvent;
-      if (!event) {
-        return;
-      }
+  // _assign(SyntheticEvent.prototype, {
+  //   preventDefault: function () {
+  //     this.defaultPrevented = true;
+  //     var event = this.nativeEvent;
+  //     if (!event) {
+  //       return;
+  //     }
   
-      if (event.preventDefault) {
-        event.preventDefault();
-      } else if (typeof event.returnValue !== 'unknown') {
-        event.returnValue = false;
-      }
-      this.isDefaultPrevented = functionThatReturnsTrue;
-    },
+  //     if (event.preventDefault) {
+  //       event.preventDefault();
+  //     } else if (typeof event.returnValue !== 'unknown') {
+  //       event.returnValue = false;
+  //     }
+  //     this.isDefaultPrevented = functionThatReturnsTrue;
+  //   },
   
-    stopPropagation: function () {
-      var event = this.nativeEvent;
-      if (!event) {
-        return;
-      }
+  //   stopPropagation: function () {
+  //     var event = this.nativeEvent;
+  //     if (!event) {
+  //       return;
+  //     }
   
-      if (event.stopPropagation) {
-        event.stopPropagation();
-      } else if (typeof event.cancelBubble !== 'unknown') {
-        // The ChangeEventPlugin registers a "propertychange" event for
-        // IE. This event does not support bubbling or cancelling, and
-        // any references to cancelBubble throw "Member not found".  A
-        // typeof check of "unknown" circumvents this issue (and is also
-        // IE specific).
-        event.cancelBubble = true;
-      }
+  //     if (event.stopPropagation) {
+  //       event.stopPropagation();
+  //     } else if (typeof event.cancelBubble !== 'unknown') {
+  //       // The ChangeEventPlugin registers a "propertychange" event for
+  //       // IE. This event does not support bubbling or cancelling, and
+  //       // any references to cancelBubble throw "Member not found".  A
+  //       // typeof check of "unknown" circumvents this issue (and is also
+  //       // IE specific).
+  //       event.cancelBubble = true;
+  //     }
   
-      this.isPropagationStopped = functionThatReturnsTrue;
-    },
+  //     this.isPropagationStopped = functionThatReturnsTrue;
+  //   },
   
-    /**
-     * We release all dispatched `SyntheticEvent`s after each event loop, adding
-     * them back into the pool. This allows a way to hold onto a reference that
-     * won't be added back into the pool.
-     */
-    persist: function () {
-      this.isPersistent = functionThatReturnsTrue;
-    },
+  //   /**
+  //    * We release all dispatched `SyntheticEvent`s after each event loop, adding
+  //    * them back into the pool. This allows a way to hold onto a reference that
+  //    * won't be added back into the pool.
+  //    */
+  //   persist: function () {
+  //     this.isPersistent = functionThatReturnsTrue;
+  //   },
   
-    /**
-     * Checks if this event should be released back into the pool.
-     *
-     * @return {boolean} True if this should not be released, false otherwise.
-     */
-    isPersistent: functionThatReturnsFalse,
+  //   /**
+  //    * Checks if this event should be released back into the pool.
+  //    *
+  //    * @return {boolean} True if this should not be released, false otherwise.
+  //    */
+  //   isPersistent: functionThatReturnsFalse,
   
-    /**
-     * `PooledClass` looks for `destructor` on each instance it releases.
-     */
-    destructor: function () {
-      var Interface = this.constructor.Interface;
-      for (var propName in Interface) {
-        {
-          Object.defineProperty(this, propName, getPooledWarningPropertyDefinition(propName, Interface[propName]));
-        }
-      }
-      this.dispatchConfig = null;
-      this._targetInst = null;
-      this.nativeEvent = null;
-      this.isDefaultPrevented = functionThatReturnsFalse;
-      this.isPropagationStopped = functionThatReturnsFalse;
-      this._dispatchListeners = null;
-      this._dispatchInstances = null;
-      {
-        Object.defineProperty(this, 'nativeEvent', getPooledWarningPropertyDefinition('nativeEvent', null));
-        Object.defineProperty(this, 'isDefaultPrevented', getPooledWarningPropertyDefinition('isDefaultPrevented', functionThatReturnsFalse));
-        Object.defineProperty(this, 'isPropagationStopped', getPooledWarningPropertyDefinition('isPropagationStopped', functionThatReturnsFalse));
-        Object.defineProperty(this, 'preventDefault', getPooledWarningPropertyDefinition('preventDefault', function () {}));
-        Object.defineProperty(this, 'stopPropagation', getPooledWarningPropertyDefinition('stopPropagation', function () {}));
-      }
-    }
-  });
+  //   /**
+  //    * `PooledClass` looks for `destructor` on each instance it releases.
+  //    */
+  //   destructor: function () {
+  //     var Interface = this.constructor.Interface;
+  //     for (var propName in Interface) {
+  //       {
+  //         Object.defineProperty(this, propName, getPooledWarningPropertyDefinition(propName, Interface[propName]));
+  //       }
+  //     }
+  //     this.dispatchConfig = null;
+  //     this._targetInst = null;
+  //     this.nativeEvent = null;
+  //     this.isDefaultPrevented = functionThatReturnsFalse;
+  //     this.isPropagationStopped = functionThatReturnsFalse;
+  //     this._dispatchListeners = null;
+  //     this._dispatchInstances = null;
+  //     {
+  //       Object.defineProperty(this, 'nativeEvent', getPooledWarningPropertyDefinition('nativeEvent', null));
+  //       Object.defineProperty(this, 'isDefaultPrevented', getPooledWarningPropertyDefinition('isDefaultPrevented', functionThatReturnsFalse));
+  //       Object.defineProperty(this, 'isPropagationStopped', getPooledWarningPropertyDefinition('isPropagationStopped', functionThatReturnsFalse));
+  //       Object.defineProperty(this, 'preventDefault', getPooledWarningPropertyDefinition('preventDefault', function () {}));
+  //       Object.defineProperty(this, 'stopPropagation', getPooledWarningPropertyDefinition('stopPropagation', function () {}));
+  //     }
+  //   }
+  // });
   
-  SyntheticEvent.Interface = EventInterface;
+  // SyntheticEvent.Interface = EventInterface;
   
-  /**
-   * Helper to reduce boilerplate when creating subclasses.
-   */
-  SyntheticEvent.extend = function (Interface) {
-    var Super = this;
+  // /**
+  //  * Helper to reduce boilerplate when creating subclasses.
+  //  */
+  // SyntheticEvent.extend = function (Interface) {
+  //   var Super = this;
   
-    var E = function () {};
-    E.prototype = Super.prototype;
-    var prototype = new E();
+  //   var E = function () {};
+  //   E.prototype = Super.prototype;
+  //   var prototype = new E();
   
-    function Class() {
-      return Super.apply(this, arguments);
-    }
-    _assign(prototype, Class.prototype);
-    Class.prototype = prototype;
-    Class.prototype.constructor = Class;
+  //   function Class() {
+  //     return Super.apply(this, arguments);
+  //   }
+  //   _assign(prototype, Class.prototype);
+  //   Class.prototype = prototype;
+  //   Class.prototype.constructor = Class;
   
-    Class.Interface = _assign({}, Super.Interface, Interface);
-    Class.extend = Super.extend;
-    addEventPoolingTo(Class);
+  //   Class.Interface = _assign({}, Super.Interface, Interface);
+  //   Class.extend = Super.extend;
+  //   addEventPoolingTo(Class);
   
-    return Class;
-  };
+  //   return Class;
+  // };
   
-  addEventPoolingTo(SyntheticEvent);
+  // addEventPoolingTo(SyntheticEvent);
   
   /**
    * Helper to nullify syntheticEvent instance properties when destructing
@@ -1606,57 +1429,32 @@
    * @param {?object} getVal
    * @return {object} defineProperty object
    */
-  function getPooledWarningPropertyDefinition(propName, getVal) {
-    var isFunction = typeof getVal === 'function';
-    return {
-      configurable: true,
-      set: set,
-      get: get
-    };
+ 
   
-    function set(val) {
-      var action = isFunction ? 'setting the method' : 'setting the property';
-      warn(action, 'This is effectively a no-op');
-      return val;
-    }
+  // function getPooledEvent(dispatchConfig, targetInst, nativeEvent, nativeInst) {
+  //   var EventConstructor = this;
+  //   if (EventConstructor.eventPool.length) {
+  //     var instance = EventConstructor.eventPool.pop();
+  //     EventConstructor.call(instance, dispatchConfig, targetInst, nativeEvent, nativeInst);
+  //     return instance;
+  //   }
+  //   return new EventConstructor(dispatchConfig, targetInst, nativeEvent, nativeInst);
+  // }
   
-    function get() {
-      var action = isFunction ? 'accessing the method' : 'accessing the property';
-      var result = isFunction ? 'This is a no-op function' : 'This is set to null';
-      warn(action, result);
-      return getVal;
-    }
+  // function releasePooledEvent(event) {
+  //   var EventConstructor = this;
+  //   !(event instanceof EventConstructor) ? invariant(false, 'Trying to release an event instance into a pool of a different type.') : void 0;
+  //   event.destructor();
+  //   if (EventConstructor.eventPool.length < EVENT_POOL_SIZE) {
+  //     EventConstructor.eventPool.push(event);
+  //   }
+  // }
   
-    function warn(action, result) {
-      var warningCondition = false;
-      !warningCondition ? warningWithoutStack$1(false, "This synthetic event is reused for performance reasons. If you're seeing this, " + "you're %s `%s` on a released/nullified synthetic event. %s. " + 'If you must keep the original synthetic event around, use event.persist(). ' + 'See https://fb.me/react-event-pooling for more information.', action, propName, result) : void 0;
-    }
-  }
-  
-  function getPooledEvent(dispatchConfig, targetInst, nativeEvent, nativeInst) {
-    var EventConstructor = this;
-    if (EventConstructor.eventPool.length) {
-      var instance = EventConstructor.eventPool.pop();
-      EventConstructor.call(instance, dispatchConfig, targetInst, nativeEvent, nativeInst);
-      return instance;
-    }
-    return new EventConstructor(dispatchConfig, targetInst, nativeEvent, nativeInst);
-  }
-  
-  function releasePooledEvent(event) {
-    var EventConstructor = this;
-    !(event instanceof EventConstructor) ? invariant(false, 'Trying to release an event instance into a pool of a different type.') : void 0;
-    event.destructor();
-    if (EventConstructor.eventPool.length < EVENT_POOL_SIZE) {
-      EventConstructor.eventPool.push(event);
-    }
-  }
-  
-  function addEventPoolingTo(EventConstructor) {
-    EventConstructor.eventPool = [];
-    EventConstructor.getPooled = getPooledEvent;
-    EventConstructor.release = releasePooledEvent;
-  }
+  // function addEventPoolingTo(EventConstructor) {
+  //   EventConstructor.eventPool = [];
+  //   EventConstructor.getPooled = getPooledEvent;
+  //   EventConstructor.release = releasePooledEvent;
+  // }
   
   /**
    * @interface Event
@@ -2176,40 +1974,7 @@
     _flushInteractiveUpdatesImpl = flushInteractiveUpdatesImpl;
   }
   
-  /**
-   * @see http://www.whatwg.org/specs/web-apps/current-work/multipage/the-input-element.html#input-type-attr-summary
-   */
-  var supportedInputTypes = {
-    color: true,
-    date: true,
-    datetime: true,
-    'datetime-local': true,
-    email: true,
-    month: true,
-    number: true,
-    password: true,
-    range: true,
-    search: true,
-    tel: true,
-    text: true,
-    time: true,
-    url: true,
-    week: true
-  };
   
-  function isTextInputElement(elem) {
-    var nodeName = elem && elem.nodeName && elem.nodeName.toLowerCase();
-  
-    if (nodeName === 'input') {
-      return !!supportedInputTypes[elem.type];
-    }
-  
-    if (nodeName === 'textarea') {
-      return true;
-    }
-  
-    return false;
-  }
   
   /**
    * HTML nodeType values that represent the type of the node
@@ -2753,152 +2518,6 @@
     return properties.hasOwnProperty(name) ? properties[name] : null;
   }
   
-  function PropertyInfoRecord(name, type, mustUseProperty, attributeName, attributeNamespace) {
-    this.acceptsBooleans = type === BOOLEANISH_STRING || type === BOOLEAN || type === OVERLOADED_BOOLEAN;
-    this.attributeName = attributeName;
-    this.attributeNamespace = attributeNamespace;
-    this.mustUseProperty = mustUseProperty;
-    this.propertyName = name;
-    this.type = type;
-  }
-  
-  // When adding attributes to this list, be sure to also add them to
-  // the `possibleStandardNames` module to ensure casing and incorrect
-  // name warnings.
-  var properties = {};
-  
-  // These props are reserved by React. They shouldn't be written to the DOM.
-  ['children', 'dangerouslySetInnerHTML',
-  // TODO: This prevents the assignment of defaultValue to regular
-  // elements (not just inputs). Now that ReactDOMInput assigns to the
-  // defaultValue property -- do we need this?
-  'defaultValue', 'defaultChecked', 'innerHTML', 'suppressContentEditableWarning', 'suppressHydrationWarning', 'style'].forEach(function (name) {
-    properties[name] = new PropertyInfoRecord(name, RESERVED, false, // mustUseProperty
-    name, // attributeName
-    null);
-  } // attributeNamespace
-  );
-  
-  // A few React string attributes have a different name.
-  // This is a mapping from React prop names to the attribute names.
-  [['acceptCharset', 'accept-charset'], ['className', 'class'], ['htmlFor', 'for'], ['httpEquiv', 'http-equiv']].forEach(function (_ref) {
-    var name = _ref[0],
-        attributeName = _ref[1];
-  
-    properties[name] = new PropertyInfoRecord(name, STRING, false, // mustUseProperty
-    attributeName, // attributeName
-    null);
-  } // attributeNamespace
-  );
-  
-  // These are "enumerated" HTML attributes that accept "true" and "false".
-  // In React, we let users pass `true` and `false` even though technically
-  // these aren't boolean attributes (they are coerced to strings).
-  ['contentEditable', 'draggable', 'spellCheck', 'value'].forEach(function (name) {
-    properties[name] = new PropertyInfoRecord(name, BOOLEANISH_STRING, false, // mustUseProperty
-    name.toLowerCase(), // attributeName
-    null);
-  } // attributeNamespace
-  );
-  
-  // These are "enumerated" SVG attributes that accept "true" and "false".
-  // In React, we let users pass `true` and `false` even though technically
-  // these aren't boolean attributes (they are coerced to strings).
-  // Since these are SVG attributes, their attribute names are case-sensitive.
-  ['autoReverse', 'externalResourcesRequired', 'focusable', 'preserveAlpha'].forEach(function (name) {
-    properties[name] = new PropertyInfoRecord(name, BOOLEANISH_STRING, false, // mustUseProperty
-    name, // attributeName
-    null);
-  } // attributeNamespace
-  );
-  
-  // These are HTML boolean attributes.
-  ['allowFullScreen', 'async',
-  // Note: there is a special case that prevents it from being written to the DOM
-  // on the client side because the browsers are inconsistent. Instead we call focus().
-  'autoFocus', 'autoPlay', 'controls', 'default', 'defer', 'disabled', 'formNoValidate', 'hidden', 'loop', 'noModule', 'noValidate', 'open', 'playsInline', 'readOnly', 'required', 'reversed', 'scoped', 'seamless',
-  // Microdata
-  'itemScope'].forEach(function (name) {
-    properties[name] = new PropertyInfoRecord(name, BOOLEAN, false, // mustUseProperty
-    name.toLowerCase(), // attributeName
-    null);
-  } // attributeNamespace
-  );
-  
-  // These are the few React props that we set as DOM properties
-  // rather than attributes. These are all booleans.
-  ['checked',
-  // Note: `option.selected` is not updated if `select.multiple` is
-  // disabled with `removeAttribute`. We have special logic for handling this.
-  'multiple', 'muted', 'selected'].forEach(function (name) {
-    properties[name] = new PropertyInfoRecord(name, BOOLEAN, true, // mustUseProperty
-    name, // attributeName
-    null);
-  } // attributeNamespace
-  );
-  
-  // These are HTML attributes that are "overloaded booleans": they behave like
-  // booleans, but can also accept a string value.
-  ['capture', 'download'].forEach(function (name) {
-    properties[name] = new PropertyInfoRecord(name, OVERLOADED_BOOLEAN, false, // mustUseProperty
-    name, // attributeName
-    null);
-  } // attributeNamespace
-  );
-  
-  // These are HTML attributes that must be positive numbers.
-  ['cols', 'rows', 'size', 'span'].forEach(function (name) {
-    properties[name] = new PropertyInfoRecord(name, POSITIVE_NUMERIC, false, // mustUseProperty
-    name, // attributeName
-    null);
-  } // attributeNamespace
-  );
-  
-  // These are HTML attributes that must be numbers.
-  ['rowSpan', 'start'].forEach(function (name) {
-    properties[name] = new PropertyInfoRecord(name, NUMERIC, false, // mustUseProperty
-    name.toLowerCase(), // attributeName
-    null);
-  } // attributeNamespace
-  );
-  
-  var CAMELIZE = /[\-\:]([a-z])/g;
-  var capitalize = function (token) {
-    return token[1].toUpperCase();
-  };
-  
-  // This is a list of all SVG attributes that need special casing, namespacing,
-  // or boolean value assignment. Regular attributes that just accept strings
-  // and have the same names are omitted, just like in the HTML whitelist.
-  // Some of these attributes can be hard to find. This list was created by
-  // scrapping the MDN documentation.
-  ['accent-height', 'alignment-baseline', 'arabic-form', 'baseline-shift', 'cap-height', 'clip-path', 'clip-rule', 'color-interpolation', 'color-interpolation-filters', 'color-profile', 'color-rendering', 'dominant-baseline', 'enable-background', 'fill-opacity', 'fill-rule', 'flood-color', 'flood-opacity', 'font-family', 'font-size', 'font-size-adjust', 'font-stretch', 'font-style', 'font-variant', 'font-weight', 'glyph-name', 'glyph-orientation-horizontal', 'glyph-orientation-vertical', 'horiz-adv-x', 'horiz-origin-x', 'image-rendering', 'letter-spacing', 'lighting-color', 'marker-end', 'marker-mid', 'marker-start', 'overline-position', 'overline-thickness', 'paint-order', 'panose-1', 'pointer-events', 'rendering-intent', 'shape-rendering', 'stop-color', 'stop-opacity', 'strikethrough-position', 'strikethrough-thickness', 'stroke-dasharray', 'stroke-dashoffset', 'stroke-linecap', 'stroke-linejoin', 'stroke-miterlimit', 'stroke-opacity', 'stroke-width', 'text-anchor', 'text-decoration', 'text-rendering', 'underline-position', 'underline-thickness', 'unicode-bidi', 'unicode-range', 'units-per-em', 'v-alphabetic', 'v-hanging', 'v-ideographic', 'v-mathematical', 'vector-effect', 'vert-adv-y', 'vert-origin-x', 'vert-origin-y', 'word-spacing', 'writing-mode', 'xmlns:xlink', 'x-height'].forEach(function (attributeName) {
-    var name = attributeName.replace(CAMELIZE, capitalize);
-    properties[name] = new PropertyInfoRecord(name, STRING, false, // mustUseProperty
-    attributeName, null);
-  } // attributeNamespace
-  );
-  
-  // String SVG attributes with the xlink namespace.
-  ['xlink:actuate', 'xlink:arcrole', 'xlink:href', 'xlink:role', 'xlink:show', 'xlink:title', 'xlink:type'].forEach(function (attributeName) {
-    var name = attributeName.replace(CAMELIZE, capitalize);
-    properties[name] = new PropertyInfoRecord(name, STRING, false, // mustUseProperty
-    attributeName, 'http://www.w3.org/1999/xlink');
-  });
-  
-  // String SVG attributes with the xml namespace.
-  ['xml:base', 'xml:lang', 'xml:space'].forEach(function (attributeName) {
-    var name = attributeName.replace(CAMELIZE, capitalize);
-    properties[name] = new PropertyInfoRecord(name, STRING, false, // mustUseProperty
-    attributeName, 'http://www.w3.org/XML/1998/namespace');
-  });
-  
-  // Special case: this attribute exists both in HTML and SVG.
-  // Its "tabindex" attribute name is case-sensitive in SVG so we can't just use
-  // its React `tabIndex` name, like we do for attributes that exist only in HTML.
-  properties.tabIndex = new PropertyInfoRecord('tabIndex', STRING, false, // mustUseProperty
-  'tabindex', // attributeName
-  null);
   
   /**
    * Get the value for a property on a node. Only used in DEV for SSR validation.
@@ -3730,115 +3349,6 @@
    */
   var DOMEventPluginOrder = ['ResponderEventPlugin', 'SimpleEventPlugin', 'EnterLeaveEventPlugin', 'ChangeEventPlugin', 'SelectEventPlugin', 'BeforeInputEventPlugin'];
   
-  var SyntheticUIEvent = SyntheticEvent.extend({
-    view: null,
-    detail: null
-  });
-  
-  var modifierKeyToProp = {
-    Alt: 'altKey',
-    Control: 'ctrlKey',
-    Meta: 'metaKey',
-    Shift: 'shiftKey'
-  };
-  
-  // Older browsers (Safari <= 10, iOS Safari <= 10.2) do not support
-  // getModifierState. If getModifierState is not supported, we map it to a set of
-  // modifier keys exposed by the event. In this case, Lock-keys are not supported.
-  /**
-   * Translation from modifier key to the associated property in the event.
-   * @see http://www.w3.org/TR/DOM-Level-3-Events/#keys-Modifiers
-   */
-  
-  function modifierStateGetter(keyArg) {
-    var syntheticEvent = this;
-    var nativeEvent = syntheticEvent.nativeEvent;
-    if (nativeEvent.getModifierState) {
-      return nativeEvent.getModifierState(keyArg);
-    }
-    var keyProp = modifierKeyToProp[keyArg];
-    return keyProp ? !!nativeEvent[keyProp] : false;
-  }
-  
-  function getEventModifierState(nativeEvent) {
-    return modifierStateGetter;
-  }
-  
-  var previousScreenX = 0;
-  var previousScreenY = 0;
-  // Use flags to signal movementX/Y has already been set
-  var isMovementXSet = false;
-  var isMovementYSet = false;
-  
-  /**
-   * @interface MouseEvent
-   * @see http://www.w3.org/TR/DOM-Level-3-Events/
-   */
-  var SyntheticMouseEvent = SyntheticUIEvent.extend({
-    screenX: null,
-    screenY: null,
-    clientX: null,
-    clientY: null,
-    pageX: null,
-    pageY: null,
-    ctrlKey: null,
-    shiftKey: null,
-    altKey: null,
-    metaKey: null,
-    getModifierState: getEventModifierState,
-    button: null,
-    buttons: null,
-    relatedTarget: function (event) {
-      return event.relatedTarget || (event.fromElement === event.srcElement ? event.toElement : event.fromElement);
-    },
-    movementX: function (event) {
-      if ('movementX' in event) {
-        return event.movementX;
-      }
-  
-      var screenX = previousScreenX;
-      previousScreenX = event.screenX;
-  
-      if (!isMovementXSet) {
-        isMovementXSet = true;
-        return 0;
-      }
-  
-      return event.type === 'mousemove' ? event.screenX - screenX : 0;
-    },
-    movementY: function (event) {
-      if ('movementY' in event) {
-        return event.movementY;
-      }
-  
-      var screenY = previousScreenY;
-      previousScreenY = event.screenY;
-  
-      if (!isMovementYSet) {
-        isMovementYSet = true;
-        return 0;
-      }
-  
-      return event.type === 'mousemove' ? event.screenY - screenY : 0;
-    }
-  });
-  
-  /**
-   * @interface PointerEvent
-   * @see http://www.w3.org/TR/pointerevents/
-   */
-  var SyntheticPointerEvent = SyntheticMouseEvent.extend({
-    pointerId: null,
-    width: null,
-    height: null,
-    pressure: null,
-    tangentialPressure: null,
-    tiltX: null,
-    tiltY: null,
-    twist: null,
-    pointerType: null,
-    isPrimary: null
-  });
   
   var eventTypes$2 = {
     mouseEnter: {
@@ -3949,58 +3459,10 @@
     }
   };
   
-  /*eslint-disable no-self-compare */
   
-  var hasOwnProperty$1 = Object.prototype.hasOwnProperty;
+
   
-  /**
-   * inlined Object.is polyfill to avoid requiring consumers ship their own
-   * https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/is
-   */
-  function is(x, y) {
-    // SameValue algorithm
-    if (x === y) {
-      // Steps 1-5, 7-10
-      // Steps 6.b-6.e: +0 != -0
-      // Added the nonzero y check to make Flow happy, but it is redundant
-      return x !== 0 || y !== 0 || 1 / x === 1 / y;
-    } else {
-      // Step 6.a: NaN == NaN
-      return x !== x && y !== y;
-    }
-  }
-  
-  /**
-   * Performs equality by iterating through keys on an object and returning false
-   * when any key has values which are not strictly equal between the arguments.
-   * Returns true when the values of all keys are strictly equal.
-   */
-  function shallowEqual(objA, objB) {
-    if (is(objA, objB)) {
-      return true;
-    }
-  
-    if (typeof objA !== 'object' || objA === null || typeof objB !== 'object' || objB === null) {
-      return false;
-    }
-  
-    var keysA = Object.keys(objA);
-    var keysB = Object.keys(objB);
-  
-    if (keysA.length !== keysB.length) {
-      return false;
-    }
-  
-    // Test for A's keys different from B.
-    for (var i = 0; i < keysA.length; i++) {
-      if (!hasOwnProperty$1.call(objB, keysA[i]) || !is(objA[keysA[i]], objB[keysA[i]])) {
-        return false;
-      }
-    }
-  
-    return true;
-  }
-  
+ 
   /**
    * `ReactInstanceMap` maintains a mapping from a public facing stateful
    * instance (key) and the internal representation (value). This allows public
@@ -4301,301 +3763,6 @@
   function addEventCaptureListener(element, eventType, listener) {
     element.addEventListener(eventType, listener, true);
   }
-  
-  /**
-   * @interface Event
-   * @see http://www.w3.org/TR/css3-animations/#AnimationEvent-interface
-   * @see https://developer.mozilla.org/en-US/docs/Web/API/AnimationEvent
-   */
-  var SyntheticAnimationEvent = SyntheticEvent.extend({
-    animationName: null,
-    elapsedTime: null,
-    pseudoElement: null
-  });
-  
-  /**
-   * @interface Event
-   * @see http://www.w3.org/TR/clipboard-apis/
-   */
-  var SyntheticClipboardEvent = SyntheticEvent.extend({
-    clipboardData: function (event) {
-      return 'clipboardData' in event ? event.clipboardData : window.clipboardData;
-    }
-  });
-  
-  /**
-   * @interface FocusEvent
-   * @see http://www.w3.org/TR/DOM-Level-3-Events/
-   */
-  var SyntheticFocusEvent = SyntheticUIEvent.extend({
-    relatedTarget: null
-  });
-  
-  /**
-   * `charCode` represents the actual "character code" and is safe to use with
-   * `String.fromCharCode`. As such, only keys that correspond to printable
-   * characters produce a valid `charCode`, the only exception to this is Enter.
-   * The Tab-key is considered non-printable and does not have a `charCode`,
-   * presumably because it does not produce a tab-character in browsers.
-   *
-   * @param {object} nativeEvent Native browser event.
-   * @return {number} Normalized `charCode` property.
-   */
-  function getEventCharCode(nativeEvent) {
-    var charCode = void 0;
-    var keyCode = nativeEvent.keyCode;
-  
-    if ('charCode' in nativeEvent) {
-      charCode = nativeEvent.charCode;
-  
-      // FF does not set `charCode` for the Enter-key, check against `keyCode`.
-      if (charCode === 0 && keyCode === 13) {
-        charCode = 13;
-      }
-    } else {
-      // IE8 does not implement `charCode`, but `keyCode` has the correct value.
-      charCode = keyCode;
-    }
-  
-    // IE and Edge (on Windows) and Chrome / Safari (on Windows and Linux)
-    // report Enter as charCode 10 when ctrl is pressed.
-    if (charCode === 10) {
-      charCode = 13;
-    }
-  
-    // Some non-printable keys are reported in `charCode`/`keyCode`, discard them.
-    // Must not discard the (non-)printable Enter-key.
-    if (charCode >= 32 || charCode === 13) {
-      return charCode;
-    }
-  
-    return 0;
-  }
-  
-  /**
-   * Normalization of deprecated HTML5 `key` values
-   * @see https://developer.mozilla.org/en-US/docs/Web/API/KeyboardEvent#Key_names
-   */
-  var normalizeKey = {
-    Esc: 'Escape',
-    Spacebar: ' ',
-    Left: 'ArrowLeft',
-    Up: 'ArrowUp',
-    Right: 'ArrowRight',
-    Down: 'ArrowDown',
-    Del: 'Delete',
-    Win: 'OS',
-    Menu: 'ContextMenu',
-    Apps: 'ContextMenu',
-    Scroll: 'ScrollLock',
-    MozPrintableKey: 'Unidentified'
-  };
-  
-  /**
-   * Translation from legacy `keyCode` to HTML5 `key`
-   * Only special keys supported, all others depend on keyboard layout or browser
-   * @see https://developer.mozilla.org/en-US/docs/Web/API/KeyboardEvent#Key_names
-   */
-  var translateToKey = {
-    '8': 'Backspace',
-    '9': 'Tab',
-    '12': 'Clear',
-    '13': 'Enter',
-    '16': 'Shift',
-    '17': 'Control',
-    '18': 'Alt',
-    '19': 'Pause',
-    '20': 'CapsLock',
-    '27': 'Escape',
-    '32': ' ',
-    '33': 'PageUp',
-    '34': 'PageDown',
-    '35': 'End',
-    '36': 'Home',
-    '37': 'ArrowLeft',
-    '38': 'ArrowUp',
-    '39': 'ArrowRight',
-    '40': 'ArrowDown',
-    '45': 'Insert',
-    '46': 'Delete',
-    '112': 'F1',
-    '113': 'F2',
-    '114': 'F3',
-    '115': 'F4',
-    '116': 'F5',
-    '117': 'F6',
-    '118': 'F7',
-    '119': 'F8',
-    '120': 'F9',
-    '121': 'F10',
-    '122': 'F11',
-    '123': 'F12',
-    '144': 'NumLock',
-    '145': 'ScrollLock',
-    '224': 'Meta'
-  };
-  
-  /**
-   * @param {object} nativeEvent Native browser event.
-   * @return {string} Normalized `key` property.
-   */
-  function getEventKey(nativeEvent) {
-    if (nativeEvent.key) {
-      // Normalize inconsistent values reported by browsers due to
-      // implementations of a working draft specification.
-  
-      // FireFox implements `key` but returns `MozPrintableKey` for all
-      // printable characters (normalized to `Unidentified`), ignore it.
-      var key = normalizeKey[nativeEvent.key] || nativeEvent.key;
-      if (key !== 'Unidentified') {
-        return key;
-      }
-    }
-  
-    // Browser does not implement `key`, polyfill as much of it as we can.
-    if (nativeEvent.type === 'keypress') {
-      var charCode = getEventCharCode(nativeEvent);
-  
-      // The enter-key is technically both printable and non-printable and can
-      // thus be captured by `keypress`, no other non-printable key should.
-      return charCode === 13 ? 'Enter' : String.fromCharCode(charCode);
-    }
-    if (nativeEvent.type === 'keydown' || nativeEvent.type === 'keyup') {
-      // While user keyboard layout determines the actual meaning of each
-      // `keyCode` value, almost all function keys have a universal value.
-      return translateToKey[nativeEvent.keyCode] || 'Unidentified';
-    }
-    return '';
-  }
-  
-  /**
-   * @interface KeyboardEvent
-   * @see http://www.w3.org/TR/DOM-Level-3-Events/
-   */
-  var SyntheticKeyboardEvent = SyntheticUIEvent.extend({
-    key: getEventKey,
-    location: null,
-    ctrlKey: null,
-    shiftKey: null,
-    altKey: null,
-    metaKey: null,
-    repeat: null,
-    locale: null,
-    getModifierState: getEventModifierState,
-    // Legacy Interface
-    charCode: function (event) {
-      // `charCode` is the result of a KeyPress event and represents the value of
-      // the actual printable character.
-  
-      // KeyPress is deprecated, but its replacement is not yet final and not
-      // implemented in any major browser. Only KeyPress has charCode.
-      if (event.type === 'keypress') {
-        return getEventCharCode(event);
-      }
-      return 0;
-    },
-    keyCode: function (event) {
-      // `keyCode` is the result of a KeyDown/Up event and represents the value of
-      // physical keyboard key.
-  
-      // The actual meaning of the value depends on the users' keyboard layout
-      // which cannot be detected. Assuming that it is a US keyboard layout
-      // provides a surprisingly accurate mapping for US and European users.
-      // Due to this, it is left to the user to implement at this time.
-      if (event.type === 'keydown' || event.type === 'keyup') {
-        return event.keyCode;
-      }
-      return 0;
-    },
-    which: function (event) {
-      // `which` is an alias for either `keyCode` or `charCode` depending on the
-      // type of the event.
-      if (event.type === 'keypress') {
-        return getEventCharCode(event);
-      }
-      if (event.type === 'keydown' || event.type === 'keyup') {
-        return event.keyCode;
-      }
-      return 0;
-    }
-  });
-  
-  /**
-   * @interface DragEvent
-   * @see http://www.w3.org/TR/DOM-Level-3-Events/
-   */
-  var SyntheticDragEvent = SyntheticMouseEvent.extend({
-    dataTransfer: null
-  });
-  
-  /**
-   * @interface TouchEvent
-   * @see http://www.w3.org/TR/touch-events/
-   */
-  var SyntheticTouchEvent = SyntheticUIEvent.extend({
-    touches: null,
-    targetTouches: null,
-    changedTouches: null,
-    altKey: null,
-    metaKey: null,
-    ctrlKey: null,
-    shiftKey: null,
-    getModifierState: getEventModifierState
-  });
-  
-  /**
-   * @interface Event
-   * @see http://www.w3.org/TR/2009/WD-css3-transitions-20090320/#transition-events-
-   * @see https://developer.mozilla.org/en-US/docs/Web/API/TransitionEvent
-   */
-  var SyntheticTransitionEvent = SyntheticEvent.extend({
-    propertyName: null,
-    elapsedTime: null,
-    pseudoElement: null
-  });
-  
-  /**
-   * @interface WheelEvent
-   * @see http://www.w3.org/TR/DOM-Level-3-Events/
-   */
-  var SyntheticWheelEvent = SyntheticMouseEvent.extend({
-    deltaX: function (event) {
-      return 'deltaX' in event ? event.deltaX : // Fallback to `wheelDeltaX` for Webkit and normalize (right is positive).
-      'wheelDeltaX' in event ? -event.wheelDeltaX : 0;
-    },
-    deltaY: function (event) {
-      return 'deltaY' in event ? event.deltaY : // Fallback to `wheelDeltaY` for Webkit and normalize (down is positive).
-      'wheelDeltaY' in event ? -event.wheelDeltaY : // Fallback to `wheelDelta` for IE<9 and normalize (down is positive).
-      'wheelDelta' in event ? -event.wheelDelta : 0;
-    },
-  
-    deltaZ: null,
-  
-    // Browsers without "deltaMode" is reporting in raw wheel delta where one
-    // notch on the scroll is always +/- 120, roughly equivalent to pixels.
-    // A good approximation of DOM_DELTA_LINE (1) is 5% of viewport size or
-    // ~40 pixels, for DOM_DELTA_SCREEN (2) it is 87.5% of viewport size.
-    deltaMode: null
-  });
-  
-  /**
-   * Turns
-   * ['abort', ...]
-   * into
-   * eventTypes = {
-   *   'abort': {
-   *     phasedRegistrationNames: {
-   *       bubbled: 'onAbort',
-   *       captured: 'onAbortCapture',
-   *     },
-   *     dependencies: [TOP_ABORT],
-   *   },
-   *   ...
-   * };
-   * topLevelEventsToDispatchConfig = new Map([
-   *   [TOP_ABORT, { sameConfig }],
-   * ]);
-   */
   
   var interactiveEventTypeNames = [[TOP_BLUR, 'blur'], [TOP_CANCEL, 'cancel'], [TOP_CLICK, 'click'], [TOP_CLOSE, 'close'], [TOP_CONTEXT_MENU, 'contextMenu'], [TOP_COPY, 'copy'], [TOP_CUT, 'cut'], [TOP_AUX_CLICK, 'auxClick'], [TOP_DOUBLE_CLICK, 'doubleClick'], [TOP_DRAG_END, 'dragEnd'], [TOP_DRAG_START, 'dragStart'], [TOP_DROP, 'drop'], [TOP_FOCUS, 'focus'], [TOP_INPUT, 'input'], [TOP_INVALID, 'invalid'], [TOP_KEY_DOWN, 'keyDown'], [TOP_KEY_PRESS, 'keyPress'], [TOP_KEY_UP, 'keyUp'], [TOP_MOUSE_DOWN, 'mouseDown'], [TOP_MOUSE_UP, 'mouseUp'], [TOP_PASTE, 'paste'], [TOP_PAUSE, 'pause'], [TOP_PLAY, 'play'], [TOP_POINTER_CANCEL, 'pointerCancel'], [TOP_POINTER_DOWN, 'pointerDown'], [TOP_POINTER_UP, 'pointerUp'], [TOP_RATE_CHANGE, 'rateChange'], [TOP_RESET, 'reset'], [TOP_SEEKED, 'seeked'], [TOP_SUBMIT, 'submit'], [TOP_TOUCH_CANCEL, 'touchCancel'], [TOP_TOUCH_END, 'touchEnd'], [TOP_TOUCH_START, 'touchStart'], [TOP_VOLUME_CHANGE, 'volumeChange']];
   var nonInteractiveEventTypeNames = [[TOP_ABORT, 'abort'], [TOP_ANIMATION_END, 'animationEnd'], [TOP_ANIMATION_ITERATION, 'animationIteration'], [TOP_ANIMATION_START, 'animationStart'], [TOP_CAN_PLAY, 'canPlay'], [TOP_CAN_PLAY_THROUGH, 'canPlayThrough'], [TOP_DRAG, 'drag'], [TOP_DRAG_ENTER, 'dragEnter'], [TOP_DRAG_EXIT, 'dragExit'], [TOP_DRAG_LEAVE, 'dragLeave'], [TOP_DRAG_OVER, 'dragOver'], [TOP_DURATION_CHANGE, 'durationChange'], [TOP_EMPTIED, 'emptied'], [TOP_ENCRYPTED, 'encrypted'], [TOP_ENDED, 'ended'], [TOP_ERROR, 'error'], [TOP_GOT_POINTER_CAPTURE, 'gotPointerCapture'], [TOP_LOAD, 'load'], [TOP_LOADED_DATA, 'loadedData'], [TOP_LOADED_METADATA, 'loadedMetadata'], [TOP_LOAD_START, 'loadStart'], [TOP_LOST_POINTER_CAPTURE, 'lostPointerCapture'], [TOP_MOUSE_MOVE, 'mouseMove'], [TOP_MOUSE_OUT, 'mouseOut'], [TOP_MOUSE_OVER, 'mouseOver'], [TOP_PLAYING, 'playing'], [TOP_POINTER_MOVE, 'pointerMove'], [TOP_POINTER_OUT, 'pointerOut'], [TOP_POINTER_OVER, 'pointerOver'], [TOP_PROGRESS, 'progress'], [TOP_SCROLL, 'scroll'], [TOP_SEEKING, 'seeking'], [TOP_STALLED, 'stalled'], [TOP_SUSPEND, 'suspend'], [TOP_TIME_UPDATE, 'timeUpdate'], [TOP_TOGGLE, 'toggle'], [TOP_TOUCH_MOVE, 'touchMove'], [TOP_TRANSITION_END, 'transitionEnd'], [TOP_WAITING, 'waiting'], [TOP_WHEEL, 'wheel']];
@@ -20031,4 +19198,3 @@
   var reactDom = ReactDOM$3.default || ReactDOM$3;
   
   module.exports = reactDom;
-    })();
