@@ -7,7 +7,13 @@
 	var constant = require('./contant');
 	var util = require('./util');
 	var UIevent = require('./SyntheticUIEvent')
-	const { normalizeKey, translateToKey} = constant;
+	var sTag = require('./tag');
+	const { 
+		normalizeKey, 
+		translateToKey, 
+		shorthandToLonghand, 	
+		possibleStandardNames,
+		ariaProperties} = constant;
 	const { shallowEqual, shouldPreventMouseEvent, isTextInputElement } = util;
 	const { 
 		SyntheticEvent,
@@ -24,6 +30,10 @@
 		SyntheticUIEvent,
 		getEventCharCode
 	 } = UIevent;
+
+	 const { 
+		findInvalidAncestorForTag,
+		shouldAutoFocusHostComponent } = sTag;
   
   
   var validateFormat = function () {};
@@ -2324,10 +2334,11 @@
   }
   
   function getCurrentFiberStackInDev() {
+		debugger;
     {
       if (current === null) {
         return '';
-      }
+			}
       // Safe because if current fiber exists, we are reconciling,
       // and it is guaranteed to be the work-in-progress version.
       return getStackByFiberInDevAndProd(current);
@@ -5262,55 +5273,7 @@
   
   // List derived from Gecko source code:
   // https://github.com/mozilla/gecko-dev/blob/4e638efc71/layout/style/test/property_database.js
-  var shorthandToLonghand = {
-    animation: ['animationDelay', 'animationDirection', 'animationDuration', 'animationFillMode', 'animationIterationCount', 'animationName', 'animationPlayState', 'animationTimingFunction'],
-    background: ['backgroundAttachment', 'backgroundClip', 'backgroundColor', 'backgroundImage', 'backgroundOrigin', 'backgroundPositionX', 'backgroundPositionY', 'backgroundRepeat', 'backgroundSize'],
-    backgroundPosition: ['backgroundPositionX', 'backgroundPositionY'],
-    border: ['borderBottomColor', 'borderBottomStyle', 'borderBottomWidth', 'borderImageOutset', 'borderImageRepeat', 'borderImageSlice', 'borderImageSource', 'borderImageWidth', 'borderLeftColor', 'borderLeftStyle', 'borderLeftWidth', 'borderRightColor', 'borderRightStyle', 'borderRightWidth', 'borderTopColor', 'borderTopStyle', 'borderTopWidth'],
-    borderBlockEnd: ['borderBlockEndColor', 'borderBlockEndStyle', 'borderBlockEndWidth'],
-    borderBlockStart: ['borderBlockStartColor', 'borderBlockStartStyle', 'borderBlockStartWidth'],
-    borderBottom: ['borderBottomColor', 'borderBottomStyle', 'borderBottomWidth'],
-    borderColor: ['borderBottomColor', 'borderLeftColor', 'borderRightColor', 'borderTopColor'],
-    borderImage: ['borderImageOutset', 'borderImageRepeat', 'borderImageSlice', 'borderImageSource', 'borderImageWidth'],
-    borderInlineEnd: ['borderInlineEndColor', 'borderInlineEndStyle', 'borderInlineEndWidth'],
-    borderInlineStart: ['borderInlineStartColor', 'borderInlineStartStyle', 'borderInlineStartWidth'],
-    borderLeft: ['borderLeftColor', 'borderLeftStyle', 'borderLeftWidth'],
-    borderRadius: ['borderBottomLeftRadius', 'borderBottomRightRadius', 'borderTopLeftRadius', 'borderTopRightRadius'],
-    borderRight: ['borderRightColor', 'borderRightStyle', 'borderRightWidth'],
-    borderStyle: ['borderBottomStyle', 'borderLeftStyle', 'borderRightStyle', 'borderTopStyle'],
-    borderTop: ['borderTopColor', 'borderTopStyle', 'borderTopWidth'],
-    borderWidth: ['borderBottomWidth', 'borderLeftWidth', 'borderRightWidth', 'borderTopWidth'],
-    columnRule: ['columnRuleColor', 'columnRuleStyle', 'columnRuleWidth'],
-    columns: ['columnCount', 'columnWidth'],
-    flex: ['flexBasis', 'flexGrow', 'flexShrink'],
-    flexFlow: ['flexDirection', 'flexWrap'],
-    font: ['fontFamily', 'fontFeatureSettings', 'fontKerning', 'fontLanguageOverride', 'fontSize', 'fontSizeAdjust', 'fontStretch', 'fontStyle', 'fontVariant', 'fontVariantAlternates', 'fontVariantCaps', 'fontVariantEastAsian', 'fontVariantLigatures', 'fontVariantNumeric', 'fontVariantPosition', 'fontWeight', 'lineHeight'],
-    fontVariant: ['fontVariantAlternates', 'fontVariantCaps', 'fontVariantEastAsian', 'fontVariantLigatures', 'fontVariantNumeric', 'fontVariantPosition'],
-    gap: ['columnGap', 'rowGap'],
-    grid: ['gridAutoColumns', 'gridAutoFlow', 'gridAutoRows', 'gridTemplateAreas', 'gridTemplateColumns', 'gridTemplateRows'],
-    gridArea: ['gridColumnEnd', 'gridColumnStart', 'gridRowEnd', 'gridRowStart'],
-    gridColumn: ['gridColumnEnd', 'gridColumnStart'],
-    gridColumnGap: ['columnGap'],
-    gridGap: ['columnGap', 'rowGap'],
-    gridRow: ['gridRowEnd', 'gridRowStart'],
-    gridRowGap: ['rowGap'],
-    gridTemplate: ['gridTemplateAreas', 'gridTemplateColumns', 'gridTemplateRows'],
-    listStyle: ['listStyleImage', 'listStylePosition', 'listStyleType'],
-    margin: ['marginBottom', 'marginLeft', 'marginRight', 'marginTop'],
-    marker: ['markerEnd', 'markerMid', 'markerStart'],
-    mask: ['maskClip', 'maskComposite', 'maskImage', 'maskMode', 'maskOrigin', 'maskPositionX', 'maskPositionY', 'maskRepeat', 'maskSize'],
-    maskPosition: ['maskPositionX', 'maskPositionY'],
-    outline: ['outlineColor', 'outlineStyle', 'outlineWidth'],
-    overflow: ['overflowX', 'overflowY'],
-    padding: ['paddingBottom', 'paddingLeft', 'paddingRight', 'paddingTop'],
-    placeContent: ['alignContent', 'justifyContent'],
-    placeItems: ['alignItems', 'justifyItems'],
-    placeSelf: ['alignSelf', 'justifySelf'],
-    textDecoration: ['textDecorationColor', 'textDecorationLine', 'textDecorationStyle'],
-    textEmphasis: ['textEmphasisColor', 'textEmphasisStyle'],
-    transition: ['transitionDelay', 'transitionDuration', 'transitionProperty', 'transitionTimingFunction'],
-    wordWrap: ['overflowWrap']
-  };
+  
   
   /**
    * CSS properties which accept numbers but are not in units of "px".
@@ -5737,546 +5700,7 @@
   // When adding attributes to the HTML or SVG whitelist, be sure to
   // also add them to this module to ensure casing and incorrect name
   // warnings.
-  var possibleStandardNames = {
-    // HTML
-    accept: 'accept',
-    acceptcharset: 'acceptCharset',
-    'accept-charset': 'acceptCharset',
-    accesskey: 'accessKey',
-    action: 'action',
-    allowfullscreen: 'allowFullScreen',
-    alt: 'alt',
-    as: 'as',
-    async: 'async',
-    autocapitalize: 'autoCapitalize',
-    autocomplete: 'autoComplete',
-    autocorrect: 'autoCorrect',
-    autofocus: 'autoFocus',
-    autoplay: 'autoPlay',
-    autosave: 'autoSave',
-    capture: 'capture',
-    cellpadding: 'cellPadding',
-    cellspacing: 'cellSpacing',
-    challenge: 'challenge',
-    charset: 'charSet',
-    checked: 'checked',
-    children: 'children',
-    cite: 'cite',
-    class: 'className',
-    classid: 'classID',
-    classname: 'className',
-    cols: 'cols',
-    colspan: 'colSpan',
-    content: 'content',
-    contenteditable: 'contentEditable',
-    contextmenu: 'contextMenu',
-    controls: 'controls',
-    controlslist: 'controlsList',
-    coords: 'coords',
-    crossorigin: 'crossOrigin',
-    dangerouslysetinnerhtml: 'dangerouslySetInnerHTML',
-    data: 'data',
-    datetime: 'dateTime',
-    default: 'default',
-    defaultchecked: 'defaultChecked',
-    defaultvalue: 'defaultValue',
-    defer: 'defer',
-    dir: 'dir',
-    disabled: 'disabled',
-    download: 'download',
-    draggable: 'draggable',
-    enctype: 'encType',
-    for: 'htmlFor',
-    form: 'form',
-    formmethod: 'formMethod',
-    formaction: 'formAction',
-    formenctype: 'formEncType',
-    formnovalidate: 'formNoValidate',
-    formtarget: 'formTarget',
-    frameborder: 'frameBorder',
-    headers: 'headers',
-    height: 'height',
-    hidden: 'hidden',
-    high: 'high',
-    href: 'href',
-    hreflang: 'hrefLang',
-    htmlfor: 'htmlFor',
-    httpequiv: 'httpEquiv',
-    'http-equiv': 'httpEquiv',
-    icon: 'icon',
-    id: 'id',
-    innerhtml: 'innerHTML',
-    inputmode: 'inputMode',
-    integrity: 'integrity',
-    is: 'is',
-    itemid: 'itemID',
-    itemprop: 'itemProp',
-    itemref: 'itemRef',
-    itemscope: 'itemScope',
-    itemtype: 'itemType',
-    keyparams: 'keyParams',
-    keytype: 'keyType',
-    kind: 'kind',
-    label: 'label',
-    lang: 'lang',
-    list: 'list',
-    loop: 'loop',
-    low: 'low',
-    manifest: 'manifest',
-    marginwidth: 'marginWidth',
-    marginheight: 'marginHeight',
-    max: 'max',
-    maxlength: 'maxLength',
-    media: 'media',
-    mediagroup: 'mediaGroup',
-    method: 'method',
-    min: 'min',
-    minlength: 'minLength',
-    multiple: 'multiple',
-    muted: 'muted',
-    name: 'name',
-    nomodule: 'noModule',
-    nonce: 'nonce',
-    novalidate: 'noValidate',
-    open: 'open',
-    optimum: 'optimum',
-    pattern: 'pattern',
-    placeholder: 'placeholder',
-    playsinline: 'playsInline',
-    poster: 'poster',
-    preload: 'preload',
-    profile: 'profile',
-    radiogroup: 'radioGroup',
-    readonly: 'readOnly',
-    referrerpolicy: 'referrerPolicy',
-    rel: 'rel',
-    required: 'required',
-    reversed: 'reversed',
-    role: 'role',
-    rows: 'rows',
-    rowspan: 'rowSpan',
-    sandbox: 'sandbox',
-    scope: 'scope',
-    scoped: 'scoped',
-    scrolling: 'scrolling',
-    seamless: 'seamless',
-    selected: 'selected',
-    shape: 'shape',
-    size: 'size',
-    sizes: 'sizes',
-    span: 'span',
-    spellcheck: 'spellCheck',
-    src: 'src',
-    srcdoc: 'srcDoc',
-    srclang: 'srcLang',
-    srcset: 'srcSet',
-    start: 'start',
-    step: 'step',
-    style: 'style',
-    summary: 'summary',
-    tabindex: 'tabIndex',
-    target: 'target',
-    title: 'title',
-    type: 'type',
-    usemap: 'useMap',
-    value: 'value',
-    width: 'width',
-    wmode: 'wmode',
-    wrap: 'wrap',
-  
-    // SVG
-    about: 'about',
-    accentheight: 'accentHeight',
-    'accent-height': 'accentHeight',
-    accumulate: 'accumulate',
-    additive: 'additive',
-    alignmentbaseline: 'alignmentBaseline',
-    'alignment-baseline': 'alignmentBaseline',
-    allowreorder: 'allowReorder',
-    alphabetic: 'alphabetic',
-    amplitude: 'amplitude',
-    arabicform: 'arabicForm',
-    'arabic-form': 'arabicForm',
-    ascent: 'ascent',
-    attributename: 'attributeName',
-    attributetype: 'attributeType',
-    autoreverse: 'autoReverse',
-    azimuth: 'azimuth',
-    basefrequency: 'baseFrequency',
-    baselineshift: 'baselineShift',
-    'baseline-shift': 'baselineShift',
-    baseprofile: 'baseProfile',
-    bbox: 'bbox',
-    begin: 'begin',
-    bias: 'bias',
-    by: 'by',
-    calcmode: 'calcMode',
-    capheight: 'capHeight',
-    'cap-height': 'capHeight',
-    clip: 'clip',
-    clippath: 'clipPath',
-    'clip-path': 'clipPath',
-    clippathunits: 'clipPathUnits',
-    cliprule: 'clipRule',
-    'clip-rule': 'clipRule',
-    color: 'color',
-    colorinterpolation: 'colorInterpolation',
-    'color-interpolation': 'colorInterpolation',
-    colorinterpolationfilters: 'colorInterpolationFilters',
-    'color-interpolation-filters': 'colorInterpolationFilters',
-    colorprofile: 'colorProfile',
-    'color-profile': 'colorProfile',
-    colorrendering: 'colorRendering',
-    'color-rendering': 'colorRendering',
-    contentscripttype: 'contentScriptType',
-    contentstyletype: 'contentStyleType',
-    cursor: 'cursor',
-    cx: 'cx',
-    cy: 'cy',
-    d: 'd',
-    datatype: 'datatype',
-    decelerate: 'decelerate',
-    descent: 'descent',
-    diffuseconstant: 'diffuseConstant',
-    direction: 'direction',
-    display: 'display',
-    divisor: 'divisor',
-    dominantbaseline: 'dominantBaseline',
-    'dominant-baseline': 'dominantBaseline',
-    dur: 'dur',
-    dx: 'dx',
-    dy: 'dy',
-    edgemode: 'edgeMode',
-    elevation: 'elevation',
-    enablebackground: 'enableBackground',
-    'enable-background': 'enableBackground',
-    end: 'end',
-    exponent: 'exponent',
-    externalresourcesrequired: 'externalResourcesRequired',
-    fill: 'fill',
-    fillopacity: 'fillOpacity',
-    'fill-opacity': 'fillOpacity',
-    fillrule: 'fillRule',
-    'fill-rule': 'fillRule',
-    filter: 'filter',
-    filterres: 'filterRes',
-    filterunits: 'filterUnits',
-    floodopacity: 'floodOpacity',
-    'flood-opacity': 'floodOpacity',
-    floodcolor: 'floodColor',
-    'flood-color': 'floodColor',
-    focusable: 'focusable',
-    fontfamily: 'fontFamily',
-    'font-family': 'fontFamily',
-    fontsize: 'fontSize',
-    'font-size': 'fontSize',
-    fontsizeadjust: 'fontSizeAdjust',
-    'font-size-adjust': 'fontSizeAdjust',
-    fontstretch: 'fontStretch',
-    'font-stretch': 'fontStretch',
-    fontstyle: 'fontStyle',
-    'font-style': 'fontStyle',
-    fontvariant: 'fontVariant',
-    'font-variant': 'fontVariant',
-    fontweight: 'fontWeight',
-    'font-weight': 'fontWeight',
-    format: 'format',
-    from: 'from',
-    fx: 'fx',
-    fy: 'fy',
-    g1: 'g1',
-    g2: 'g2',
-    glyphname: 'glyphName',
-    'glyph-name': 'glyphName',
-    glyphorientationhorizontal: 'glyphOrientationHorizontal',
-    'glyph-orientation-horizontal': 'glyphOrientationHorizontal',
-    glyphorientationvertical: 'glyphOrientationVertical',
-    'glyph-orientation-vertical': 'glyphOrientationVertical',
-    glyphref: 'glyphRef',
-    gradienttransform: 'gradientTransform',
-    gradientunits: 'gradientUnits',
-    hanging: 'hanging',
-    horizadvx: 'horizAdvX',
-    'horiz-adv-x': 'horizAdvX',
-    horizoriginx: 'horizOriginX',
-    'horiz-origin-x': 'horizOriginX',
-    ideographic: 'ideographic',
-    imagerendering: 'imageRendering',
-    'image-rendering': 'imageRendering',
-    in2: 'in2',
-    in: 'in',
-    inlist: 'inlist',
-    intercept: 'intercept',
-    k1: 'k1',
-    k2: 'k2',
-    k3: 'k3',
-    k4: 'k4',
-    k: 'k',
-    kernelmatrix: 'kernelMatrix',
-    kernelunitlength: 'kernelUnitLength',
-    kerning: 'kerning',
-    keypoints: 'keyPoints',
-    keysplines: 'keySplines',
-    keytimes: 'keyTimes',
-    lengthadjust: 'lengthAdjust',
-    letterspacing: 'letterSpacing',
-    'letter-spacing': 'letterSpacing',
-    lightingcolor: 'lightingColor',
-    'lighting-color': 'lightingColor',
-    limitingconeangle: 'limitingConeAngle',
-    local: 'local',
-    markerend: 'markerEnd',
-    'marker-end': 'markerEnd',
-    markerheight: 'markerHeight',
-    markermid: 'markerMid',
-    'marker-mid': 'markerMid',
-    markerstart: 'markerStart',
-    'marker-start': 'markerStart',
-    markerunits: 'markerUnits',
-    markerwidth: 'markerWidth',
-    mask: 'mask',
-    maskcontentunits: 'maskContentUnits',
-    maskunits: 'maskUnits',
-    mathematical: 'mathematical',
-    mode: 'mode',
-    numoctaves: 'numOctaves',
-    offset: 'offset',
-    opacity: 'opacity',
-    operator: 'operator',
-    order: 'order',
-    orient: 'orient',
-    orientation: 'orientation',
-    origin: 'origin',
-    overflow: 'overflow',
-    overlineposition: 'overlinePosition',
-    'overline-position': 'overlinePosition',
-    overlinethickness: 'overlineThickness',
-    'overline-thickness': 'overlineThickness',
-    paintorder: 'paintOrder',
-    'paint-order': 'paintOrder',
-    panose1: 'panose1',
-    'panose-1': 'panose1',
-    pathlength: 'pathLength',
-    patterncontentunits: 'patternContentUnits',
-    patterntransform: 'patternTransform',
-    patternunits: 'patternUnits',
-    pointerevents: 'pointerEvents',
-    'pointer-events': 'pointerEvents',
-    points: 'points',
-    pointsatx: 'pointsAtX',
-    pointsaty: 'pointsAtY',
-    pointsatz: 'pointsAtZ',
-    prefix: 'prefix',
-    preservealpha: 'preserveAlpha',
-    preserveaspectratio: 'preserveAspectRatio',
-    primitiveunits: 'primitiveUnits',
-    property: 'property',
-    r: 'r',
-    radius: 'radius',
-    refx: 'refX',
-    refy: 'refY',
-    renderingintent: 'renderingIntent',
-    'rendering-intent': 'renderingIntent',
-    repeatcount: 'repeatCount',
-    repeatdur: 'repeatDur',
-    requiredextensions: 'requiredExtensions',
-    requiredfeatures: 'requiredFeatures',
-    resource: 'resource',
-    restart: 'restart',
-    result: 'result',
-    results: 'results',
-    rotate: 'rotate',
-    rx: 'rx',
-    ry: 'ry',
-    scale: 'scale',
-    security: 'security',
-    seed: 'seed',
-    shaperendering: 'shapeRendering',
-    'shape-rendering': 'shapeRendering',
-    slope: 'slope',
-    spacing: 'spacing',
-    specularconstant: 'specularConstant',
-    specularexponent: 'specularExponent',
-    speed: 'speed',
-    spreadmethod: 'spreadMethod',
-    startoffset: 'startOffset',
-    stddeviation: 'stdDeviation',
-    stemh: 'stemh',
-    stemv: 'stemv',
-    stitchtiles: 'stitchTiles',
-    stopcolor: 'stopColor',
-    'stop-color': 'stopColor',
-    stopopacity: 'stopOpacity',
-    'stop-opacity': 'stopOpacity',
-    strikethroughposition: 'strikethroughPosition',
-    'strikethrough-position': 'strikethroughPosition',
-    strikethroughthickness: 'strikethroughThickness',
-    'strikethrough-thickness': 'strikethroughThickness',
-    string: 'string',
-    stroke: 'stroke',
-    strokedasharray: 'strokeDasharray',
-    'stroke-dasharray': 'strokeDasharray',
-    strokedashoffset: 'strokeDashoffset',
-    'stroke-dashoffset': 'strokeDashoffset',
-    strokelinecap: 'strokeLinecap',
-    'stroke-linecap': 'strokeLinecap',
-    strokelinejoin: 'strokeLinejoin',
-    'stroke-linejoin': 'strokeLinejoin',
-    strokemiterlimit: 'strokeMiterlimit',
-    'stroke-miterlimit': 'strokeMiterlimit',
-    strokewidth: 'strokeWidth',
-    'stroke-width': 'strokeWidth',
-    strokeopacity: 'strokeOpacity',
-    'stroke-opacity': 'strokeOpacity',
-    suppresscontenteditablewarning: 'suppressContentEditableWarning',
-    suppresshydrationwarning: 'suppressHydrationWarning',
-    surfacescale: 'surfaceScale',
-    systemlanguage: 'systemLanguage',
-    tablevalues: 'tableValues',
-    targetx: 'targetX',
-    targety: 'targetY',
-    textanchor: 'textAnchor',
-    'text-anchor': 'textAnchor',
-    textdecoration: 'textDecoration',
-    'text-decoration': 'textDecoration',
-    textlength: 'textLength',
-    textrendering: 'textRendering',
-    'text-rendering': 'textRendering',
-    to: 'to',
-    transform: 'transform',
-    typeof: 'typeof',
-    u1: 'u1',
-    u2: 'u2',
-    underlineposition: 'underlinePosition',
-    'underline-position': 'underlinePosition',
-    underlinethickness: 'underlineThickness',
-    'underline-thickness': 'underlineThickness',
-    unicode: 'unicode',
-    unicodebidi: 'unicodeBidi',
-    'unicode-bidi': 'unicodeBidi',
-    unicoderange: 'unicodeRange',
-    'unicode-range': 'unicodeRange',
-    unitsperem: 'unitsPerEm',
-    'units-per-em': 'unitsPerEm',
-    unselectable: 'unselectable',
-    valphabetic: 'vAlphabetic',
-    'v-alphabetic': 'vAlphabetic',
-    values: 'values',
-    vectoreffect: 'vectorEffect',
-    'vector-effect': 'vectorEffect',
-    version: 'version',
-    vertadvy: 'vertAdvY',
-    'vert-adv-y': 'vertAdvY',
-    vertoriginx: 'vertOriginX',
-    'vert-origin-x': 'vertOriginX',
-    vertoriginy: 'vertOriginY',
-    'vert-origin-y': 'vertOriginY',
-    vhanging: 'vHanging',
-    'v-hanging': 'vHanging',
-    videographic: 'vIdeographic',
-    'v-ideographic': 'vIdeographic',
-    viewbox: 'viewBox',
-    viewtarget: 'viewTarget',
-    visibility: 'visibility',
-    vmathematical: 'vMathematical',
-    'v-mathematical': 'vMathematical',
-    vocab: 'vocab',
-    widths: 'widths',
-    wordspacing: 'wordSpacing',
-    'word-spacing': 'wordSpacing',
-    writingmode: 'writingMode',
-    'writing-mode': 'writingMode',
-    x1: 'x1',
-    x2: 'x2',
-    x: 'x',
-    xchannelselector: 'xChannelSelector',
-    xheight: 'xHeight',
-    'x-height': 'xHeight',
-    xlinkactuate: 'xlinkActuate',
-    'xlink:actuate': 'xlinkActuate',
-    xlinkarcrole: 'xlinkArcrole',
-    'xlink:arcrole': 'xlinkArcrole',
-    xlinkhref: 'xlinkHref',
-    'xlink:href': 'xlinkHref',
-    xlinkrole: 'xlinkRole',
-    'xlink:role': 'xlinkRole',
-    xlinkshow: 'xlinkShow',
-    'xlink:show': 'xlinkShow',
-    xlinktitle: 'xlinkTitle',
-    'xlink:title': 'xlinkTitle',
-    xlinktype: 'xlinkType',
-    'xlink:type': 'xlinkType',
-    xmlbase: 'xmlBase',
-    'xml:base': 'xmlBase',
-    xmllang: 'xmlLang',
-    'xml:lang': 'xmlLang',
-    xmlns: 'xmlns',
-    'xml:space': 'xmlSpace',
-    xmlnsxlink: 'xmlnsXlink',
-    'xmlns:xlink': 'xmlnsXlink',
-    xmlspace: 'xmlSpace',
-    y1: 'y1',
-    y2: 'y2',
-    y: 'y',
-    ychannelselector: 'yChannelSelector',
-    z: 'z',
-    zoomandpan: 'zoomAndPan'
-  };
-  
-  var ariaProperties = {
-    'aria-current': 0, // state
-    'aria-details': 0,
-    'aria-disabled': 0, // state
-    'aria-hidden': 0, // state
-    'aria-invalid': 0, // state
-    'aria-keyshortcuts': 0,
-    'aria-label': 0,
-    'aria-roledescription': 0,
-    // Widget Attributes
-    'aria-autocomplete': 0,
-    'aria-checked': 0,
-    'aria-expanded': 0,
-    'aria-haspopup': 0,
-    'aria-level': 0,
-    'aria-modal': 0,
-    'aria-multiline': 0,
-    'aria-multiselectable': 0,
-    'aria-orientation': 0,
-    'aria-placeholder': 0,
-    'aria-pressed': 0,
-    'aria-readonly': 0,
-    'aria-required': 0,
-    'aria-selected': 0,
-    'aria-sort': 0,
-    'aria-valuemax': 0,
-    'aria-valuemin': 0,
-    'aria-valuenow': 0,
-    'aria-valuetext': 0,
-    // Live Region Attributes
-    'aria-atomic': 0,
-    'aria-busy': 0,
-    'aria-live': 0,
-    'aria-relevant': 0,
-    // Drag-and-Drop Attributes
-    'aria-dropeffect': 0,
-    'aria-grabbed': 0,
-    // Relationship Attributes
-    'aria-activedescendant': 0,
-    'aria-colcount': 0,
-    'aria-colindex': 0,
-    'aria-colspan': 0,
-    'aria-controls': 0,
-    'aria-describedby': 0,
-    'aria-errormessage': 0,
-    'aria-flowto': 0,
-    'aria-labelledby': 0,
-    'aria-owns': 0,
-    'aria-posinset': 0,
-    'aria-rowcount': 0,
-    'aria-rowindex': 0,
-    'aria-rowspan': 0,
-    'aria-setsize': 0
-  };
+
   
   var warnedProperties = {};
   var rARIA = new RegExp('^(aria)-[' + ATTRIBUTE_NAME_CHAR + ']*$');
@@ -7647,72 +7071,7 @@
       return true;
     };
   
-    /**
-     * Returns whether
-     */
-    var findInvalidAncestorForTag = function (tag, ancestorInfo) {
-      switch (tag) {
-        case 'address':
-        case 'article':
-        case 'aside':
-        case 'blockquote':
-        case 'center':
-        case 'details':
-        case 'dialog':
-        case 'dir':
-        case 'div':
-        case 'dl':
-        case 'fieldset':
-        case 'figcaption':
-        case 'figure':
-        case 'footer':
-        case 'header':
-        case 'hgroup':
-        case 'main':
-        case 'menu':
-        case 'nav':
-        case 'ol':
-        case 'p':
-        case 'section':
-        case 'summary':
-        case 'ul':
-        case 'pre':
-        case 'listing':
-        case 'table':
-        case 'hr':
-        case 'xmp':
-        case 'h1':
-        case 'h2':
-        case 'h3':
-        case 'h4':
-        case 'h5':
-        case 'h6':
-          return ancestorInfo.pTagInButtonScope;
-  
-        case 'form':
-          return ancestorInfo.formTag || ancestorInfo.pTagInButtonScope;
-  
-        case 'li':
-          return ancestorInfo.listItemTagAutoclosing;
-  
-        case 'dd':
-        case 'dt':
-          return ancestorInfo.dlItemTagAutoclosing;
-  
-        case 'button':
-          return ancestorInfo.buttonTagInScope;
-  
-        case 'a':
-          // Spec says something about storing a list of markers, but it sounds
-          // equivalent to this check.
-          return ancestorInfo.aTagInScope;
-  
-        case 'nobr':
-          return ancestorInfo.nobrTagInScope;
-      }
-  
-      return null;
-    };
+
   
     var didWarn = {};
   
@@ -7795,16 +7154,7 @@
   var eventsEnabled = null;
   var selectionInformation = null;
   
-  function shouldAutoFocusHostComponent(type, props) {
-    switch (type) {
-      case 'button':
-      case 'input':
-      case 'select':
-      case 'textarea':
-        return !!props.autoFocus;
-    }
-    return false;
-  }
+
   
   function getRootHostContext(rootContainerInstance) {
     var type = void 0;
@@ -8432,10 +7782,10 @@
       if (!supportsUserTiming) {
         return;
       }
-      if (currentPhase !== null && currentPhaseFiber !== null) {
-        var warning = hasScheduledUpdateInCurrentPhase ? 'Scheduled a cascading update' : null;
-        endFiberMark(currentPhaseFiber, currentPhase, warning);
-      }
+      // if (currentPhase !== null && currentPhaseFiber !== null) {
+      //   var warning = hasScheduledUpdateInCurrentPhase ? 'Scheduled a cascading update' : null;
+      //   endFiberMark(currentPhaseFiber, currentPhase, warning);
+      // }
       currentPhase = null;
       currentPhaseFiber = null;
     }
@@ -8773,16 +8123,16 @@
     for (var contextKey in childContext) {
       !(contextKey in childContextTypes) ? invariant(false, '%s.getChildContext(): key "%s" is not defined in childContextTypes.', getComponentName(type) || 'Unknown', contextKey) : void 0;
     }
-    {
-      var name = getComponentName(type) || 'Unknown';
-      checkPropTypes(childContextTypes, childContext, 'child context', name,
-      // In practice, there is one case in which we won't get a stack. It's when
-      // somebody calls unstable_renderSubtreeIntoContainer() and we process
-      // context from the parent component instance. The stack will be missing
-      // because it's outside of the reconciliation, and so the pointer has not
-      // been set. This is rare and doesn't matter. We'll also remove that API.
-      getCurrentFiberStackInDev);
-    }
+    // {
+    //   var name = getComponentName(type) || 'Unknown';
+    //   checkPropTypes(childContextTypes, childContext, 'child context', name,
+    //   // In practice, there is one case in which we won't get a stack. It's when
+    //   // somebody calls unstable_renderSubtreeIntoContainer() and we process
+    //   // context from the parent component instance. The stack will be missing
+    //   // because it's outside of the reconciliation, and so the pointer has not
+    //   // been set. This is rare and doesn't matter. We'll also remove that API.
+    //   getCurrentFiberStackInDev);
+    // }
   
     return _assign({}, parentContext, childContext);
   }
@@ -10214,12 +9564,12 @@
       }
     }
   
-    {
-      if (fiber.tag === ClassComponent && (currentlyProcessingQueue === queue1 || queue2 !== null && currentlyProcessingQueue === queue2) && !didWarnUpdateInsideUpdate) {
-        warningWithoutStack$1(false, 'An update (setState, replaceState, or forceUpdate) was scheduled ' + 'from inside an update function. Update functions should be pure, ' + 'with zero side-effects. Consider using componentDidUpdate or a ' + 'callback.');
-        didWarnUpdateInsideUpdate = true;
-      }
-    }
+    // {
+    //   if (fiber.tag === ClassComponent && (currentlyProcessingQueue === queue1 || queue2 !== null && currentlyProcessingQueue === queue2) && !didWarnUpdateInsideUpdate) {
+    //     warningWithoutStack$1(false, 'An update (setState, replaceState, or forceUpdate) was scheduled ' + 'from inside an update function. Update functions should be pure, ' + 'with zero side-effects. Consider using componentDidUpdate or a ' + 'callback.');
+    //     didWarnUpdateInsideUpdate = true;
+    //   }
+    // }
   }
   
   function enqueueCapturedUpdate(workInProgress, update) {
@@ -17862,11 +17212,11 @@
       var rootExpirationTime = root.expirationTime;
       requestWork(root, rootExpirationTime);
     }
-    if (nestedUpdateCount > NESTED_UPDATE_LIMIT) {
-      // Reset this back to zero so subsequent updates don't throw.
-      nestedUpdateCount = 0;
-      invariant(false, 'Maximum update depth exceeded. This can happen when a component repeatedly calls setState inside componentWillUpdate or componentDidUpdate. React limits the number of nested updates to prevent infinite loops.');
-    }
+    // if (nestedUpdateCount > NESTED_UPDATE_LIMIT) {
+    //   // Reset this back to zero so subsequent updates don't throw.
+    //   nestedUpdateCount = 0;
+    //   invariant(false, 'Maximum update depth exceeded. This can happen when a component repeatedly calls setState inside componentWillUpdate or componentDidUpdate. React limits the number of nested updates to prevent infinite loops.');
+    // }
   }
   
   function syncUpdates(fn, a, b, c, d) {
@@ -18508,35 +17858,34 @@
   }
   
   function scheduleRootUpdate(current$$1, element, expirationTime, callback) {
-    {
-      if (phase === 'render' && current !== null && !didWarnAboutNestedUpdates) {
-        didWarnAboutNestedUpdates = true;
-        warningWithoutStack$1(false, 'Render methods should be a pure function of props and state; ' + 'triggering nested component updates from render is not allowed. ' + 'If necessary, trigger nested updates in componentDidUpdate.\n\n' + 'Check the render method of %s.', getComponentName(current.type) || 'Unknown');
-      }
-    }
+    // {
+    //   if (phase === 'render' && current !== null && !didWarnAboutNestedUpdates) {
+    //     didWarnAboutNestedUpdates = true;
+    //     warningWithoutStack$1(false, 'Render methods should be a pure function of props and state; ' + 'triggering nested component updates from render is not allowed. ' + 'If necessary, trigger nested updates in componentDidUpdate.\n\n' + 'Check the render method of %s.', getComponentName(current.type) || 'Unknown');
+    //   }
+    // }
   
     var update = createUpdate(expirationTime);
     // Caution: React DevTools currently depends on this property
     // being called "element".
     update.payload = { element: element };
   
-    callback = callback === undefined ? null : callback;
-    if (callback !== null) {
-      !(typeof callback === 'function') ? warningWithoutStack$1(false, 'render(...): Expected the last optional `callback` argument to be a ' + 'function. Instead received: %s.', callback) : void 0;
-      update.callback = callback;
-    }
+    // callback = callback === undefined ? null : callback;
+    // if (callback !== null) {
+    //   !(typeof callback === 'function') ? warningWithoutStack$1(false, 'render(...): Expected the last optional `callback` argument to be a ' + 'function. Instead received: %s.', callback) : void 0;
+    //   update.callback = callback;
+    // }
   
-    flushPassiveEffects();
+    // flushPassiveEffects();
     enqueueUpdate(current$$1, update);
     scheduleWork(current$$1, expirationTime);
   
-    return expirationTime;
+    return 1073741823;
   }
   
   function updateContainerAtExpirationTime(element, container, parentComponent, expirationTime, callback) {
     // TODO: If this is a nested container, this won't be the root.
     var current$$1 = container.current;
-  
     {
       if (ReactFiberInstrumentation_1.debugTool) {
         if (current$$1.alternate === null) {
@@ -18556,7 +17905,7 @@
       container.pendingContext = context;
     }
   
-    return scheduleRootUpdate(current$$1, element, expirationTime, callback);
+    return scheduleRootUpdate(current$$1, element, 1073741823, callback);
   }
   
   function findHostInstance(component) {
@@ -18612,8 +17961,9 @@
   function updateContainer(element, container, parentComponent, callback) {
     var current$$1 = container.current;
     var currentTime = requestCurrentTime();
-    var expirationTime = computeExpirationForFiber(currentTime, current$$1);
-    return updateContainerAtExpirationTime(element, container, parentComponent, expirationTime, callback);
+		var expirationTime = computeExpirationForFiber(currentTime, current$$1);
+		console.info(currentTime, expirationTime, '-----time----')
+    return updateContainerAtExpirationTime(element, container, parentComponent, 1073741823, callback);
   }
   
   function getPublicRootInstance(container) {
@@ -18898,13 +18248,13 @@
   ReactRoot.prototype.render = function (children, callback) {
     var root = this._internalRoot;
     var work = new ReactWork();
-    callback = callback === undefined ? null : callback;
-    {
-      warnOnInvalidCallback(callback, 'render');
-    }
-    if (callback !== null) {
-      work.then(callback);
-    }
+    // callback = callback === undefined ? null : callback;
+    // {
+    //   warnOnInvalidCallback(callback, 'render');
+    // }
+    // if (callback !== null) {
+    //   work.then(callback);
+    // }
     updateContainer(children, root, null, work._onCommit);
     return work;
   };
@@ -18924,14 +18274,14 @@
   ReactRoot.prototype.legacy_renderSubtreeIntoContainer = function (parentComponent, children, callback) {
     var root = this._internalRoot;
     var work = new ReactWork();
-    callback = callback === undefined ? null : callback;
-    {
-      warnOnInvalidCallback(callback, 'render');
-    }
-    if (callback !== null) {
-      work.then(callback);
-    }
-    updateContainer(children, root, parentComponent, work._onCommit);
+    // callback = callback === undefined ? null : callback;
+    // {
+    //   warnOnInvalidCallback(callback, 'render');
+    // }
+    // if (callback !== null) {
+    //   work.then(callback);
+    // }
+    // updateContainer(children, root, parentComponent, work._onCommit);
     return work;
   };
   ReactRoot.prototype.createBatch = function () {
@@ -19015,18 +18365,19 @@
     if (!root) {
       // Initial mount
       root = container._reactRootContainer = legacyCreateRootFromDOMContainer(container, forceHydrate);
-      if (typeof callback === 'function') {
-        var originalCallback = callback;
-        callback = function () {
-          var instance = getPublicRootInstance(root._internalRoot);
-          originalCallback.call(instance);
-        };
-      }
+      // if (typeof callback === 'function') {
+      //   var originalCallback = callback;
+      //   callback = function () {
+      //     var instance = getPublicRootInstance(root._internalRoot);
+      //     originalCallback.call(instance);
+      //   };
+      // }
       // Initial mount should not be batched.
       unbatchedUpdates(function () {
         if (parentComponent != null) {
           root.legacy_renderSubtreeIntoContainer(parentComponent, children, callback);
         } else {
+					console.info('render-----render-------')
           root.render(children, callback);
         }
       });
