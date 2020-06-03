@@ -17,6 +17,7 @@ function createElement(type, config, children) {
     for (var i = 0; i < childrenLength; i++) {
       childArray[i] = arguments[i + 2];
     }
+    console.info(Array.isArray(childArray), 'Array.isArray(childArray)')
     props.children = childArray;
   }
 

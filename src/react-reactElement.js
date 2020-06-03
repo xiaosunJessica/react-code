@@ -7,12 +7,8 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-'use strict';
-
-
 
 (function() {
-  'use strict';
   
   var React = require('react');
   var _assign = require('object-assign');
@@ -75,150 +71,7 @@
       this.onError(error);
     }
   };
-  
-  {
-    // In DEV mode, we swap out invokeGuardedCallback for a special version
-    // that plays more nicely with the browser's DevTools. The idea is to preserve
-    // "Pause on exceptions" behavior. Because React wraps all user-provided
-    // functions in invokeGuardedCallback, and the production version of
-    // invokeGuardedCallback uses a try-catch, all user exceptions are treated
-    // like caught exceptions, and the DevTools won't pause unless the developer
-    // takes the extra step of enabling pause on caught exceptions. This is
-    // untintuitive, though, because even though React has caught the error, from
-    // the developer's perspective, the error is uncaught.
-    //
-    // To preserve the expected "Pause on exceptions" behavior, we don't use a
-    // try-catch in DEV. Instead, we synchronously dispatch a fake event to a fake
-    // DOM node, and call the user-provided callback from inside an event handler
-    // for that fake event. If the callback throws, the error is "captured" using
-    // a global event handler. But because the error happens in a different
-    // event loop context, it does not interrupt the normal program flow.
-    // Effectively, this gives us try-catch behavior without actually using
-    // try-catch. Neat!
-  
-    // Check that the browser supports the APIs we need to implement our special
-    // DEV version of invokeGuardedCallback
-    if (typeof window !== 'undefined' && typeof window.dispatchEvent === 'function' && typeof document !== 'undefined' && typeof document.createEvent === 'function') {
-      var fakeNode = document.createElement('react');
-  
-      var invokeGuardedCallbackDev = function (name, func, context, a, b, c, d, e, f) {
-        // If document doesn't exist we know for sure we will crash in this method
-        // when we call document.createEvent(). However this can cause confusing
-        // errors: https://github.com/facebookincubator/create-react-app/issues/3482
-        // So we preemptively throw with a better message instead.
-        !(typeof document !== 'undefined') ? invariant(false, 'The `document` global was defined when React was initialized, but is not defined anymore. This can happen in a test environment if a component schedules an update from an asynchronous callback, but the test has already finished running. To solve this, you can either unmount the component at the end of your test (and ensure that any asynchronous operations get canceled in `componentWillUnmount`), or you can change the test itself to be asynchronous.') : void 0;
-        var evt = document.createEvent('Event');
-  
-        // Keeps track of whether the user-provided callback threw an error. We
-        // set this to true at the beginning, then set it to false right after
-        // calling the function. If the function errors, `didError` will never be
-        // set to false. This strategy works even if the browser is flaky and
-        // fails to call our global error handler, because it doesn't rely on
-        // the error event at all.
-        var didError = true;
-  
-        // Keeps track of the value of window.event so that we can reset it
-        // during the callback to let user code access window.event in the
-        // browsers that support it.
-        var windowEvent = window.event;
-  
-        // Keeps track of the descriptor of window.event to restore it after event
-        // dispatching: https://github.com/facebook/react/issues/13688
-        var windowEventDescriptor = Object.getOwnPropertyDescriptor(window, 'event');
-  
-        // Create an event handler for our fake event. We will synchronously
-        // dispatch our fake event using `dispatchEvent`. Inside the handler, we
-        // call the user-provided callback.
-        var funcArgs = Array.prototype.slice.call(arguments, 3);
-        function callCallback() {
-          // We immediately remove the callback from event listeners so that
-          // nested `invokeGuardedCallback` calls do not clash. Otherwise, a
-          // nested call would trigger the fake event handlers of any call higher
-          // in the stack.
-          fakeNode.removeEventListener(evtType, callCallback, false);
-  
-          // We check for window.hasOwnProperty('event') to prevent the
-          // window.event assignment in both IE <= 10 as they throw an error
-          // "Member not found" in strict mode, and in Firefox which does not
-          // support window.event.
-          if (typeof window.event !== 'undefined' && window.hasOwnProperty('event')) {
-            window.event = windowEvent;
-          }
-  
-          func.apply(context, funcArgs);
-          didError = false;
-        }
-  
-        // Create a global error event handler. We use this to capture the value
-        // that was thrown. It's possible that this error handler will fire more
-        // than once; for example, if non-React code also calls `dispatchEvent`
-        // and a handler for that event throws. We should be resilient to most of
-        // those cases. Even if our error event handler fires more than once, the
-        // last error event is always used. If the callback actually does error,
-        // we know that the last error event is the correct one, because it's not
-        // possible for anything else to have happened in between our callback
-        // erroring and the code that follows the `dispatchEvent` call below. If
-        // the callback doesn't error, but the error event was fired, we know to
-        // ignore it because `didError` will be false, as described above.
-        var error = void 0;
-        // Use this to track whether the error event is ever called.
-        var didSetError = false;
-        var isCrossOriginError = false;
-  
-        function handleWindowError(event) {
-          error = event.error;
-          didSetError = true;
-          if (error === null && event.colno === 0 && event.lineno === 0) {
-            isCrossOriginError = true;
-          }
-          if (event.defaultPrevented) {
-            // Some other error handler has prevented default.
-            // Browsers silence the error report if this happens.
-            // We'll remember this to later decide whether to log it or not.
-            if (error != null && typeof error === 'object') {
-              try {
-                error._suppressLogging = true;
-              } catch (inner) {
-                // Ignore.
-              }
-            }
-          }
-        }
-  
-        // Create a fake event type.
-        var evtType = 'react-' + (name ? name : 'invokeguardedcallback');
-  
-        // Attach our event handlers
-        window.addEventListener('error', handleWindowError);
-        fakeNode.addEventListener(evtType, callCallback, false);
-  
-        // Synchronously dispatch our fake event. If the user-provided function
-        // errors, it will trigger our global error handler.
-        evt.initEvent(evtType, false, false);
-        fakeNode.dispatchEvent(evt);
-  
-        if (windowEventDescriptor) {
-          Object.defineProperty(window, 'event', windowEventDescriptor);
-        }
-  
-        if (didError) {
-          if (!didSetError) {
-            // The callback errored, but the error event never fired.
-            error = new Error('An error was thrown inside one of your components, but React ' + "doesn't know what it was. This is likely due to browser " + 'flakiness. React does its best to preserve the "Pause on ' + 'exceptions" behavior of the DevTools, which requires some ' + "DEV-mode only tricks. It's possible that these don't work in " + 'your browser. Try triggering the error in production mode, ' + 'or switching to a modern browser. If you suspect that this is ' + 'actually an issue with React, please file an issue.');
-          } else if (isCrossOriginError) {
-            error = new Error("A cross-origin error was thrown. React doesn't have access to " + 'the actual error object in development. ' + 'See https://fb.me/react-crossorigin-error for more information.');
-          }
-          this.onError(error);
-        }
-  
-        // Remove our event listeners
-        window.removeEventListener('error', handleWindowError);
-      };
-  
-      invokeGuardedCallbackImpl = invokeGuardedCallbackDev;
-    }
-  }
-  
+ 
   var invokeGuardedCallbackImpl$1 = invokeGuardedCallbackImpl;
   
   // Used by Fiber to simulate a try-catch.
@@ -477,46 +330,7 @@
    */
   
   var warningWithoutStack = function () {};
-  
-  {
-    warningWithoutStack = function (condition, format) {
-      for (var _len = arguments.length, args = Array(_len > 2 ? _len - 2 : 0), _key = 2; _key < _len; _key++) {
-        args[_key - 2] = arguments[_key];
-      }
-  
-      if (format === undefined) {
-        throw new Error('`warningWithoutStack(condition, format, ...args)` requires a warning ' + 'message argument');
-      }
-      if (args.length > 8) {
-        // Check before the condition to catch violations early.
-        throw new Error('warningWithoutStack() currently supports at most 8 arguments.');
-      }
-      if (condition) {
-        return;
-      }
-      if (typeof console !== 'undefined') {
-        var argsWithFormat = args.map(function (item) {
-          return '' + item;
-        });
-        argsWithFormat.unshift('Warning: ' + format);
-  
-        // We intentionally don't use spread (or .apply) directly because it
-        // breaks IE9: https://github.com/facebook/react/issues/13610
-        Function.prototype.apply.call(console.error, console, argsWithFormat);
-      }
-      try {
-        // --- Welcome to debugging React ---
-        // This error was thrown as a convenience so that you can use this stack
-        // to find the callsite that caused this warning to fire.
-        var argIndex = 0;
-        var message = 'Warning: ' + format.replace(/%s/g, function () {
-          return args[argIndex++];
-        });
-        throw new Error(message);
-      } catch (x) {}
-    };
-  }
-  
+
   var warningWithoutStack$1 = warningWithoutStack;
   
   var getFiberCurrentPropsFromNode = null;
@@ -527,26 +341,20 @@
     getFiberCurrentPropsFromNode = getFiberCurrentPropsFromNodeImpl;
     getInstanceFromNode = getInstanceFromNodeImpl;
     getNodeFromInstance = getNodeFromInstanceImpl;
-    {
-      !(getNodeFromInstance && getInstanceFromNode) ? warningWithoutStack$1(false, 'EventPluginUtils.setComponentTree(...): Injected ' + 'module is missing getNodeFromInstance or getInstanceFromNode.') : void 0;
-    }
   }
   
-  var validateEventDispatches = void 0;
-  {
-    validateEventDispatches = function (event) {
-      var dispatchListeners = event._dispatchListeners;
-      var dispatchInstances = event._dispatchInstances;
-  
-      var listenersIsArr = Array.isArray(dispatchListeners);
-      var listenersLen = listenersIsArr ? dispatchListeners.length : dispatchListeners ? 1 : 0;
-  
-      var instancesIsArr = Array.isArray(dispatchInstances);
-      var instancesLen = instancesIsArr ? dispatchInstances.length : dispatchInstances ? 1 : 0;
-  
-      !(instancesIsArr === listenersIsArr && instancesLen === listenersLen) ? warningWithoutStack$1(false, 'EventPluginUtils: Invalid `event`.') : void 0;
-    };
-  }
+  var validateEventDispatches = function (event) {
+    var dispatchListeners = event._dispatchListeners;
+    var dispatchInstances = event._dispatchInstances;
+
+    var listenersIsArr = Array.isArray(dispatchListeners);
+    var listenersLen = listenersIsArr ? dispatchListeners.length : dispatchListeners ? 1 : 0;
+
+    var instancesIsArr = Array.isArray(dispatchInstances);
+    var instancesLen = instancesIsArr ? dispatchInstances.length : dispatchInstances ? 1 : 0;
+
+    !(instancesIsArr === listenersIsArr && instancesLen === listenersLen) ? warningWithoutStack$1(false, 'EventPluginUtils: Invalid `event`.') : void 0;
+  };
   
   /**
    * Dispatch the event to the listener.
@@ -567,9 +375,7 @@
   function executeDispatchesInOrder(event) {
     var dispatchListeners = event._dispatchListeners;
     var dispatchInstances = event._dispatchInstances;
-    {
-      validateEventDispatches(event);
-    }
+    validateEventDispatches(event);
     if (Array.isArray(dispatchListeners)) {
       for (var i = 0; i < dispatchListeners.length; i++) {
         if (event.isPropagationStopped()) {
@@ -4627,8 +4433,6 @@
     addEventTypeNameToConfig(eventTuple, false);
   });
   
-  // Only used in DEV for exhaustiveness validation.
-  var knownHTMLTopLevelTypes = [TOP_ABORT, TOP_CANCEL, TOP_CAN_PLAY, TOP_CAN_PLAY_THROUGH, TOP_CLOSE, TOP_DURATION_CHANGE, TOP_EMPTIED, TOP_ENCRYPTED, TOP_ENDED, TOP_ERROR, TOP_INPUT, TOP_INVALID, TOP_LOAD, TOP_LOADED_DATA, TOP_LOADED_METADATA, TOP_LOAD_START, TOP_PAUSE, TOP_PLAY, TOP_PLAYING, TOP_PROGRESS, TOP_RATE_CHANGE, TOP_RESET, TOP_SEEKED, TOP_SEEKING, TOP_STALLED, TOP_SUBMIT, TOP_SUSPEND, TOP_TIME_UPDATE, TOP_TOGGLE, TOP_VOLUME_CHANGE, TOP_WAITING];
   
   var SimpleEventPlugin = {
     eventTypes: eventTypes$4,
@@ -7960,7 +7764,6 @@
       }
       return possibleStandardNames[lowerCasedName] || null;
     }
-    return null;
   }
   
   function diffHydratedProperties(domElement, tag, rawProps, parentNamespace, rootContainerElement) {
@@ -8381,158 +8184,6 @@
       return ancestorInfo;
     };
   
-    /**
-     * Returns whether
-     */
-    var isTagValidWithParent = function (tag, parentTag) {
-      // First, let's check if we're in an unusual parsing mode...
-      switch (parentTag) {
-        // https://html.spec.whatwg.org/multipage/syntax.html#parsing-main-inselect
-        case 'select':
-          return tag === 'option' || tag === 'optgroup' || tag === '#text';
-        case 'optgroup':
-          return tag === 'option' || tag === '#text';
-        // Strictly speaking, seeing an <option> doesn't mean we're in a <select>
-        // but
-        case 'option':
-          return tag === '#text';
-        // https://html.spec.whatwg.org/multipage/syntax.html#parsing-main-intd
-        // https://html.spec.whatwg.org/multipage/syntax.html#parsing-main-incaption
-        // No special behavior since these rules fall back to "in body" mode for
-        // all except special table nodes which cause bad parsing behavior anyway.
-  
-        // https://html.spec.whatwg.org/multipage/syntax.html#parsing-main-intr
-        case 'tr':
-          return tag === 'th' || tag === 'td' || tag === 'style' || tag === 'script' || tag === 'template';
-        // https://html.spec.whatwg.org/multipage/syntax.html#parsing-main-intbody
-        case 'tbody':
-        case 'thead':
-        case 'tfoot':
-          return tag === 'tr' || tag === 'style' || tag === 'script' || tag === 'template';
-        // https://html.spec.whatwg.org/multipage/syntax.html#parsing-main-incolgroup
-        case 'colgroup':
-          return tag === 'col' || tag === 'template';
-        // https://html.spec.whatwg.org/multipage/syntax.html#parsing-main-intable
-        case 'table':
-          return tag === 'caption' || tag === 'colgroup' || tag === 'tbody' || tag === 'tfoot' || tag === 'thead' || tag === 'style' || tag === 'script' || tag === 'template';
-        // https://html.spec.whatwg.org/multipage/syntax.html#parsing-main-inhead
-        case 'head':
-          return tag === 'base' || tag === 'basefont' || tag === 'bgsound' || tag === 'link' || tag === 'meta' || tag === 'title' || tag === 'noscript' || tag === 'noframes' || tag === 'style' || tag === 'script' || tag === 'template';
-        // https://html.spec.whatwg.org/multipage/semantics.html#the-html-element
-        case 'html':
-          return tag === 'head' || tag === 'body';
-        case '#document':
-          return tag === 'html';
-      }
-  
-      // Probably in the "in body" parsing mode, so we outlaw only tag combos
-      // where the parsing rules cause implicit opens or closes to be added.
-      // https://html.spec.whatwg.org/multipage/syntax.html#parsing-main-inbody
-      switch (tag) {
-        case 'h1':
-        case 'h2':
-        case 'h3':
-        case 'h4':
-        case 'h5':
-        case 'h6':
-          return parentTag !== 'h1' && parentTag !== 'h2' && parentTag !== 'h3' && parentTag !== 'h4' && parentTag !== 'h5' && parentTag !== 'h6';
-  
-        case 'rp':
-        case 'rt':
-          return impliedEndTags.indexOf(parentTag) === -1;
-  
-        case 'body':
-        case 'caption':
-        case 'col':
-        case 'colgroup':
-        case 'frame':
-        case 'head':
-        case 'html':
-        case 'tbody':
-        case 'td':
-        case 'tfoot':
-        case 'th':
-        case 'thead':
-        case 'tr':
-          // These tags are only valid with a few parents that have special child
-          // parsing rules -- if we're down here, then none of those matched and
-          // so we allow it only if we don't know what the parent is, as all other
-          // cases are invalid.
-          return parentTag == null;
-      }
-  
-      return true;
-    };
-  
-    /**
-     * Returns whether
-     */
-    var findInvalidAncestorForTag = function (tag, ancestorInfo) {
-      switch (tag) {
-        case 'address':
-        case 'article':
-        case 'aside':
-        case 'blockquote':
-        case 'center':
-        case 'details':
-        case 'dialog':
-        case 'dir':
-        case 'div':
-        case 'dl':
-        case 'fieldset':
-        case 'figcaption':
-        case 'figure':
-        case 'footer':
-        case 'header':
-        case 'hgroup':
-        case 'main':
-        case 'menu':
-        case 'nav':
-        case 'ol':
-        case 'p':
-        case 'section':
-        case 'summary':
-        case 'ul':
-        case 'pre':
-        case 'listing':
-        case 'table':
-        case 'hr':
-        case 'xmp':
-        case 'h1':
-        case 'h2':
-        case 'h3':
-        case 'h4':
-        case 'h5':
-        case 'h6':
-          return ancestorInfo.pTagInButtonScope;
-  
-        case 'form':
-          return ancestorInfo.formTag || ancestorInfo.pTagInButtonScope;
-  
-        case 'li':
-          return ancestorInfo.listItemTagAutoclosing;
-  
-        case 'dd':
-        case 'dt':
-          return ancestorInfo.dlItemTagAutoclosing;
-  
-        case 'button':
-          return ancestorInfo.buttonTagInScope;
-  
-        case 'a':
-          // Spec says something about storing a list of markers, but it sounds
-          // equivalent to this check.
-          return ancestorInfo.aTagInScope;
-  
-        case 'nobr':
-          return ancestorInfo.nobrTagInScope;
-      }
-  
-      return null;
-    };
-  
-    var didWarn = {};
-  
     validateDOMNesting = function (childTag, childText, ancestorInfo) {
      
     };
@@ -8609,14 +8260,10 @@
   }
   
   function getChildHostContext(parentHostContext, type, rootContainerInstance) {
-    {
-      var parentHostContextDev = parentHostContext;
-      var _namespace = getChildNamespace(parentHostContextDev.namespace, type);
-      var _ancestorInfo2 = updatedAncestorInfo(parentHostContextDev.ancestorInfo, type);
-      return { namespace: _namespace, ancestorInfo: _ancestorInfo2 };
-    }
-    var parentNamespace = parentHostContext;
-    return getChildNamespace(parentNamespace, type);
+    var parentHostContextDev = parentHostContext;
+    var _namespace = getChildNamespace(parentHostContextDev.namespace, type);
+    var _ancestorInfo2 = updatedAncestorInfo(parentHostContextDev.ancestorInfo, type);
+    return { namespace: _namespace, ancestorInfo: _ancestorInfo2 };
   }
   
   function getPublicInstance(instance) {
@@ -8628,6 +8275,7 @@
     selectionInformation = getSelectionInformation();
     setEnabled(false);
   }
+  
   
   function resetAfterCommit(containerInfo) {
     restoreSelection(selectionInformation);
@@ -8644,6 +8292,8 @@
       var hostContextDev = hostContext;
       parentNamespace = hostContextDev.namespace;
     }
+
+    console.info('createInstancecreateInstance', type, props, rootContainerInstance,)
     var domElement = createElement(type, props, rootContainerInstance, parentNamespace);
     precacheFiberNode(internalInstanceHandle, domElement);
     updateFiberProps(domElement, props);
@@ -9572,29 +9222,6 @@
     return true;
   }
   
-  function invalidateContextProvider(workInProgress, type, didChange) {
-    var instance = workInProgress.stateNode;
-    !instance ? invariant(false, 'Expected to have an instance by this point. This error is likely caused by a bug in React. Please file an issue.') : void 0;
-  
-    if (didChange) {
-      // Merge parent and own context.
-      // Skip this if we're not updating due to sCU.
-      // This avoids unnecessarily recomputing memoized values.
-      var mergedContext = processChildContext(workInProgress, type, previousContext);
-      instance.__reactInternalMemoizedMergedChildContext = mergedContext;
-  
-      // Replace the old (or empty) context with the new one.
-      // It is important to unwind the context in the reverse order.
-      pop(didPerformWorkStackCursor, workInProgress);
-      pop(contextStackCursor, workInProgress);
-      // Now push the new context and mark that it has changed.
-      push(contextStackCursor, mergedContext, workInProgress);
-      push(didPerformWorkStackCursor, didChange, workInProgress);
-    } else {
-      pop(didPerformWorkStackCursor, workInProgress);
-      push(didPerformWorkStackCursor, didChange, workInProgress);
-    }
-  }
   
   function findCurrentUnmaskedContext(fiber) {
     // Currently this is only used with renderSubtreeIntoContainer; not sure if it
@@ -9637,7 +9264,6 @@
     };
   }
   
-  var isDevToolsPresent = typeof window.__REACT_DEVTOOLS_GLOBAL_HOOK__ !== 'undefined';
   
   function injectInternals(internals) {
     if (typeof window.__REACT_DEVTOOLS_GLOBAL_HOOK__ === 'undefined') {
@@ -10022,7 +9648,6 @@
           }
       }
     }
-  
     fiber = createFiber(fiberTag, pendingProps, key, mode);
     fiber.elementType = type;
     fiber.type = resolvedType;
@@ -11059,6 +10684,7 @@
   }
   
   function processUpdateQueue(workInProgress, queue, props, instance, renderExpirationTime) {
+    debugger;
     hasForceUpdate = false;
   
     queue = ensureWorkInProgressQueueIsAClone(workInProgress, queue);
@@ -12226,7 +11852,6 @@
   }
   
   var fakeInternalInstance = {};
-  var isArray$1 = Array.isArray;
   
   // React.Component uses a shared frozen object by default.
   // We'll use it to determine whether we need to initialize legacy refs.
@@ -12398,75 +12023,7 @@
   
     return true;
   }
-  
-  function checkClassInstance(workInProgress, ctor, newProps) {
-    var instance = workInProgress.stateNode;
-    {
-      var name = getComponentName(ctor) || 'Component';
-      var renderPresent = instance.render;
-  
-      if (!renderPresent) {
-        if (ctor.prototype && typeof ctor.prototype.render === 'function') {
-          warningWithoutStack$1(false, '%s(...): No `render` method found on the returned component ' + 'instance: did you accidentally return an object from the constructor?', name);
-        } else {
-          warningWithoutStack$1(false, '%s(...): No `render` method found on the returned component ' + 'instance: you may have forgotten to define `render`.', name);
-        }
-      }
-  
-      var noGetInitialStateOnES6 = !instance.getInitialState || instance.getInitialState.isReactClassApproved || instance.state;
-      !noGetInitialStateOnES6 ? warningWithoutStack$1(false, 'getInitialState was defined on %s, a plain JavaScript class. ' + 'This is only supported for classes created using React.createClass. ' + 'Did you mean to define a state property instead?', name) : void 0;
-      var noGetDefaultPropsOnES6 = !instance.getDefaultProps || instance.getDefaultProps.isReactClassApproved;
-      !noGetDefaultPropsOnES6 ? warningWithoutStack$1(false, 'getDefaultProps was defined on %s, a plain JavaScript class. ' + 'This is only supported for classes created using React.createClass. ' + 'Use a static property to define defaultProps instead.', name) : void 0;
-      var noInstancePropTypes = !instance.propTypes;
-      !noInstancePropTypes ? warningWithoutStack$1(false, 'propTypes was defined as an instance property on %s. Use a static ' + 'property to define propTypes instead.', name) : void 0;
-      var noInstanceContextType = !instance.contextType;
-      !noInstanceContextType ? warningWithoutStack$1(false, 'contextType was defined as an instance property on %s. Use a static ' + 'property to define contextType instead.', name) : void 0;
-      var noInstanceContextTypes = !instance.contextTypes;
-      !noInstanceContextTypes ? warningWithoutStack$1(false, 'contextTypes was defined as an instance property on %s. Use a static ' + 'property to define contextTypes instead.', name) : void 0;
-  
-      if (ctor.contextType && ctor.contextTypes && !didWarnAboutContextTypeAndContextTypes.has(ctor)) {
-        didWarnAboutContextTypeAndContextTypes.add(ctor);
-        warningWithoutStack$1(false, '%s declares both contextTypes and contextType static properties. ' + 'The legacy contextTypes property will be ignored.', name);
-      }
-  
-      var noComponentShouldUpdate = typeof instance.componentShouldUpdate !== 'function';
-      !noComponentShouldUpdate ? warningWithoutStack$1(false, '%s has a method called ' + 'componentShouldUpdate(). Did you mean shouldComponentUpdate()? ' + 'The name is phrased as a question because the function is ' + 'expected to return a value.', name) : void 0;
-      if (ctor.prototype && ctor.prototype.isPureReactComponent && typeof instance.shouldComponentUpdate !== 'undefined') {
-        warningWithoutStack$1(false, '%s has a method called shouldComponentUpdate(). ' + 'shouldComponentUpdate should not be used when extending React.PureComponent. ' + 'Please extend React.Component if shouldComponentUpdate is used.', getComponentName(ctor) || 'A pure component');
-      }
-      var noComponentDidUnmount = typeof instance.componentDidUnmount !== 'function';
-      !noComponentDidUnmount ? warningWithoutStack$1(false, '%s has a method called ' + 'componentDidUnmount(). But there is no such lifecycle method. ' + 'Did you mean componentWillUnmount()?', name) : void 0;
-      var noComponentDidReceiveProps = typeof instance.componentDidReceiveProps !== 'function';
-      !noComponentDidReceiveProps ? warningWithoutStack$1(false, '%s has a method called ' + 'componentDidReceiveProps(). But there is no such lifecycle method. ' + 'If you meant to update the state in response to changing props, ' + 'use componentWillReceiveProps(). If you meant to fetch data or ' + 'run side-effects or mutations after React has updated the UI, use componentDidUpdate().', name) : void 0;
-      var noComponentWillRecieveProps = typeof instance.componentWillRecieveProps !== 'function';
-      !noComponentWillRecieveProps ? warningWithoutStack$1(false, '%s has a method called ' + 'componentWillRecieveProps(). Did you mean componentWillReceiveProps()?', name) : void 0;
-      var noUnsafeComponentWillRecieveProps = typeof instance.UNSAFE_componentWillRecieveProps !== 'function';
-      !noUnsafeComponentWillRecieveProps ? warningWithoutStack$1(false, '%s has a method called ' + 'UNSAFE_componentWillRecieveProps(). Did you mean UNSAFE_componentWillReceiveProps()?', name) : void 0;
-      var hasMutatedProps = instance.props !== newProps;
-      !(instance.props === undefined || !hasMutatedProps) ? warningWithoutStack$1(false, '%s(...): When calling super() in `%s`, make sure to pass ' + "up the same props that your component's constructor was passed.", name, name) : void 0;
-      var noInstanceDefaultProps = !instance.defaultProps;
-      !noInstanceDefaultProps ? warningWithoutStack$1(false, 'Setting defaultProps as an instance property on %s is not supported and will be ignored.' + ' Instead, define defaultProps as a static property on %s.', name, name) : void 0;
-  
-      if (typeof instance.getSnapshotBeforeUpdate === 'function' && typeof instance.componentDidUpdate !== 'function' && !didWarnAboutGetSnapshotBeforeUpdateWithoutDidUpdate.has(ctor)) {
-        didWarnAboutGetSnapshotBeforeUpdateWithoutDidUpdate.add(ctor);
-        warningWithoutStack$1(false, '%s: getSnapshotBeforeUpdate() should be used with componentDidUpdate(). ' + 'This component defines getSnapshotBeforeUpdate() only.', getComponentName(ctor));
-      }
-  
-      var noInstanceGetDerivedStateFromProps = typeof instance.getDerivedStateFromProps !== 'function';
-      !noInstanceGetDerivedStateFromProps ? warningWithoutStack$1(false, '%s: getDerivedStateFromProps() is defined as an instance method ' + 'and will be ignored. Instead, declare it as a static method.', name) : void 0;
-      var noInstanceGetDerivedStateFromCatch = typeof instance.getDerivedStateFromError !== 'function';
-      !noInstanceGetDerivedStateFromCatch ? warningWithoutStack$1(false, '%s: getDerivedStateFromError() is defined as an instance method ' + 'and will be ignored. Instead, declare it as a static method.', name) : void 0;
-      var noStaticGetSnapshotBeforeUpdate = typeof ctor.getSnapshotBeforeUpdate !== 'function';
-      !noStaticGetSnapshotBeforeUpdate ? warningWithoutStack$1(false, '%s: getSnapshotBeforeUpdate() is defined as a static method ' + 'and will be ignored. Instead, declare it as an instance method.', name) : void 0;
-      var _state = instance.state;
-      if (_state && (typeof _state !== 'object' || isArray$1(_state))) {
-        warningWithoutStack$1(false, '%s.state: must be set to an object or null', name);
-      }
-      if (typeof instance.getChildContext === 'function') {
-        !(typeof ctor.childContextTypes === 'object') ? warningWithoutStack$1(false, '%s.getChildContext(): childContextTypes must be defined in order to ' + 'use getChildContext().', name) : void 0;
-      }
-    }
-  }
+
   
   function adoptClassInstance(workInProgress, instance) {
     debugger;
@@ -12625,9 +12182,9 @@
     }
   
     {
-      if (instance.state === newProps) {
-        var componentName = getComponentName(ctor) || 'Component';
-      }
+      // if (instance.state === newProps) {
+      //   var componentName = getComponentName(ctor) || 'Component';
+      // }
   
       if (workInProgress.mode & StrictMode) {
         ReactStrictModeWarnings.recordUnsafeLifecycleWarnings(workInProgress, instance);
@@ -14507,6 +14064,7 @@
       workInProgress.expirationTime = Never;
       return null;
     }
+
   
     reconcileChildren(current$$1, workInProgress, nextChildren, renderExpirationTime);
     return workInProgress.child;
@@ -17968,10 +17526,10 @@
   }
   
   function workLoop(isYieldy) {
-    debugger;
     if (!isYieldy) {
       // Flush work without yielding
       while (nextUnitOfWork !== null) {
+        debugger;
         nextUnitOfWork = performUnitOfWork(nextUnitOfWork);
       }
     } else {
@@ -18479,6 +18037,7 @@
   }
   
   function scheduleWork(fiber, expirationTime) {
+    debugger;
     var root = scheduleWorkToRoot(fiber, expirationTime);
     if (root === null) {
       {
@@ -19615,8 +19174,6 @@
   }
   
   setBatchingImplementation(batchedUpdates$1, interactiveUpdates$1, flushInteractiveUpdates$1);
-  
-  var warnedAboutHydrateAPI = false;
   
   function legacyCreateRootFromDOMContainer(container, forceHydrate) {
     return new ReactRoot(container, false, false);
