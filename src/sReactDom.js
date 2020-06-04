@@ -4,18 +4,16 @@
     return !!(prototype && prototype.isReactComponent);
   }
   const transferVdomToDom = (vdom) =>{
-    debugger;
+		debugger;
+		// 文本节点
     if (typeof vdom === 'string') {
       return document.createTextNode(vdom);
-    }
-    // const {children} = vdom.props;
-    // // 参考 createFiberFromTypeAndProps 
-    // if (!children.hasOwnProperty('type') && !Array.isArray(children)) {
-    //   return document.createTextNode(vdom.props.children)
-    // }
+		}
+		// html 标签
     if (typeof vdom.type === 'string') {
       return createElement(vdom)
-    }
+		}
+		// 组件
     if (typeof vdom.type === 'function') {
       // 函数组件和类组件2种
       if (shouldConstruct(vdom.type)) {
@@ -32,17 +30,21 @@
 
   const createElement = (vdom) => {
     const element = document.createElement(vdom.type);
-    const { children } = vdom.props;
-    console.info(Array.isArray(children), 'Array.isArray(children)Array.isArray(children)')
+		const { children } = vdom.props;
+		console.info(children, 'vdomvdomvdom')
     if (Array.isArray(children)) {
       children.forEach((child) => {
-        console.info(child, '-----child-----', transferVdomToDom(child))
         element.appendChild(transferVdomToDom(child))
-      })
-    }
-    if (typeof children === 'string') {
-      element.appendChild(document.createTextNode(children))
-    }
+			})	
+    } else {
+			if (typeof children === 'string') {
+				element.appendChild(document.createTextNode(children))
+			}
+			if (typeof children === 'object') {
+				element.appendChild(transferVdomToDom(children))
+			}
+		}
+		
     return element;
   }
 
@@ -57,7 +59,6 @@
     render: function(element, container, callback) {
       transferVdomToDom(element)
       // container.innerHTML = `<pre>${JSON.stringify(element, null, 2)}</pre>`
-      console.info(element, '----elememt-----')
       container.appendChild(transferVdomToDom(element))
     }
   }

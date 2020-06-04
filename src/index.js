@@ -8,9 +8,15 @@ function Func(props) {
 }
 class Cmpt extends Component {
   render() {
-    return <div>123</div>
+    return <div>
+			<div>cmpt</div>
+			<div>cmpt123454</div>
+		</div>
   }
 }
-const JSX =<Func><span>12345</span></Func>
+const JSX = <div>
+	<Func><span>function</span></Func>
+	<Cmpt><div>123</div></Cmpt>
+</div>
 
 ReactDOM.render(JSX, document.querySelector("#root"));

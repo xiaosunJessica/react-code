@@ -13285,7 +13285,6 @@
       if (typeof newChild === 'string' || typeof newChild === 'number') {
         return placeSingleChild(reconcileSingleTextNode(returnFiber, currentFirstChild, '' + newChild, expirationTime));
       }
-  
       if (isArray(newChild)) {
         return reconcileChildrenArray(returnFiber, currentFirstChild, newChild, expirationTime);
       }
