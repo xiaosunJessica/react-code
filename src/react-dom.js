@@ -721,7 +721,7 @@
   }
   
   function updateFiberProps(node, props) {
-    debugger;
+    console.info('debugger-----------');
     node[internalEventHandlersKey] = props;
   }
   
@@ -2264,7 +2264,7 @@
   }
   
   function getComponentName(type) {
-    debugger;
+    console.info('debugger-----------');
     if (type == null) {
       // Host root, text node or just invalid type.
       return null;
@@ -2927,7 +2927,7 @@
   // This feature flag can be used to control the behavior:
   var debugRenderPhaseSideEffectsForStrictMode = true;
   
-  // To preserve the "Pause on caught exceptions" behavior of the debugger, we
+  // To preserve the "Pause on caught exceptions" behavior of the console.info('debugger-----------'), we
   // replay the begin phase of a failed component inside invokeGuardedCallback.
   var replayFailedUnitOfWorkWithInvokeGuardedCallback = true;
   
@@ -4098,7 +4098,7 @@
   }
   
   function addEventBubbleListener(element, eventType, listener) {
-    debugger;
+    console.info('debugger-----------');
     element.addEventListener(eventType, listener, false);
   }
   
@@ -4438,7 +4438,7 @@
     eventTypes: eventTypes$4,
   
     isInteractiveTopLevelEventType: function (topLevelType) {
-      debugger;
+      console.info('debugger-----------');
       var config = topLevelEventsToDispatchConfig[topLevelType];
       return config !== undefined && config.isInteractive === true;
     },
@@ -4643,7 +4643,7 @@
    * @internal
    */
   function trapBubbledEvent(topLevelType, element) {
-    debugger;
+    console.info('debugger-----------');
     if (!element) {
       return null;
     }
@@ -4800,7 +4800,7 @@
    * @param {object} mountAt Container where to mount the listener
    */
   function listenTo(registrationName, mountAt) {
-    debugger;
+    console.info('debugger-----------');
     var isListening = getListeningForDocument(mountAt);
     var dependencies = registrationNameDependencies[registrationName];
   
@@ -5882,7 +5882,7 @@
    * @internal
    */
   var setTextContent = function (node, text) {
-    debugger;
+    console.info('debugger-----------');
     if (text) {
       var firstChild = node.firstChild;
   
@@ -6346,7 +6346,7 @@
   }
   
   function isCustomComponent(tagName, props) {
-    debugger;
+    console.info('debugger-----------');
     if (tagName.indexOf('-') === -1) {
       return typeof props.is === 'string';
     }
@@ -7299,7 +7299,7 @@
   }
   
   function ensureListeningTo(rootContainerElement, registrationName) {
-    debugger;
+    console.info('debugger-----------');
     var isDocumentOrFragment = rootContainerElement.nodeType === DOCUMENT_NODE || rootContainerElement.nodeType === DOCUMENT_FRAGMENT_NODE;
     var doc = isDocumentOrFragment ? rootContainerElement : rootContainerElement.ownerDocument;
     listenTo(registrationName, doc);
@@ -7312,7 +7312,7 @@
   function noop() {}
   
   function trapClickOnNonInteractiveElement(node) {
-    debugger;
+    console.info('debugger-----------');
     // Mobile Safari does not fire properly bubble click events on
     // non-interactive elements, which means delegated click listeners do not
     // fire. The workaround for this bug involves attaching an empty click
@@ -7326,7 +7326,7 @@
   }
   
   function setInitialDOMProperties(tag, domElement, rootContainerElement, nextProps, isCustomComponentTag) {
-		debugger;
+		console.info('debugger-----------');
 		console.info(nextProps, '----nextProps')
     for (var propKey in nextProps) {
       if (!nextProps.hasOwnProperty(propKey)) {
@@ -7396,7 +7396,7 @@
   }
   
   function createElement(type, props, rootContainerElement, parentNamespace) {
-    debugger;
+    console.info('debugger-----------');
     var isCustomComponentTag = void 0;
   
     // We create tags in the namespace of their parent container, except HTML
@@ -7725,6 +7725,7 @@
   
   // Apply the diff.
   function updateProperties(domElement, updatePayload, tag, lastRawProps, nextRawProps) {
+		debugger;
     // Update checked *before* name.
     // In the middle of an update, it is possible to have multiple checked.
     // When a checked radio tries to change name, browser makes another radio's checked false.
@@ -8138,7 +8139,7 @@
     };
   
     updatedAncestorInfo = function (oldInfo, tag) {
-      debugger;
+      console.info('debugger-----------');
       var ancestorInfo = _assign({}, oldInfo || emptyAncestorInfo);
       var info = { tag: tag };
   
@@ -8230,7 +8231,7 @@
   }
   
   function getRootHostContext(rootContainerInstance) {
-    debugger;
+    console.info('debugger-----------');
     var type = void 0;
     var namespace = void 0;
     var nodeType = rootContainerInstance.nodeType;
@@ -8286,7 +8287,7 @@
   }
   
   function createInstance(type, props, rootContainerInstance, hostContext, internalInstanceHandle) {
-    debugger;
+    console.info('debugger-----------');
     var parentNamespace = void 0;
     {
       // TODO: take namespace into account when validating.
@@ -8306,7 +8307,7 @@
   }
   
   function finalizeInitialChildren(domElement, type, props, rootContainerInstance, hostContext) {
-    debugger;
+    console.info('debugger-----------');
     setInitialProperties(domElement, type, props, rootContainerInstance);
     return shouldAutoFocusHostComponent(type, props);
   }
@@ -8368,6 +8369,7 @@
   }
   
   function commitUpdate(domElement, updatePayload, type, oldProps, newProps, internalInstanceHandle) {
+		debugger;
     // Update the props handle so that we know which props are the ones with
     // with current event handlers.
     updateFiberProps(domElement, newProps);
@@ -8388,7 +8390,7 @@
   }
   
   function appendChildToContainer(container, child) {
-    debugger;
+    console.info('debugger-----------');
     var parentNode = void 0;
     if (container.nodeType === COMMENT_NODE) {
       parentNode = container.parentNode;
@@ -8777,7 +8779,7 @@
   }
   
   function startWorkTimer(fiber) {
-    debugger;
+    console.info('debugger-----------');
     if (enableUserTimingAPI) {
       if (!supportsUserTiming || shouldIgnoreFiber(fiber)) {
         return;
@@ -9495,7 +9497,7 @@
   };
   
   function shouldConstruct(Component) {
-    debugger;
+    console.info('debugger-----------');
     var prototype = Component.prototype;
     return !!(prototype && prototype.isReactComponent);
   }
@@ -9600,7 +9602,7 @@
   function createFiberFromTypeAndProps(type, // React$ElementType
   key, pendingProps, owner, mode, expirationTime) {
     var fiber = void 0;
-    debugger;
+    console.info('debugger-----------');
   
     var fiberTag = IndeterminateComponent;
     // The resolved type is set if we know what the final type will be. I.e. it's not lazy.
@@ -9658,7 +9660,7 @@
   }
   
   function createFiberFromElement(element, mode, expirationTime) {
-    debugger;
+    console.info('debugger-----------');
     var owner = null;
     {
       owner = element._owner;
@@ -9715,7 +9717,7 @@
   }
   
   function createFiberFromText(content, mode, expirationTime) {
-    debugger;
+    console.info('debugger-----------');
     var fiber = createFiber(HostText, content, null, mode);
     fiber.expirationTime = expirationTime;
     return fiber;
@@ -10630,7 +10632,7 @@
   }
   
   function getStateFromUpdate(workInProgress, queue, update, prevState, nextProps, instance) {
-    debugger;
+    console.info('debugger-----------');
     switch (update.tag) {
       case ReplaceState:
         {
@@ -10685,7 +10687,7 @@
   }
   
   function processUpdateQueue(workInProgress, queue, props, instance, renderExpirationTime) {
-    debugger;
+    console.info('debugger-----------');
     hasForceUpdate = false;
   
     queue = ensureWorkInProgressQueueIsAClone(workInProgress, queue);
@@ -10721,7 +10723,8 @@
         }
       } else {
         // This update does have sufficient priority. Process it and compute
-        // a new result.
+				// a new result.
+				debugger;
         resultState = getStateFromUpdate(workInProgress, queue, update, resultState, props, instance);
         var _callback = update.callback;
         if (_callback !== null) {
@@ -10764,7 +10767,8 @@
         }
       } else {
         // This update does have sufficient priority. Process it and compute
-        // a new result.
+				// a new result.
+				debugger;
         resultState = getStateFromUpdate(workInProgress, queue, update, resultState, props, instance);
         var _callback2 = update.callback;
         if (_callback2 !== null) {
@@ -11946,6 +11950,7 @@
   var classComponentUpdater = {
     isMounted: isMounted,
     enqueueSetState: function (inst, payload, callback) {
+			debugger;
       var fiber = get(inst);
       var currentTime = requestCurrentTime();
       var expirationTime = computeExpirationForFiber(currentTime, fiber);
@@ -12027,7 +12032,7 @@
 
   
   function adoptClassInstance(workInProgress, instance) {
-    debugger;
+    console.info('debugger-----------');
     instance.updater = classComponentUpdater;
     workInProgress.stateNode = instance;
     // The instance needs access to the fiber so that it can schedule updates
@@ -12038,7 +12043,7 @@
   }
   
   function constructClassInstance(workInProgress, ctor, props, renderExpirationTime) {
-    debugger;
+    console.info('debugger-----------');
     var isLegacyContextConsumer = false;
     var unmaskedContext = emptyContextObject;
     var context = null;
@@ -12167,7 +12172,7 @@
   
   // Invokes the mount life-cycles on a previously never rendered instance.
   function mountClassInstance(workInProgress, ctor, newProps, renderExpirationTime) {
-    debugger;
+    console.info('debugger-----------');
   
     var instance = workInProgress.stateNode;
     instance.props = newProps;
@@ -12642,7 +12647,7 @@
     function placeSingleChild(newFiber) {
       // This is simpler for the single child case. We only need to do a
       // placement for inserting new children.
-      debugger;
+      console.info('debugger-----------');
       if (shouldTrackSideEffects && newFiber.alternate === null) {
         newFiber.effectTag = Placement;
       }
@@ -12712,7 +12717,7 @@
     }
   
     function createChild(returnFiber, newChild, expirationTime) {
-      debugger;
+      console.info('debugger-----------');
       if (typeof newChild === 'string' || typeof newChild === 'number') {
         // Text nodes don't have keys. If the previous node is implicitly keyed
         // we can continue to replace it without aborting even if it is not a text
@@ -12886,7 +12891,7 @@
     }
   
     function reconcileChildrenArray(returnFiber, currentFirstChild, newChildren, expirationTime) {
-      debugger;
+      console.info('debugger-----------');
       // This algorithm can't optimize by searching from boths ends since we
       // don't have backpointers on fibers. I'm trying to see how far we can get
       // with that model. If it ends up not being worth the tradeoffs, we can
@@ -13187,7 +13192,7 @@
     }
   
     function reconcileSingleElement(returnFiber, currentFirstChild, element, expirationTime) {
-      debugger;
+      console.info('debugger-----------');
       var key = element.key;
       var child = currentFirstChild;
       while (child !== null) {
@@ -13265,7 +13270,7 @@
       // Handle top level unkeyed fragments as if they were arrays.
       // This leads to an ambiguity between <>{[...]}</> and <>...</>.
       // We treat the ambiguous cases above the same.
-      debugger;
+      console.info('debugger-----------');
       var isUnkeyedTopLevelFragment = typeof newChild === 'object' && newChild !== null && newChild.type === REACT_FRAGMENT_TYPE && newChild.key === null;
       if (isUnkeyedTopLevelFragment) {
         newChild = newChild.props.children;
@@ -13480,7 +13485,7 @@
   }
   
   function tryToClaimNextHydratableInstance(fiber) {
-    debugger;
+    console.info('debugger-----------');
     if (!isHydrating) {
       return;
     }
@@ -13641,7 +13646,7 @@
   }
   
   function reconcileChildren(current$$1, workInProgress, nextChildren, renderExpirationTime) {
-    debugger;
+    console.info('debugger-----------');
     if (current$$1 === null) {
       // If this is a fresh new component that hasn't been rendered yet, we
       // won't update its child set by applying minimal side-effects. Instead,
@@ -13865,7 +13870,8 @@
   }
   
   function updateClassComponent(current$$1, workInProgress, Component, nextProps, renderExpirationTime) {
-    debugger;
+		console.info('debugger-----------');
+		debugger;
   
     // Push context providers early to prevent context stack mismatches.
     // During mounting we don't know the child context yet as the instance doesn't exist.
@@ -13916,7 +13922,7 @@
   function finishClassComponent(current$$1, workInProgress, Component, shouldUpdate, hasContext, renderExpirationTime) {
     // Refs should update even if shouldComponentUpdate returns false
     markRef(current$$1, workInProgress);
-    debugger;
+    console.info('debugger-----------');
   
     var didCaptureError = (workInProgress.effectTag & DidCapture) !== NoEffect;
   
@@ -13944,7 +13950,7 @@
     } else {
       {
         setCurrentPhase('render');
-        debugger;
+        console.info('debugger-----------');
         nextChildren = instance.render();
         if (debugRenderPhaseSideEffects || debugRenderPhaseSideEffectsForStrictMode && workInProgress.mode & StrictMode) {
           instance.render();
@@ -13986,7 +13992,7 @@
   }
   
   function updateHostRoot(current$$1, workInProgress, renderExpirationTime) {
-    debugger;
+    console.info('debugger-----------');
     pushHostRootContext(workInProgress);
     var updateQueue = workInProgress.updateQueue;
     var nextProps = workInProgress.pendingProps;
@@ -14030,7 +14036,7 @@
   }
   
   function updateHostComponent(current$$1, workInProgress, renderExpirationTime) {
-    debugger;
+    console.info('debugger-----------');
     pushHostContext(workInProgress);
   
     if (current$$1 === null) {
@@ -14646,7 +14652,7 @@
   }
   
   function beginWork(current$$1, workInProgress, renderExpirationTime) {
-    debugger;
+    console.info('debugger-----------');
     var updateExpirationTime = workInProgress.expirationTime;
   
     // Before entering the begin phase, clear the expiration time.
@@ -14756,7 +14762,7 @@
     // Mutation mode
   
     appendAllChildren = function (parent, workInProgress, needsVisibilityToggle, isHidden) {
-      debugger;
+      console.info('debugger-----------');
       // We only have the top Fiber that was created but we need recurse down its
       // children to find all the terminal nodes.
       var node = workInProgress.child;
@@ -15080,7 +15086,7 @@
   }
   
   function completeWork(current, workInProgress, renderExpirationTime) {
-    debugger;
+    console.info('debugger-----------');
     var newProps = workInProgress.pendingProps;
   
     switch (workInProgress.tag) {
@@ -15965,7 +15971,7 @@
   }
   
   function commitPlacement(finishedWork) {
-    debugger;
+    console.info('debugger-----------');
     if (!supportsMutation) {
       return;
     }
@@ -17007,6 +17013,7 @@
   }
   
   function commitRoot(root, finishedWork) {
+		debugger;
     isWorking = true;
     isCommitting$1 = true;
     startCommitTimer();
@@ -17472,7 +17479,7 @@
     // Ideally nothing should rely on this, but relying on it here
     // means that we don't need an additional field on the work in
     // progress.
-    debugger;
+    console.info('debugger-----------');
     var current$$1 = workInProgress.alternate;
   
     // See if beginning this work spawns more work.
@@ -17529,7 +17536,7 @@
     if (!isYieldy) {
       // Flush work without yielding
       while (nextUnitOfWork !== null) {
-        debugger;
+        console.info('debugger-----------');
         nextUnitOfWork = performUnitOfWork(nextUnitOfWork);
       }
     } else {
@@ -17541,7 +17548,7 @@
   }
   
   function renderRoot(root, isYieldy) {
-    debugger;
+    console.info('debugger-----------');
     flushPassiveEffects();
   
     isWorking = true;
@@ -18037,7 +18044,7 @@
   }
   
   function scheduleWork(fiber, expirationTime) {
-    debugger;
+    console.info('debugger-----------');
     var root = scheduleWorkToRoot(fiber, expirationTime);
     if (root === null) {
       {
@@ -18260,7 +18267,7 @@
   
     // TODO: Get rid of Sync and use current time?
     if (expirationTime === Sync) {
-      debugger;
+      console.info('debugger-----------');
       performWork(Sync, false);
     } else {
       scheduleCallbackWithExpirationTime(root, expirationTime);
@@ -18396,7 +18403,7 @@
   }
   
   function performWork(minExpirationTime, isYieldy) {
-    debugger;
+    console.info('debugger-----------');
     // Keep working on roots until there's no more work, or until there's a higher
     // priority event.
     findHighestPriorityRoot();
@@ -18483,7 +18490,7 @@
   
   function performWorkOnRoot(root, expirationTime, isYieldy) {
     isRendering = true;
-    debugger;
+    console.info('debugger-----------');
     // Check if this is async work or sync/expired work.
     if (!isYieldy) {
       // Flush work without yielding.
@@ -19228,7 +19235,7 @@
       return legacyRenderSubtreeIntoContainer(null, element, container, true, callback);
     },
     render: function (element, container, callback) {
-      debugger
+      console.info('debugger-----------')
       return legacyRenderSubtreeIntoContainer(null, element, container, false, callback);
     },
     unstable_renderSubtreeIntoContainer: function (parentComponent, element, containerNode, callback) {

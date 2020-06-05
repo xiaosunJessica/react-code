@@ -1,6 +1,6 @@
 // import React, { PureComponent } from 'react';
 // import { PureComponent, Component } from 'react';
-import React, { Component } from './sreact';
+import React, { Component } from './reactBaseClass';
 // import ReactDOM from "./sReactDom";
 import ReactDOM from "./react-dom";
 function Func(props) {
@@ -14,8 +14,11 @@ class Cmpt extends Component {
 		}
 	}
 	onCount = () => {
+		console.info('-----')
 		this.setState({
 			count: this.state.count + 1
+		}, () => {
+			console.info('test-----testtesttesttesttesttesttesttesttest')
 		})
 	}
   render() {
