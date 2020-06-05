@@ -1,10 +1,10 @@
+import setValueForStyles from './setCss';
 (function(){
   function shouldConstruct(Component) {
     var prototype = Component.prototype;
     return !!(prototype && prototype.isReactComponent);
   }
   const transferVdomToDom = (vdom) =>{
-		debugger;
 		// 文本节点
     if (typeof vdom === 'string') {
       return document.createTextNode(vdom);
@@ -17,7 +17,7 @@
     if (typeof vdom.type === 'function') {
       // 函数组件和类组件2种
       if (shouldConstruct(vdom.type)) {
-        const instance = new vdom.type();
+				const instance = new vdom.type(vdom.props);
         const _vdom = instance.render();
         // 类组件
         return transferClassToDom(_vdom)
@@ -31,19 +31,28 @@
   const createElement = (vdom) => {
     const element = document.createElement(vdom.type);
 		const { children } = vdom.props;
-		console.info(children, 'vdomvdomvdom')
     if (Array.isArray(children)) {
       children.forEach((child) => {
         element.appendChild(transferVdomToDom(child))
 			})	
     } else {
-			if (typeof children === 'string') {
+			if (typeof children === 'string' || typeof children === 'number') {
 				element.appendChild(document.createTextNode(children))
 			}
 			if (typeof children === 'object') {
 				element.appendChild(transferVdomToDom(children))
 			}
 		}
+		// 不可采用es6的结构...
+		for (var propKey in vdom.props) {
+			if (propKey.startsWith('on')) {
+				element[propKey.toLowerCase()] = vdom.props[propKey]
+			}
+			if (propKey === 'style') {
+				setValueForStyles(element, vdom.props[propKey])
+			}
+		}
+		
 		
     return element;
   }
@@ -64,3 +73,5 @@
   }
   module.exports = ReactDOM;
 })()
+
+

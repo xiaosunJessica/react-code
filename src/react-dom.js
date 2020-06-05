@@ -7326,7 +7326,8 @@
   }
   
   function setInitialDOMProperties(tag, domElement, rootContainerElement, nextProps, isCustomComponentTag) {
-    debugger;
+		debugger;
+		console.info(nextProps, '----nextProps')
     for (var propKey in nextProps) {
       if (!nextProps.hasOwnProperty(propKey)) {
         continue;

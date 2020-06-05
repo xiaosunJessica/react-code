@@ -45,6 +45,7 @@ function createElement(type, config, children) {
 }
 
 export function Component(props, context, updater) {
+	debugger;
   this.props = props;
   this.context = context;
   this.updater = updater;
@@ -53,7 +54,9 @@ export function Component(props, context, updater) {
 Component.prototype.isReactComponent = {}
 
 Component.prototype.setState = function(partialState, callback) {
-  this.updater.enqueueSetState(this, partialState, callback, 'setState')
+	// debugger;
+	console.info(this.updater, '-----this.update---')
+  // this.updater.enqueueSetState(this, partialState, callback, 'setState')
 }
 
 Component.prototype.forceUpdate = function(callback) {
