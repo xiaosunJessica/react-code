@@ -1,6 +1,6 @@
 // import React, { PureComponent } from 'react';
 // import { PureComponent, Component } from 'react';
-import React from './react';
+import React from './React/react';
 // import ReactDOM from "./sReactDom";
 import ReactDOM from "./sourceCode/react-dom";
 // console.info(ReactDOM1, 'ReactDOMReactDOM')
