@@ -1,5 +1,6 @@
-import setValueForStyles from './cssPropertyOperation';
+
 (function(){
+  var stylesFunction = require('./cssPropertyOperation');
   function shouldConstruct(Component) {
     var prototype = Component.prototype;
     return !!(prototype && prototype.isReactComponent);
@@ -49,7 +50,7 @@ import setValueForStyles from './cssPropertyOperation';
 				element[propKey.toLowerCase()] = vdom.props[propKey]
 			}
 			if (propKey === 'style') {
-				setValueForStyles(element, vdom.props[propKey])
+				stylesFunction.setValueForStyles(element, vdom.props[propKey])
 			}
 		}
 		
@@ -71,7 +72,18 @@ import setValueForStyles from './cssPropertyOperation';
       container.appendChild(updateContainer(element))
     }
   }
-  module.exports = ReactDOM;
+
+  let ReactDOM$2 = Object.freeze({
+    default: ReactDOM
+  })
+
+  var ReactDOM$3 = ( ReactDOM$2 && ReactDOM ) || ReactDOM$2;
+  
+  // TODO: decide on the top-level export form.
+  // This is hacky but makes it work with both Rollup and Jest.
+  var reactDom = ReactDOM$3.default || ReactDOM$3;
+  
+  module.exports = reactDom;
 })()
 
 

@@ -1,8 +1,9 @@
 // import React, { PureComponent } from 'react';
 // import { PureComponent, Component } from 'react';
 import React, { Component } from './reactBaseClass';
-// import ReactDOM from "./sReactDom";
-import ReactDOM from "./react-dom";
+import ReactDOM from "./sReactDom";
+// import ReactDOM from "./sourceCode/react-dom";
+// console.info(ReactDOM1, 'ReactDOMReactDOM')
 function Func(props) {
   return <span>{props && props.children}</span>
 }
