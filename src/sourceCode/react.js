@@ -245,16 +245,16 @@ var warningWithoutStack$1 = warningWithoutStack;
 var didWarnStateUpdateForUnmountedComponent = {};
 
 function warnNoop(publicInstance, callerName) {
-  {
-    var _constructor = publicInstance.constructor;
-    var componentName = _constructor && (_constructor.displayName || _constructor.name) || 'ReactClass';
-    var warningKey = componentName + '.' + callerName;
-    if (didWarnStateUpdateForUnmountedComponent[warningKey]) {
-      return;
-    }
-    warningWithoutStack$1(false, "Can't call %s on a component that is not yet mounted. " + 'This is a no-op, but it might indicate a bug in your application. ' + 'Instead, assign to `this.state` directly or define a `state = {};` ' + 'class property with the desired state in the %s component.', callerName, componentName);
-    didWarnStateUpdateForUnmountedComponent[warningKey] = true;
-  }
+  // {
+  //   var _constructor = publicInstance.constructor;
+  //   var componentName = _constructor && (_constructor.displayName || _constructor.name) || 'ReactClass';
+  //   var warningKey = componentName + '.' + callerName;
+  //   if (didWarnStateUpdateForUnmountedComponent[warningKey]) {
+  //     return;
+  //   }
+  //   warningWithoutStack$1(false, "Can't call %s on a component that is not yet mounted. " + 'This is a no-op, but it might indicate a bug in your application. ' + 'Instead, assign to `this.state` directly or define a `state = {};` ' + 'class property with the desired state in the %s component.', callerName, componentName);
+  //   didWarnStateUpdateForUnmountedComponent[warningKey] = true;
+  // }
 }
 
 /**
@@ -288,7 +288,7 @@ var ReactNoopUpdateQueue = {
    * @internal
    */
   enqueueForceUpdate: function (publicInstance, callback, callerName) {
-    warnNoop(publicInstance, 'forceUpdate');
+   
   },
 
   /**
@@ -305,7 +305,7 @@ var ReactNoopUpdateQueue = {
    * @internal
    */
   enqueueReplaceState: function (publicInstance, completeState, callback, callerName) {
-    warnNoop(publicInstance, 'replaceState');
+   
   },
 
   /**
@@ -321,7 +321,7 @@ var ReactNoopUpdateQueue = {
    * @internal
    */
   enqueueSetState: function (publicInstance, partialState, callback, callerName) {
-    warnNoop(publicInstance, 'setState');
+   
   }
 };
 
@@ -340,7 +340,7 @@ function Component(props, context, updater) {
   this.refs = emptyObject;
   // We initialize the default updater but the real one gets injected by the
   // renderer.
-  this.updater = updater || ReactNoopUpdateQueue;
+  this.updater = updater;
 }
 
 Component.prototype.isReactComponent = {};
@@ -371,7 +371,7 @@ Component.prototype.isReactComponent = {};
  * @protected
  */
 Component.prototype.setState = function (partialState, callback) {
-  !(typeof partialState === 'object' || typeof partialState === 'function' || partialState == null) ? invariant(false, 'setState(...): takes an object of state variables to update or a function which returns an object of state variables.') : void 0;
+  console.info(this.updater, 'this.updater-------')
   this.updater.enqueueSetState(this, partialState, callback, 'setState');
 };
 

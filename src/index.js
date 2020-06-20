@@ -1,13 +1,14 @@
 // import React, { PureComponent } from 'react';
 // import { PureComponent, Component } from 'react';
-import React, { Component } from './reactBaseClass';
-import ReactDOM from "./sReactDom";
-// import ReactDOM from "./sourceCode/react-dom";
+import React from './react';
+// import ReactDOM from "./sReactDom";
+import ReactDOM from "./sourceCode/react-dom";
 // console.info(ReactDOM1, 'ReactDOMReactDOM')
 function Func(props) {
+  console.info(React, '----React')
   return <span>{props && props.children}</span>
 }
-class Cmpt extends Component {
+class Cmpt extends React.Component {
 	constructor(props) {
 		super(props);
 		this.state = {

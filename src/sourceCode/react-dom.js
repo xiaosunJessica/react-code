@@ -12032,7 +12032,7 @@
 
   
   function adoptClassInstance(workInProgress, instance) {
-    console.info('debugger-----------');
+    console.info('debugger-----------adoptClassInstanceadoptClassInstanceadoptClassInstance');
     instance.updater = classComponentUpdater;
     workInProgress.stateNode = instance;
     // The instance needs access to the fiber so that it can schedule updates
