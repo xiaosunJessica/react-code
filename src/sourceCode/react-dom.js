@@ -7725,7 +7725,6 @@
   
   // Apply the diff.
   function updateProperties(domElement, updatePayload, tag, lastRawProps, nextRawProps) {
-		debugger;
     // Update checked *before* name.
     // In the middle of an update, it is possible to have multiple checked.
     // When a checked radio tries to change name, browser makes another radio's checked false.
@@ -8369,7 +8368,6 @@
   }
   
   function commitUpdate(domElement, updatePayload, type, oldProps, newProps, internalInstanceHandle) {
-		debugger;
     // Update the props handle so that we know which props are the ones with
     // with current event handlers.
     updateFiberProps(domElement, newProps);
@@ -10724,7 +10722,6 @@
       } else {
         // This update does have sufficient priority. Process it and compute
 				// a new result.
-				debugger;
         resultState = getStateFromUpdate(workInProgress, queue, update, resultState, props, instance);
         var _callback = update.callback;
         if (_callback !== null) {
@@ -10768,7 +10765,6 @@
       } else {
         // This update does have sufficient priority. Process it and compute
 				// a new result.
-				debugger;
         resultState = getStateFromUpdate(workInProgress, queue, update, resultState, props, instance);
         var _callback2 = update.callback;
         if (_callback2 !== null) {
@@ -11660,7 +11656,7 @@
         }
         _last2.next = _update2;
       }
-      queue.last = _update2;
+			queue.last = _update2;
       scheduleWork(fiber, _expirationTime);
     }
   }
@@ -11950,7 +11946,6 @@
   var classComponentUpdater = {
     isMounted: isMounted,
     enqueueSetState: function (inst, payload, callback) {
-			debugger;
       var fiber = get(inst);
       var currentTime = requestCurrentTime();
       var expirationTime = computeExpirationForFiber(currentTime, fiber);
@@ -11965,7 +11960,7 @@
       }
   
       flushPassiveEffects();
-      enqueueUpdate(fiber, update);
+			enqueueUpdate(fiber, update);
       scheduleWork(fiber, expirationTime);
     },
     enqueueReplaceState: function (inst, payload, callback) {
@@ -11985,7 +11980,7 @@
       }
   
       flushPassiveEffects();
-      enqueueUpdate(fiber, update);
+			enqueueUpdate(fiber, update);
       scheduleWork(fiber, expirationTime);
     },
     enqueueForceUpdate: function (inst, callback) {
@@ -12004,7 +11999,7 @@
       }
   
       flushPassiveEffects();
-      enqueueUpdate(fiber, update);
+			enqueueUpdate(fiber, update);
       scheduleWork(fiber, expirationTime);
     }
   };
@@ -12032,7 +12027,7 @@
 
   
   function adoptClassInstance(workInProgress, instance) {
-    console.info('debugger-----------adoptClassInstanceadoptClassInstanceadoptClassInstance');
+    console.info('debugger-----------classComponentUpdater');
     instance.updater = classComponentUpdater;
     workInProgress.stateNode = instance;
     // The instance needs access to the fiber so that it can schedule updates
@@ -12073,7 +12068,8 @@
   
     var instance = new ctor(props, context);
     var state = workInProgress.memoizedState = instance.state !== null && instance.state !== undefined ? instance.state : null;
-    adoptClassInstance(workInProgress, instance);
+		adoptClassInstance(workInProgress, instance);
+		console.info('classComponentUpdateradoptClassInstanceadoptClassInstance12072')
   
     {
       if (typeof ctor.getDerivedStateFromProps === 'function' && state === null) {
@@ -13871,8 +13867,6 @@
   
   function updateClassComponent(current$$1, workInProgress, Component, nextProps, renderExpirationTime) {
 		console.info('debugger-----------');
-		debugger;
-  
     // Push context providers early to prevent context stack mismatches.
     // During mounting we don't know the child context yet as the instance doesn't exist.
     // We will invalidate the child context in finishClassComponent() right after rendering.
@@ -13897,7 +13891,9 @@
         workInProgress.alternate = null;
         // Since this is conceptually a new fiber, schedule a Placement effect
         workInProgress.effectTag |= Placement;
-      }
+			}
+			
+			console.info('classComponentUpdaterconstructClassInstanceconstructClassInstance13896')
       // In the initial pass we might need to construct the instance.
       constructClassInstance(workInProgress, Component, nextProps, renderExpirationTime);
       mountClassInstance(workInProgress, Component, nextProps, renderExpirationTime);
@@ -14184,7 +14180,6 @@
       hasContext = false;
     }
     prepareToReadContext(workInProgress, renderExpirationTime);
-  
     constructClassInstance(workInProgress, Component, nextProps, renderExpirationTime);
     mountClassInstance(workInProgress, Component, nextProps, renderExpirationTime);
   
@@ -14257,7 +14252,7 @@
         applyDerivedStateFromProps(workInProgress, Component, getDerivedStateFromProps, props);
       }
   
-      adoptClassInstance(workInProgress, value);
+			adoptClassInstance(workInProgress, value);
       mountClassInstance(workInProgress, Component, props, renderExpirationTime);
       return finishClassComponent(null, workInProgress, Component, true, hasContext, renderExpirationTime);
     } else {
@@ -14680,7 +14675,8 @@
         {
           var _Component2 = workInProgress.type;
           var _unresolvedProps = workInProgress.pendingProps;
-          var _resolvedProps = workInProgress.elementType === _Component2 ? _unresolvedProps : resolveDefaultProps(_Component2, _unresolvedProps);
+					var _resolvedProps = workInProgress.elementType === _Component2 ? _unresolvedProps : resolveDefaultProps(_Component2, _unresolvedProps);
+					console.info('beginWork classComponentUpdater-----14680')
           return updateClassComponent(current$$1, workInProgress, _Component2, _resolvedProps, renderExpirationTime);
         }
       case HostRoot:
@@ -16782,7 +16778,7 @@
       }
       // Replay the begin phase.
       isReplayingFailedUnitOfWork = true;
-      originalReplayError = thrownValue;
+			originalReplayError = thrownValue;
       invokeGuardedCallback(null, workLoop, null, isYieldy);
       isReplayingFailedUnitOfWork = false;
       originalReplayError = null;
@@ -17013,7 +17009,6 @@
   }
   
   function commitRoot(root, finishedWork) {
-		debugger;
     isWorking = true;
     isCommitting$1 = true;
     startCommitTimer();
@@ -17495,7 +17490,8 @@
   
     var next = void 0;
     if (enableProfilerTimer) {
-  
+	
+			console.info('performUnitOfWork classComponentUpdater 17494')
       next = beginWork(current$$1, workInProgress, nextRenderExpirationTime);
       workInProgress.memoizedProps = workInProgress.pendingProps;
   
@@ -17536,11 +17532,12 @@
     if (!isYieldy) {
       // Flush work without yielding
       while (nextUnitOfWork !== null) {
-        console.info('debugger-----------');
+				console.info('debugger-----------');
+				console.info('workLoop, classComponentUpdater 17536 ')
         nextUnitOfWork = performUnitOfWork(nextUnitOfWork);
       }
     } else {
-      // Flush asynchronous work until there's a higher priority event
+			// Flush asynchronous work until there's a higher priority event
       while (nextUnitOfWork !== null && !shouldYieldToRenderer()) {
         nextUnitOfWork = performUnitOfWork(nextUnitOfWork);
       }
@@ -17622,6 +17619,7 @@
   
     do {
       try {
+				console.info('renderRoot --classComponentUpdater 17622')
         workLoop(isYieldy);
       } catch (thrownValue) {
         resetContextDependences();
@@ -17810,7 +17808,7 @@
           if (typeof ctor.getDerivedStateFromError === 'function' || typeof instance.componentDidCatch === 'function' && !isAlreadyFailedLegacyErrorBoundary(instance)) {
             var errorInfo = createCapturedValue(value, sourceFiber);
             var update = createClassErrorUpdate(fiber, errorInfo, expirationTime);
-            enqueueUpdate(fiber, update);
+						enqueueUpdate(fiber, update);
             scheduleWork(fiber, expirationTime);
             return;
           }
@@ -17819,7 +17817,7 @@
           {
             var _errorInfo = createCapturedValue(value, sourceFiber);
             var _update = createRootErrorUpdate(fiber, _errorInfo, expirationTime);
-            enqueueUpdate(fiber, _update);
+						enqueueUpdate(fiber, _update);
             scheduleWork(fiber, expirationTime);
             return;
           }
@@ -17833,7 +17831,7 @@
       var rootFiber = sourceFiber;
       var _errorInfo2 = createCapturedValue(value, rootFiber);
       var _update2 = createRootErrorUpdate(rootFiber, _errorInfo2, expirationTime);
-      enqueueUpdate(rootFiber, _update2);
+			enqueueUpdate(rootFiber, _update2);
       scheduleWork(rootFiber, expirationTime);
     }
   }
@@ -18075,7 +18073,8 @@
     !isWorking || isCommitting$1 ||
     // ...unless this is a different root than the one we're rendering.
     nextRoot !== root) {
-      var rootExpirationTime = root.expirationTime;
+			var rootExpirationTime = root.expirationTime;
+			console.info('scheduleWork classComponentUpdater 18080')
       requestWork(root, rootExpirationTime);
     }
     if (nestedUpdateCount > NESTED_UPDATE_LIMIT) {
@@ -18259,7 +18258,7 @@
         // ...unless we're inside unbatchedUpdates, in which case we should
         // flush it now.
         nextFlushedRoot = root;
-        nextFlushedExpirationTime = Sync;
+				nextFlushedExpirationTime = Sync;
         performWorkOnRoot(root, Sync, false);
       }
       return;
@@ -18267,7 +18266,8 @@
   
     // TODO: Get rid of Sync and use current time?
     if (expirationTime === Sync) {
-      console.info('debugger-----------');
+			console.info('debugger-----------');
+			console.info('requestWork classComponentUpdater 18269')
       performWork(Sync, false);
     } else {
       scheduleCallbackWithExpirationTime(root, expirationTime);
@@ -18391,7 +18391,7 @@
             root = root.nextScheduledRoot;
           } while (root !== firstScheduledRoot);
         }
-      }
+			}
       performWork(NoWork, true);
     } finally {
       didYield = false;
@@ -18426,7 +18426,8 @@
       }
     } else {
       while (nextFlushedRoot !== null && nextFlushedExpirationTime !== NoWork && minExpirationTime <= nextFlushedExpirationTime) {
-        performWorkOnRoot(nextFlushedRoot, nextFlushedExpirationTime, false);
+				console.info('performWork classComponentUpdater 18429')
+				performWorkOnRoot(nextFlushedRoot, nextFlushedExpirationTime, false);
         findHighestPriorityRoot();
       }
     }
@@ -18454,7 +18455,7 @@
     // This has the effect of synchronously flushing all work up to and
     // including the given time.
     nextFlushedRoot = root;
-    nextFlushedExpirationTime = expirationTime;
+		nextFlushedExpirationTime = expirationTime;
     performWorkOnRoot(root, expirationTime, false);
     // Flush any sync work that was scheduled by lifecycles
     performSyncWork();
@@ -18511,7 +18512,8 @@
           root.timeoutHandle = noTimeout;
           // $FlowFixMe Complains noTimeout is not a TimeoutID, despite the check above
           cancelTimeout(timeoutHandle);
-        }
+				}
+				console.info('performWorkOnRoot classComponentUpdater 18513')
         renderRoot(root, isYieldy);
         finishedWork = root.finishedWork;
         if (finishedWork !== null) {
@@ -18534,7 +18536,7 @@
           root.timeoutHandle = noTimeout;
           // $FlowFixMe Complains noTimeout is not a TimeoutID, despite the check above
           cancelTimeout(_timeoutHandle);
-        }
+				}
         renderRoot(root, isYieldy);
         _finishedWork = root.finishedWork;
         if (_finishedWork !== null) {
@@ -18653,7 +18655,7 @@
     // the previous event may influence which handlers are called during
     // this event.
     if (!isBatchingUpdates && !isRendering && lowestPriorityPendingInteractiveExpirationTime !== NoWork) {
-      // Synchronously flush pending interactive updates.
+			// Synchronously flush pending interactive updates.
       performWork(lowestPriorityPendingInteractiveExpirationTime, false);
       lowestPriorityPendingInteractiveExpirationTime = NoWork;
     }
@@ -18674,7 +18676,7 @@
   
   function flushInteractiveUpdates$1() {
     if (!isRendering && lowestPriorityPendingInteractiveExpirationTime !== NoWork) {
-      // Synchronously flush pending interactive updates.
+			// Synchronously flush pending interactive updates.
       performWork(lowestPriorityPendingInteractiveExpirationTime, false);
       lowestPriorityPendingInteractiveExpirationTime = NoWork;
     }
@@ -18731,7 +18733,8 @@
     update.payload = { element: element };
  
     flushPassiveEffects();
-    enqueueUpdate(current$$1, update);
+		enqueueUpdate(current$$1, update);
+		console.info('scheduleRootUpdate classComponentUpdater 18737')
     scheduleWork(current$$1, expirationTime);
   
     return expirationTime;
@@ -18747,7 +18750,8 @@
     } else {
       container.pendingContext = context;
     }
-  
+	
+		console.info('updateContainerAtExpirationTime classComponentUpdater 18754')
     return scheduleRootUpdate(current$$1, element, expirationTime, callback);
   }
   
@@ -18804,7 +18808,8 @@
   function updateContainer(element, container, parentComponent, callback) {
     var current$$1 = container.current;
     var currentTime = requestCurrentTime();
-    var expirationTime = computeExpirationForFiber(currentTime, current$$1);
+		var expirationTime = computeExpirationForFiber(currentTime, current$$1);
+		console.info('updateContainer classComponentUpdater 18812')
     return updateContainerAtExpirationTime(element, container, parentComponent, expirationTime, callback);
   }
   
@@ -18853,7 +18858,7 @@
       fiber.pendingProps = copyWithSet(fiber.memoizedProps, path, value);
       if (fiber.alternate) {
         fiber.alternate.pendingProps = fiber.pendingProps;
-      }
+			}
       scheduleWork(fiber, Sync);
     };
   }
@@ -18960,7 +18965,7 @@
     this._children = children;
     var internalRoot = this._root._internalRoot;
     var expirationTime = this._expirationTime;
-    var work = new ReactWork();
+		var work = new ReactWork();
     updateContainerAtExpirationTime(children, internalRoot, null, expirationTime, work._onCommit);
     return work;
   };
@@ -19096,7 +19101,8 @@
     // // }
     // if (callback !== null) {
     //   work.then(callback);
-    // }
+		// }
+		console.info('render--classComponentUpdater 19105')
     updateContainer(children, root, null, work._onCommit);
     return work;
   };
@@ -19109,7 +19115,7 @@
     }
     if (callback !== null) {
       work.then(callback);
-    }
+		}
     updateContainer(null, root, null, work._onCommit);
     return work;
   };
@@ -19122,7 +19128,7 @@
     }
     if (callback !== null) {
       work.then(callback);
-    }
+		}
     updateContainer(children, root, parentComponent, work._onCommit);
     return work;
   };
