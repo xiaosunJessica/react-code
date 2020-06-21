@@ -16,6 +16,7 @@
   var scheduler = require('scheduler');
   var tracing = require('scheduler/tracing');
   
+  
   /**
    * Use invariant() to assert state which your program assumes to be true.
    *
@@ -11946,6 +11947,7 @@
   var classComponentUpdater = {
     isMounted: isMounted,
     enqueueSetState: function (inst, payload, callback) {
+      console.info('1111---------enqueueSetState classComponentUpdater -')
       var fiber = get(inst);
       var currentTime = requestCurrentTime();
       var expirationTime = computeExpirationForFiber(currentTime, fiber);
@@ -11964,6 +11966,7 @@
       scheduleWork(fiber, expirationTime);
     },
     enqueueReplaceState: function (inst, payload, callback) {
+      console.info('111---------enqueueSetState classComponentUpdater -')
       var fiber = get(inst);
       var currentTime = requestCurrentTime();
       var expirationTime = computeExpirationForFiber(currentTime, fiber);
@@ -11984,6 +11987,7 @@
       scheduleWork(fiber, expirationTime);
     },
     enqueueForceUpdate: function (inst, callback) {
+      console.info('111---------enqueueSetState classComponentUpdater -')
       var fiber = get(inst);
       var currentTime = requestCurrentTime();
       var expirationTime = computeExpirationForFiber(currentTime, fiber);
@@ -12003,6 +12007,8 @@
       scheduleWork(fiber, expirationTime);
     }
   };
+
+  // var {classComponentUpdater} = require('../react-reconciler/reactClassComponent')
   
   function checkShouldComponentUpdate(workInProgress, ctor, oldProps, newProps, oldState, newState, nextContext) {
     var instance = workInProgress.stateNode;
@@ -12027,15 +12033,17 @@
 
   
   function adoptClassInstance(workInProgress, instance) {
-    console.info('debugger-----------classComponentUpdater');
+    console.info('debugger-----------classComponentUpdater', instance);
     instance.updater = classComponentUpdater;
     workInProgress.stateNode = instance;
-    // The instance needs access to the fiber so that it can schedule updates
+    // // The instance needs access to the fiber so that it can schedule updates
     set(instance, workInProgress);
-    {
-      instance._reactInternalInstance = fakeInternalInstance;
-    }
+    // {
+    //   instance._reactInternalInstance = fakeInternalInstance;
+    // }
   }
+
+  // var {adoptClassInstance} = require('../react-reconciler/reactClassComponent')
   
   function constructClassInstance(workInProgress, ctor, props, renderExpirationTime) {
     console.info('debugger-----------');
@@ -12069,7 +12077,7 @@
     var instance = new ctor(props, context);
     var state = workInProgress.memoizedState = instance.state !== null && instance.state !== undefined ? instance.state : null;
 		adoptClassInstance(workInProgress, instance);
-		console.info('classComponentUpdateradoptClassInstanceadoptClassInstance12072')
+		console.info('constructClassInstance classComponentUpdater 12072')
   
     {
       if (typeof ctor.getDerivedStateFromProps === 'function' && state === null) {
@@ -13892,7 +13900,8 @@
         // Since this is conceptually a new fiber, schedule a Placement effect
         workInProgress.effectTag |= Placement;
 			}
-			
+      
+      debugger;
 			console.info('classComponentUpdaterconstructClassInstanceconstructClassInstance13896')
       // In the initial pass we might need to construct the instance.
       constructClassInstance(workInProgress, Component, nextProps, renderExpirationTime);

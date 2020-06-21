@@ -29,7 +29,8 @@ class Cmpt extends React.Component {
 }
 const JSX = <div>
 	<Func>function</Func>
-	<Cmpt />
+	<Cmpt>1</Cmpt>
+  <Cmpt>2</Cmpt>
 </div>
 
 ReactDOM.render(JSX, document.querySelector("#root"));

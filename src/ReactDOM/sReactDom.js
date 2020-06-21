@@ -21,6 +21,7 @@
 				const instance = new vdom.type(vdom.props);
         const _vdom = instance.render();
         // 类组件
+        // 实例化Component updateClassComponent - constructClassInstance
         return updateClassComponent(_vdom)
       } else {
         // 函数组件
