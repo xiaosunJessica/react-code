@@ -1,6 +1,7 @@
 
 (function(){
   var stylesFunction = require('./cssPropertyOperation');
+  var { constructClassInstance } = require('../react-reconciler/reactClassComponent')
   function shouldConstruct(Component) {
     var prototype = Component.prototype;
     return !!(prototype && prototype.isReactComponent);
@@ -18,7 +19,10 @@
     if (typeof vdom.type === 'function') {
       // 函数组件和类组件2种
       if (shouldConstruct(vdom.type)) {
-				const instance = new vdom.type(vdom.props);
+        const _instance = constructClassInstance({}, vdom.type);
+        console.info(_instance, '------Component')
+        const instance = new vdom.type(vdom.props);
+        instance.updater = _instance.updater;
         const _vdom = instance.render();
         // 类组件
         // 实例化Component updateClassComponent - constructClassInstance

@@ -2,7 +2,6 @@
 export const classComponentUpdater = {
   isMounted: {},
   enqueueSetState(inst, payload, callback) {
-   
   },
   enqueueReplaceState(inst, payload, callback) {
     
@@ -12,12 +11,13 @@ export const classComponentUpdater = {
   },
 };
 
-const constructClassInstance = (workInProgress, Component, props) => {
+export const constructClassInstance = (workInProgress, Component, props) => {
   const instance = new Component(props, {});
-  adoptClassInstance(workInProgress, instance)
+  return adoptClassInstance(workInProgress, instance)
 }
 
 export function adoptClassInstance(workInProgress, instance) {
   instance.updater = classComponentUpdater;
   workInProgress.stateNode = instance;
+  return instance
 }

@@ -341,6 +341,7 @@ function Component(props, context, updater) {
   // We initialize the default updater but the real one gets injected by the
   // renderer.
   this.updater = updater;
+  console.info(props, context, updater, 'props, context, updaterprops, context, updater')
 }
 
 Component.prototype.isReactComponent = {};
@@ -371,7 +372,6 @@ Component.prototype.isReactComponent = {};
  * @protected
  */
 Component.prototype.setState = function (partialState, callback) {
-  console.info(this.updater, 'this.updater-------')
   this.updater.enqueueSetState(this, partialState, callback, 'setState');
 };
 
@@ -424,30 +424,30 @@ ComponentDummy.prototype = Component.prototype;
 /**
  * Convenience component with default shallow equality check for sCU.
  */
-function PureComponent(props, context, updater) {
-  this.props = props;
-  this.context = context;
-  // If a component has string refs, we will assign a different object later.
-  this.refs = emptyObject;
-  this.updater = updater || ReactNoopUpdateQueue;
-}
+// function PureComponent(props, context, updater) {
+//   this.props = props;
+//   this.context = context;
+//   // If a component has string refs, we will assign a different object later.
+//   this.refs = emptyObject;
+//   this.updater = updater || ReactNoopUpdateQueue;
+// }
 
-var pureComponentPrototype = PureComponent.prototype = new ComponentDummy();
-pureComponentPrototype.constructor = PureComponent;
-// Avoid an extra prototype jump for these methods.
-_assign(pureComponentPrototype, Component.prototype);
-pureComponentPrototype.isPureReactComponent = true;
+// var pureComponentPrototype = PureComponent.prototype = new ComponentDummy();
+// pureComponentPrototype.constructor = PureComponent;
+// // Avoid an extra prototype jump for these methods.
+// _assign(pureComponentPrototype, Component.prototype);
+// pureComponentPrototype.isPureReactComponent = true;
 
 // an immutable object with a single mutable value
-function createRef() {
-  var refObject = {
-    current: null
-  };
-  {
-    Object.seal(refObject);
-  }
-  return refObject;
-}
+// function createRef() {
+//   var refObject = {
+//     current: null
+//   };
+//   {
+//     Object.seal(refObject);
+//   }
+//   return refObject;
+// }
 
 /**
  * Keeps track of the current owner.
@@ -1816,9 +1816,9 @@ var React = {
     only: onlyChild
   },
 
-  createRef: createRef,
+  // createRef: createRef,
   Component: Component,
-  PureComponent: PureComponent,
+  // PureComponent: PureComponent,
 
   createContext: createContext,
   forwardRef: forwardRef,

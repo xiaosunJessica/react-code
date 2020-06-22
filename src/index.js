@@ -1,8 +1,9 @@
 // import React, { PureComponent } from 'react';
 // import { PureComponent, Component } from 'react';
 import React from './React/react';
-// import ReactDOM from "./sReactDom";
-import ReactDOM from "./sourceCode/react-dom";
+import ReactDOM from "./ReactDOM/sReactDom";
+// import React from './sourceCode/react';
+// import ReactDOM from "./sourceCode/react-dom";
 // console.info(ReactDOM1, 'ReactDOMReactDOM')
 function Func(props) {
   console.info(React, '----React')
@@ -30,7 +31,6 @@ class Cmpt extends React.Component {
 const JSX = <div>
 	<Func>function</Func>
 	<Cmpt>1</Cmpt>
-  <Cmpt>2</Cmpt>
 </div>
 
 ReactDOM.render(JSX, document.querySelector("#root"));
