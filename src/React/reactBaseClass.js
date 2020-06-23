@@ -15,7 +15,6 @@ Component.prototype.isReactComponent = {}
 
 Component.prototype.setState = function(partialState, callback) {
   // debugger;
-  console.info('-----component----', this)
   this.updater.enqueueSetState(this, partialState, callback, 'setState')
 }
 

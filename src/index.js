@@ -1,9 +1,9 @@
 // import React, { PureComponent } from 'react';
 // import { PureComponent, Component } from 'react';
 import React from './React/react';
-import ReactDOM from "./ReactDOM/sReactDom";
+// import ReactDOM from "./ReactDOM/sReactDom";
 // import React from './sourceCode/react';
-// import ReactDOM from "./sourceCode/react-dom";
+import ReactDOM from "./sourceCode/react-dom";
 // console.info(ReactDOM1, 'ReactDOMReactDOM')
 function Func(props) {
   console.info(React, '----React')

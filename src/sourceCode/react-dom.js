@@ -11947,21 +11947,21 @@
   var classComponentUpdater = {
     isMounted: isMounted,
     enqueueSetState: function (inst, payload, callback) {
-      console.info('1111---------enqueueSetState classComponentUpdater -')
       var fiber = get(inst);
       var currentTime = requestCurrentTime();
       var expirationTime = computeExpirationForFiber(currentTime, fiber);
   
       var update = createUpdate(expirationTime);
       update.payload = payload;
-      if (callback !== undefined && callback !== null) {
-        {
-          warnOnInvalidCallback$1(callback, 'setState');
-        }
-        update.callback = callback;
-      }
-  
-      flushPassiveEffects();
+      // if (callback !== undefined && callback !== null) {
+      //   {
+      //     warnOnInvalidCallback$1(callback, 'setState');
+      //   }
+      //   update.callback = callback;
+      // }
+	
+			debugger;
+      // flushPassiveEffects();
 			enqueueUpdate(fiber, update);
       scheduleWork(fiber, expirationTime);
     },
@@ -13901,7 +13901,7 @@
         workInProgress.effectTag |= Placement;
 			}
       
-      debugger;
+      
 			console.info('classComponentUpdaterconstructClassInstanceconstructClassInstance13896')
       // In the initial pass we might need to construct the instance.
       constructClassInstance(workInProgress, Component, nextProps, renderExpirationTime);
