@@ -11947,10 +11947,12 @@
   var classComponentUpdater = {
     isMounted: isMounted,
     enqueueSetState: function (inst, payload, callback) {
+			debugger;
       var fiber = get(inst);
       var currentTime = requestCurrentTime();
       var expirationTime = computeExpirationForFiber(currentTime, fiber);
-  
+	
+			
       var update = createUpdate(expirationTime);
       update.payload = payload;
       // if (callback !== undefined && callback !== null) {
@@ -11960,7 +11962,6 @@
       //   update.callback = callback;
       // }
 	
-			debugger;
       // flushPassiveEffects();
 			enqueueUpdate(fiber, update);
       scheduleWork(fiber, expirationTime);
@@ -18053,28 +18054,28 @@
   function scheduleWork(fiber, expirationTime) {
     console.info('debugger-----------');
     var root = scheduleWorkToRoot(fiber, expirationTime);
-    if (root === null) {
-      {
-        switch (fiber.tag) {
-          case ClassComponent:
-            warnAboutUpdateOnUnmounted(fiber, true);
-            break;
-          case FunctionComponent:
-          case ForwardRef:
-          case MemoComponent:
-          case SimpleMemoComponent:
-            warnAboutUpdateOnUnmounted(fiber, false);
-            break;
-        }
-      }
-      return;
-    }
+    // if (root === null) {
+    //   {
+    //     switch (fiber.tag) {
+    //       case ClassComponent:
+    //         warnAboutUpdateOnUnmounted(fiber, true);
+    //         break;
+    //       case FunctionComponent:
+    //       case ForwardRef:
+    //       case MemoComponent:
+    //       case SimpleMemoComponent:
+    //         warnAboutUpdateOnUnmounted(fiber, false);
+    //         break;
+    //     }
+    //   }
+    //   return;
+    // }
   
-    if (!isWorking && nextRenderExpirationTime !== NoWork && expirationTime > nextRenderExpirationTime) {
-      // This is an interruption. (Used for performance tracking.)
-      interruptedBy = fiber;
-      resetStack();
-    }
+    // if (!isWorking && nextRenderExpirationTime !== NoWork && expirationTime > nextRenderExpirationTime) {
+    //   // This is an interruption. (Used for performance tracking.)
+    //   interruptedBy = fiber;
+    //   resetStack();
+    // }
     markPendingPriorityLevel(root, expirationTime);
     if (
     // If we're in the render phase, we don't need to schedule this root
@@ -18086,11 +18087,11 @@
 			console.info('scheduleWork classComponentUpdater 18080')
       requestWork(root, rootExpirationTime);
     }
-    if (nestedUpdateCount > NESTED_UPDATE_LIMIT) {
-      // Reset this back to zero so subsequent updates don't throw.
-      nestedUpdateCount = 0;
-      invariant(false, 'Maximum update depth exceeded. This can happen when a component repeatedly calls setState inside componentWillUpdate or componentDidUpdate. React limits the number of nested updates to prevent infinite loops.');
-    }
+    // if (nestedUpdateCount > NESTED_UPDATE_LIMIT) {
+    //   // Reset this back to zero so subsequent updates don't throw.
+    //   nestedUpdateCount = 0;
+    //   invariant(false, 'Maximum update depth exceeded. This can happen when a component repeatedly calls setState inside componentWillUpdate or componentDidUpdate. React limits the number of nested updates to prevent infinite loops.');
+    // }
   }
   
   function syncUpdates(fn, a, b, c, d) {
