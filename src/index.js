@@ -28,9 +28,10 @@ class Cmpt extends React.Component {
     return <div style={{color: 'red'}} onClick={this.onCount}>{this.state.count}</div>
   }
 }
-const JSX = <div>
-	<Func>function</Func>
-	<Cmpt>1</Cmpt>
-</div>
+const JSX = <>
+  1
+	{/* <Func>function</Func>
+	<Cmpt>1</Cmpt> */}
+</>
 
 ReactDOM.render(JSX, document.querySelector("#root"));

@@ -25,7 +25,6 @@ var ReactVersion = '16.7.0';
 // The Symbol used to tag the ReactElement-like types. If there is no native Symbol
 // nor polyfill, then a plain number is used for performance.
 var hasSymbol = typeof Symbol === 'function' && Symbol.for;
-
 var REACT_ELEMENT_TYPE = hasSymbol ? Symbol.for('react.element') : 0xeac7;
 var REACT_PORTAL_TYPE = hasSymbol ? Symbol.for('react.portal') : 0xeaca;
 var REACT_FRAGMENT_TYPE = hasSymbol ? Symbol.for('react.fragment') : 0xeacb;
@@ -424,30 +423,30 @@ ComponentDummy.prototype = Component.prototype;
 /**
  * Convenience component with default shallow equality check for sCU.
  */
-// function PureComponent(props, context, updater) {
-//   this.props = props;
-//   this.context = context;
-//   // If a component has string refs, we will assign a different object later.
-//   this.refs = emptyObject;
-//   this.updater = updater || ReactNoopUpdateQueue;
-// }
+function PureComponent(props, context, updater) {
+  this.props = props;
+  this.context = context;
+  // If a component has string refs, we will assign a different object later.
+  this.refs = emptyObject;
+  this.updater = updater || ReactNoopUpdateQueue;
+}
 
-// var pureComponentPrototype = PureComponent.prototype = new ComponentDummy();
-// pureComponentPrototype.constructor = PureComponent;
-// // Avoid an extra prototype jump for these methods.
-// _assign(pureComponentPrototype, Component.prototype);
-// pureComponentPrototype.isPureReactComponent = true;
+var pureComponentPrototype = PureComponent.prototype = new ComponentDummy();
+pureComponentPrototype.constructor = PureComponent;
+// Avoid an extra prototype jump for these methods.
+_assign(pureComponentPrototype, Component.prototype);
+pureComponentPrototype.isPureReactComponent = true;
 
 // an immutable object with a single mutable value
-// function createRef() {
-//   var refObject = {
-//     current: null
-//   };
-//   {
-//     Object.seal(refObject);
-//   }
-//   return refObject;
-// }
+function createRef() {
+  var refObject = {
+    current: null
+  };
+  {
+    Object.seal(refObject);
+  }
+  return refObject;
+}
 
 /**
  * Keeps track of the current owner.
@@ -524,6 +523,7 @@ function getComponentName(type) {
     case REACT_CONCURRENT_MODE_TYPE:
       return 'ConcurrentMode';
     case REACT_FRAGMENT_TYPE:
+      debugger;
       return 'Fragment';
     case REACT_PORTAL_TYPE:
       return 'Portal';
@@ -780,6 +780,7 @@ var ReactElement = function (type, key, ref, self, source, owner, props) {
  * See https://reactjs.org/docs/react-api.html#createelement
  */
 function createElement(type, config, children) {
+  console.log(type, config, children, '----children----cretelement')
   var propName = void 0;
 
   // Reserved names are extracted
@@ -1442,6 +1443,7 @@ function forwardRef(render) {
 }
 
 function isValidElementType(type) {
+  debugger;
   return typeof type === 'string' || typeof type === 'function' ||
   // Note: its typeof might be other than 'symbol' or 'number' if it's a polyfill.
   type === REACT_FRAGMENT_TYPE || type === REACT_CONCURRENT_MODE_TYPE || type === REACT_PROFILER_TYPE || type === REACT_STRICT_MODE_TYPE || type === REACT_SUSPENSE_TYPE || typeof type === 'object' && type !== null && (type.$$typeof === REACT_LAZY_TYPE || type.$$typeof === REACT_MEMO_TYPE || type.$$typeof === REACT_PROVIDER_TYPE || type.$$typeof === REACT_CONTEXT_TYPE || type.$$typeof === REACT_FORWARD_REF_TYPE);
@@ -1825,7 +1827,7 @@ var React = {
   lazy: lazy,
   memo: memo,
 
-  Fragment: REACT_FRAGMENT_TYPE,
+  Fragment: '1234',
   StrictMode: REACT_STRICT_MODE_TYPE,
   Suspense: REACT_SUSPENSE_TYPE,
 
