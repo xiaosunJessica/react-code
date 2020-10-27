@@ -523,7 +523,6 @@ function getComponentName(type) {
     case REACT_CONCURRENT_MODE_TYPE:
       return 'ConcurrentMode';
     case REACT_FRAGMENT_TYPE:
-      debugger;
       return 'Fragment';
     case REACT_PORTAL_TYPE:
       return 'Portal';
@@ -780,7 +779,6 @@ var ReactElement = function (type, key, ref, self, source, owner, props) {
  * See https://reactjs.org/docs/react-api.html#createelement
  */
 function createElement(type, config, children) {
-  console.log(type, config, children, '----children----cretelement')
   var propName = void 0;
 
   // Reserved names are extracted
@@ -1443,7 +1441,6 @@ function forwardRef(render) {
 }
 
 function isValidElementType(type) {
-  debugger;
   return typeof type === 'string' || typeof type === 'function' ||
   // Note: its typeof might be other than 'symbol' or 'number' if it's a polyfill.
   type === REACT_FRAGMENT_TYPE || type === REACT_CONCURRENT_MODE_TYPE || type === REACT_PROFILER_TYPE || type === REACT_STRICT_MODE_TYPE || type === REACT_SUSPENSE_TYPE || typeof type === 'object' && type !== null && (type.$$typeof === REACT_LAZY_TYPE || type.$$typeof === REACT_MEMO_TYPE || type.$$typeof === REACT_PROVIDER_TYPE || type.$$typeof === REACT_CONTEXT_TYPE || type.$$typeof === REACT_FORWARD_REF_TYPE);

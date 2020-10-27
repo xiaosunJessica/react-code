@@ -10630,6 +10630,7 @@
     return queue;
   }
   
+  // sunyaqin-state Merge
   function getStateFromUpdate(workInProgress, queue, update, prevState, nextProps, instance) {
     console.info('debugger-----------');
     switch (update.tag) {
@@ -10685,6 +10686,7 @@
     return prevState;
   }
   
+  // sunyaqin-链表处理
   function processUpdateQueue(workInProgress, queue, props, instance, renderExpirationTime) {
     console.info('debugger-----------');
     hasForceUpdate = false;
@@ -19207,6 +19209,7 @@
   
     // TODO: Without `any` type, Flow says "Property cannot be accessed on any
     // member of intersection type." Whyyyyyy.
+    debugger;
     var root = container._reactRootContainer;
     // Initial mount
     root = container._reactRootContainer = legacyCreateRootFromDOMContainer(container, forceHydrate);
@@ -19251,7 +19254,7 @@
       return legacyRenderSubtreeIntoContainer(null, element, container, true, callback);
     },
     render: function (element, container, callback) {
-      console.info('debugger-----------')
+      console.info('debugger-----------', element, container, callback)
       return legacyRenderSubtreeIntoContainer(null, element, container, false, callback);
     },
     unstable_renderSubtreeIntoContainer: function (parentComponent, element, containerNode, callback) {
