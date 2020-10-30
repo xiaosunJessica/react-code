@@ -9050,13 +9050,13 @@
     cursor.current = value;
   }
   
-  function checkThatStackIsEmpty() {
-    {
-      if (index !== -1) {
-        warningWithoutStack$1(false, 'Expected an empty stack. Something was not reset properly.');
-      }
-    }
-  }
+  // function checkThatStackIsEmpty() {
+  //   {
+  //     if (index !== -1) {
+  //       warningWithoutStack$1(false, 'Expected an empty stack. Something was not reset properly.');
+  //     }
+  //   }
+  // }
   
   function resetStackAfterFatalErrorInDev() {
     {
@@ -9534,12 +9534,12 @@
       workInProgress.type = current.type;
       workInProgress.stateNode = current.stateNode;
   
-      {
-        // DEV-only fields
-        workInProgress._debugID = current._debugID;
-        workInProgress._debugSource = current._debugSource;
-        workInProgress._debugOwner = current._debugOwner;
-      }
+      // {
+      //   // DEV-only fields
+      //   workInProgress._debugID = current._debugID;
+      //   workInProgress._debugSource = current._debugSource;
+      //   workInProgress._debugOwner = current._debugOwner;
+      // }
   
       workInProgress.alternate = current;
       current.alternate = workInProgress;
@@ -16828,10 +16828,10 @@
       }
     }
   
-    {
-      ReactStrictModeWarnings.discardPendingWarnings();
-      checkThatStackIsEmpty();
-    }
+    // {
+    //   // ReactStrictModeWarnings.discardPendingWarnings();
+    //   // checkThatStackIsEmpty();
+    // }
   
     nextRoot = null;
     nextRenderExpirationTime = NoWork;
@@ -17558,7 +17558,7 @@
   
   function renderRoot(root, isYieldy) {
     console.info('debugger-----------');
-    flushPassiveEffects();
+    // flushPassiveEffects();
   
     isWorking = true;
     if (enableHooks) {
@@ -18749,7 +18749,7 @@
 		console.info('scheduleRootUpdate classComponentUpdater 18737')
     scheduleWork(current$$1, expirationTime);
   
-    return expirationTime;
+    expirationTime;
   }
   
   function updateContainerAtExpirationTime(element, container, parentComponent, expirationTime, callback) {
@@ -18764,7 +18764,7 @@
     }
 	
 		console.info('updateContainerAtExpirationTime classComponentUpdater 18754')
-    return scheduleRootUpdate(current$$1, element, expirationTime, callback);
+    scheduleRootUpdate(current$$1, element, expirationTime, callback);
   }
   
   function findHostInstance(component) {
@@ -18822,7 +18822,7 @@
     var currentTime = requestCurrentTime();
 		var expirationTime = computeExpirationForFiber(currentTime, current$$1);
 		console.info('updateContainer classComponentUpdater 18812')
-    return updateContainerAtExpirationTime(element, container, parentComponent, expirationTime, callback);
+    updateContainerAtExpirationTime(element, container, parentComponent, expirationTime, callback);
   }
   
   function getPublicRootInstance(container) {
@@ -19116,7 +19116,7 @@
 		// }
 		console.info('render--classComponentUpdater 19105')
     updateContainer(children, root, null, work._onCommit);
-    return work;
+    // return work;
   };
   ReactRoot.prototype.unmount = function (callback) {
     var root = this._internalRoot;
@@ -19215,7 +19215,9 @@
     root = container._reactRootContainer = legacyCreateRootFromDOMContainer(container, forceHydrate);
     // Initial mount should not be batched.
     root.render(children, callback);
-    return getPublicRootInstance(root._internalRoot);
+    console.log(root, 'rooot----')
+    // sunyaqin ----render时，返回实例没啥用
+    // return getPublicRootInstance(root._internalRoot);
   }
   
   function createPortal$$1(children, container) {
@@ -19255,7 +19257,7 @@
     },
     render: function (element, container, callback) {
       console.info('debugger-----------', element, container, callback)
-      return legacyRenderSubtreeIntoContainer(null, element, container, false, callback);
+      legacyRenderSubtreeIntoContainer(null, element, container, false, callback);
     },
     unstable_renderSubtreeIntoContainer: function (parentComponent, element, containerNode, callback) {
       !(parentComponent != null && has(parentComponent)) ? invariant(false, 'parentComponent must be a valid React Component') : void 0;
