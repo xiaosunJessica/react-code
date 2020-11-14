@@ -394,7 +394,6 @@ ReactRoot.prototype.render = ReactSyncRoot.prototype.render = function(
   children: ReactNodeList,
   callback: ?() => mixed,
 ): Work {
-  debugger;
   const root = this._internalRoot;
   const work = new ReactWork();
   callback = callback === undefined ? null : callback;
@@ -562,10 +561,10 @@ function legacyRenderSubtreeIntoContainer(
   forceHydrate: boolean,
   callback: ?Function,
 ) {
-  if (__DEV__) {
-    topLevelUpdateWarnings(container);
-    warnOnInvalidCallback(callback === undefined ? null : callback, 'render');
-  }
+  // if (__DEV__) {
+  //   topLevelUpdateWarnings(container);
+  //   warnOnInvalidCallback(callback === undefined ? null : callback, 'render');
+  // }
 
   // TODO: Without `any` type, Flow says "Property cannot be accessed on any
   // member of intersection type." Whyyyyyy.
@@ -681,19 +680,6 @@ const ReactDOM: Object = {
     container: DOMContainer,
     callback: ?Function,
   ) {
-    invariant(
-      isValidContainer(container),
-      'Target container is not a DOM element.',
-    );
-    if (__DEV__) {
-      warningWithoutStack(
-        !container._reactHasBeenPassedToCreateRootDEV,
-        'You are calling ReactDOM.render() on a container that was previously ' +
-          'passed to ReactDOM.%s(). This is not supported. ' +
-          'Did you mean to call root.render(element)?',
-        enableStableConcurrentModeAPIs ? 'createRoot' : 'unstable_createRoot',
-      );
-    }
     return legacyRenderSubtreeIntoContainer(
       null,
       element,

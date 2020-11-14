@@ -16,6 +16,9 @@ payload属性像是虚拟dom？
 push和pop方法的valueStack和fiberStack是做什么用的？
 getStateFromUpdate是做什么用的
 
+unstable_scheduleCallback 类似requestIdelCallback来实现调度功能
+
 参考文档：
 https://github.com/nannongrousong/blog/issues/1
 https://github.com/bubucuo/react-sourcecode-debug-env
+
