@@ -1,7 +1,7 @@
  //fiber
 {
    // Instance
-  // 主要是用于标记元素类型，hostRoot, classComponent
+  // 主要是用于标记元素类型，HostRoot, ClassComponent
   this.tag = tag;
   // 唯一性标志，和jsx里的key一样
   this.key = key;
@@ -48,6 +48,7 @@
   this.expirationTime = NoWork;
   this.childExpirationTime = NoWork;
 
+  // 当前节点**
   this.alternate = null;
 
 }
