@@ -1,14 +1,17 @@
  //fiber
 {
    // Instance
-  // 主要是用于标记元素类型，HostRoot, ClassComponent
+  // 主要是用于标记元素类型，FunctionComponent=0/ClassComponent=1/IndeterminateComponent=2/HostRoot=3
+  // 详细见文件ReactWorkTags
   this.tag = tag;
   // 唯一性标志，和jsx里的key一样
   this.key = key;
-  // 生成实际DOM元素需要的标签，div,p
+  // 虚拟DOM的type
   this.elementType = null;
   // 虚拟DOM生成标志的类型，
   this.type = null;
+
+  // 在classComponent里是instance，在root里是rootFiber
   this.stateNode = null;
 
   // Fiber
@@ -32,7 +35,7 @@
   this.memoizedState = null;
   this.dependencies = null;
 
-  // legacy /concurrent/ hydrate等模式
+  // legacy noMode /concurrent/ StrictMode /ProfileMode/BatchedMode
   this.mode = mode;
 
 
