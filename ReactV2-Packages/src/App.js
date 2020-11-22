@@ -4,7 +4,6 @@ class App extends React.Component {
     count: 1
   }
   click = () => {
-    debugger;
     this.setState({
       count: this.state.count + 1
     })
