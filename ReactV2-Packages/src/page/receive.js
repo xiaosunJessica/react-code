@@ -8,10 +8,16 @@ export default class Receive extends React.Component {
     }
   }
 
-  componentWillReceiveProps(nextprops) {
-    if (this.state.count !== nextprops.count) {
+  componentDidMount = () => {
+    this.setState({
+      count: this.state.count + 1
+    })
+  }
+
+  componentWillReceiveProps(nextProps) {
+    if (this.state.count !== nextProps.count) {
       this.setState({
-        count: nextprops.count
+        count: nextProps.count
       })
     }
   }
