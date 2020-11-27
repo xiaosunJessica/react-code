@@ -131,6 +131,8 @@ export function scheduleCallback(
   options: SchedulerCallbackOptions | void | null,
 ) {
   const priorityLevel = reactPriorityToSchedulerPriority(reactPriorityLevel);
+  debugger;
+  // sun-调度
   return Scheduler_scheduleCallback(priorityLevel, callback, options);
 }
 

@@ -162,6 +162,8 @@ function flushWork(hasTimeRemaining, initialTime) {
 }
 
 function workLoop(hasTimeRemaining, initialTime) {
+  debugger;
+  // 看下是否有执行过这里
   let currentTime = initialTime;
   advanceTimers(currentTime);
   currentTask = peek(taskQueue);

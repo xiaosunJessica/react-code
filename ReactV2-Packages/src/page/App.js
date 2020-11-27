@@ -1,4 +1,5 @@
-import React from './react/packages/react';
+import React from '../react/packages/react';
+import Receive from './receive';
 class App extends React.Component {
   state = {
     count: 1
@@ -10,7 +11,10 @@ class App extends React.Component {
   }
   render() {
     return (
-      <div>{this.state.count} <span onClick={this.click}>add</span></div>
+      <div>
+        <Receive count={this.state.count}  />
+        <span onClick={this.click}>add</span>
+      </div>
     )
   }
 }
