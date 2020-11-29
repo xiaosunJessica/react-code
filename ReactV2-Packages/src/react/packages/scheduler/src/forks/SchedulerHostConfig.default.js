@@ -278,6 +278,7 @@ if (
   channel.port1.onmessage = performWorkUntilDeadline;
 
   const onAnimationFrame = rAFTime => {
+    debugger;
     if (scheduledHostCallback === null) {
       // No scheduled work. Exit.
       prevRAFTime = -1;

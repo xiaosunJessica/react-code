@@ -486,6 +486,7 @@ function commitLifeCycles(
               );
             }
           }
+          debugger;
           instance.componentDidUpdate(
             prevProps,
             prevState,

@@ -160,6 +160,7 @@ if (supportsMutation) {
         // down its children. Instead, we'll get insertions from each child in
         // the portal directly.
       } else if (node.child !== null) {
+        // sun->fragment处理方式
         node.child.return = node;
         node = node.child;
         continue;
@@ -168,7 +169,9 @@ if (supportsMutation) {
         return;
       }
       while (node.sibling === null) {
+         // sun ->向上回溯到当前节点或跟节点，循环结束
         if (node.return === null || node.return === workInProgress) {
+         
           return;
         }
         node = node.return;
