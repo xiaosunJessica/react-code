@@ -27,12 +27,15 @@
   // JSX里带入的正常ref
   this.ref = null;
 
-  //当前需要更新的props
+  // 当前需要更新的props
   this.pendingProps = pendingProps;
   // 记录之前的props
   this.memoizedProps = null;
+  // 更新对象
   this.updateQueue = null;
+  // 记录之前的state
   this.memoizedState = null;
+  
   this.dependencies = null;
 
   // legacy noMode /concurrent/ StrictMode /ProfileMode/BatchedMode
@@ -44,6 +47,8 @@
   this.effectTag = NoEffect;
   this.nextEffect = null;
 
+  // 在commit里的finishWork有用到，从firstEffect开始执行到lastEffect结束
+  // 在更新的时候，firstEffect到lasteEffect记录整个需要更新的链表结构
   this.firstEffect = null;
   this.lastEffect = null;
 
@@ -51,7 +56,8 @@
   this.expirationTime = NoWork;
   this.childExpirationTime = NoWork;
 
-  // 当前节点**
+  // 当前节点, workInProgress是记录新数据的当前节点，alternate是保留上一次记录的当前节点，
+  // 在更新时可以看到pendingProps之类的是不一样的
   this.alternate = null;
 
 }

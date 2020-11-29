@@ -9,10 +9,18 @@ class App extends React.Component {
       count: this.state.count + 1
     })
   }
+  // shouldComponentUpdate = () => {
+  //   return false
+  // }
+  // getSnapshotBeforeUpdate = () => {
+  //   debugger
+  //   console.log('---getSnapshotBeforeUpdategetSnapshotBeforeUpdate-')
+  // }
   render() {
     return (
       <div>
-        <Receive count={this.state.count}  />
+        {this.state.count === 1 && <Receive count={this.state.count}  />}
+      
         <span onClick={this.click}>add</span>
       </div>
     )
