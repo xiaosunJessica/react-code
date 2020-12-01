@@ -19,12 +19,13 @@ class App extends React.Component {
   render() {
     return (
       <div>
-        {this.state.count === 1 && <Receive count={this.state.count}  />}
-      
+        {/* {this.state.count === 1 && <Receive count={this.state.count}  />} */}
+        {this.state.count}
         <span onClick={this.click}>add</span>
       </div>
     )
   }
 }
+
 
 export default App;
