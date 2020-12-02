@@ -36,7 +36,13 @@ setState 浅拷贝
    state
 
 4. 事件
+
+初次渲染有unbatchedUpdates
+
+batchedEventUpdates
 5. requestIdle...
+
+6. context
 
 参考文档：
 https://github.com/nannongrousong/blog/issues/1

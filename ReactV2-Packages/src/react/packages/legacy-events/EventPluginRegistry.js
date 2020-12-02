@@ -203,7 +203,6 @@ export function injectEventPluginOrder(
     'EventPluginRegistry: Cannot inject event plugin ordering more than ' +
       'once. You are likely trying to load more than one copy of React.',
   );
-  debugger;
   // Clone the ordering so it cannot be dynamically mutated.
   eventPluginOrder = Array.prototype.slice.call(injectedEventPluginOrder);
   recomputePluginOrdering();

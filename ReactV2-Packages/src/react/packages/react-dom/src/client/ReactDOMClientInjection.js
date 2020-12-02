@@ -23,7 +23,6 @@ import SimpleEventPlugin from '../events/SimpleEventPlugin';
 /**
  * Inject modules for resolving DOM hierarchy and plugin ordering.
  */
-
 EventPluginHubInjection.injectEventPluginOrder(DOMEventPluginOrder);
 setComponentTree(
   getFiberCurrentPropsFromNode,
@@ -35,7 +34,6 @@ setComponentTree(
  * Some important event plugins included by default (without having to require
  * them).
  */
-debugger;
 EventPluginHubInjection.injectEventPluginsByName({
   SimpleEventPlugin: SimpleEventPlugin,
   EnterLeaveEventPlugin: EnterLeaveEventPlugin,

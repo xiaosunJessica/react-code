@@ -9,3 +9,4 @@ export const BatchedMode = 0b0010;
 export const ConcurrentMode = 0b0100;
 // 8 性能测试模式，用来检测哪里存在性能问题，React16-17开发环境使
 export const ProfileMode = 0b1000;
+
