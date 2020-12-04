@@ -560,6 +560,7 @@ function runRootCallback(root, callback, isSync) {
   try {
     continuation = callback(isSync);
     if (continuation !== null) {
+      debugger;
       return runRootCallback.bind(null, root, continuation);
     } else {
       return null;

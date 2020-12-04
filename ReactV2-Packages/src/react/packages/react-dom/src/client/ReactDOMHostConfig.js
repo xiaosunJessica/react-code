@@ -253,6 +253,7 @@ export function finalizeInitialChildren(
   hostContext: HostContext,
 ): boolean {
   console.log('----绑定事件')
+  debugger;
   setInitialProperties(domElement, type, props, rootContainerInstance);
   return shouldAutoFocusHostComponent(type, props);
 }
