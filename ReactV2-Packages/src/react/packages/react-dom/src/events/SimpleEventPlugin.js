@@ -197,7 +197,6 @@ for (let i = 0; i < eventTuples.length; i++) {
     eventPriority,
   };
   eventTypes[event] = config;
-  debugger;
   topLevelEventsToDispatchConfig[topEvent] = config;
 }
 

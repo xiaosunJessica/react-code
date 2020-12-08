@@ -1153,6 +1153,7 @@ function dispatchAction<S, A>(
       renderPhaseUpdates = new Map();
     }
     const firstRenderPhaseUpdate = renderPhaseUpdates.get(queue);
+    debugger;
     if (firstRenderPhaseUpdate === undefined) {
       renderPhaseUpdates.set(queue, update);
     } else {

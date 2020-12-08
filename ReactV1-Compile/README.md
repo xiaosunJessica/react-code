@@ -39,9 +39,11 @@ setState 浅拷贝
   事件初始化
 evenPluginOrder=["ResponderEventPlugin",  "SimpleEventPlugin", "EnterLeaveEventPlugin", "ChangeEventPlugin", "SelectEventPlugin", "BeforeInputEventPlugin"]
 
-5. requestIdle...
+5. hooks
 
-6. context
+6. requestIdle...
+
+7. context
 
 问题：
 初次渲染有unbatchedUpdates
