@@ -134,6 +134,7 @@ function flushWork(hasTimeRemaining, initialTime) {
 
   isPerformingWork = true;
   const previousPriorityLevel = currentPriorityLevel;
+  debugger;
   try {
     if (enableProfiling) {
       try {
@@ -295,6 +296,7 @@ function timeoutForPriorityLevel(priorityLevel) {
 }
 
 function unstable_scheduleCallback(priorityLevel, callback, options) {
+  debugger
   var currentTime = getCurrentTime();
 
   var startTime;
@@ -355,6 +357,7 @@ function unstable_scheduleCallback(priorityLevel, callback, options) {
     // wait until the next time we yield.
     if (!isHostCallbackScheduled && !isPerformingWork) {
       isHostCallbackScheduled = true;
+      debugger;
       requestHostCallback(flushWork);
     }
   }

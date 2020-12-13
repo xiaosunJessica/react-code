@@ -714,9 +714,9 @@ export function unbatchedUpdates<A, R>(fn: (a: A) => R, a: A): R {
   executionContext &= ~BatchedContext;
   executionContext |= LegacyUnbatchedContext;
   try {
-    debugger;
     return fn(a);
   } finally {
+    debugger;
     executionContext = prevExecutionContext;
     if (executionContext === NoContext) {
       // Flush the immediate callbacks that were scheduled during this batch
@@ -1501,6 +1501,7 @@ function commitRoot(root) {
   );
   // If there are passive effects, schedule a callback to flush them. This goes
   // outside commitRootImpl so that it inherits the priority of the render.
+  debugger;
   if (rootWithPendingPassiveEffects !== null) {
     scheduleCallback(NormalPriority, () => {
       flushPassiveEffects();

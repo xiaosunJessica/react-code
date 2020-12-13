@@ -328,7 +328,6 @@ function commitHookEffectList(
   mountTag: number,
   finishedWork: Fiber,
 ) {
-  debugger;
   const updateQueue: FunctionComponentUpdateQueue | null = (finishedWork.updateQueue: any);
   let lastEffect = updateQueue !== null ? updateQueue.lastEffect : null;
   if (lastEffect !== null) {
@@ -487,7 +486,6 @@ function commitLifeCycles(
               );
             }
           }
-          debugger;
           instance.componentDidUpdate(
             prevProps,
             prevState,

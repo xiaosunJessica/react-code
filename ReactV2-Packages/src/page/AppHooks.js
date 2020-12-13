@@ -1,7 +1,7 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useMemo, useCallback } from 'react';
 
 
-const App = () => {
+const App = React.memo(() => {
   const [ count, setCount ] = useState(1);
   useEffect(() => {
     // clickEvt()
@@ -15,6 +15,6 @@ const App = () => {
     // <div onClick={clickEvt}>{count}</div>
     <div >{count}</div>
   )
-}
+})
 
 export default App;
