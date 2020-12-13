@@ -1513,6 +1513,7 @@ function commitRoot(root) {
 function commitRootImpl(root, renderPriorityLevel) {
   flushPassiveEffects();
   flushRenderPhaseStrictModeWarningsInDEV();
+  debugger;
 
   invariant(
     (executionContext & (RenderContext | CommitContext)) === NoContext,

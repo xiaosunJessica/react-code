@@ -139,7 +139,6 @@ function extractPluginEvents(
   for (let i = 0; i < plugins.length; i++) {
     // Not every plugin in the ordering may be loaded at runtime.
     const possiblePlugin: PluginModule<AnyNativeEvent> = plugins[i];
-    debugger;
     if (possiblePlugin) {
       const extractedEvents = possiblePlugin.extractEvents(
         topLevelType,

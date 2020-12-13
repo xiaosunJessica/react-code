@@ -4,11 +4,27 @@ class App extends React.Component {
   state = {
     count: 1
   }
-  click = () => {
+  componentDidMount= () => {
     this.setState({
-      count: this.state.count + 1
+      count: 2
     })
   }
+  // click = () => {
+  //   debugger;
+  //   this.setState({
+  //     count: 2
+  //   })
+  //   this.setState({
+  //     count: 3
+  //   })
+  //   console.log(this.state.count, 'before setTumeout')
+  //   setTimeout(() => {
+  //     this.setState({
+  //       count: 4
+  //     })
+  //     console.log(this.state.count, 'after setTimeout')
+  //   })
+  // }
   // shouldComponentUpdate = () => {
   //   return false
   // }
@@ -21,7 +37,7 @@ class App extends React.Component {
       <div>
         {/* {this.state.count === 1 && <Receive count={this.state.count}  />} */}
         {this.state.count}
-        <span onClick={this.click}>add</span>
+        {/* <span onClick={this.click}>add</span> */}
       </div>
     )
   }
