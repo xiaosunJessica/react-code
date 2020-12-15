@@ -88,3 +88,4 @@ isSimpleFunctionComponent
 # 参考链家
 [1](https://zhuanlan.zhihu.com/p/304213203)
 [2](https://developers.google.cn/web/fundamentals/performance/rendering)浏览器渲染
+[3] how browsers work (浏览器渲染)
