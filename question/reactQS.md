@@ -1,3 +1,11 @@
+<!--
+ * @Author: your name
+ * @Date: 2020-12-21 10:04:17
+ * @LastEditTime: 2020-12-21 14:44:17
+ * @LastEditors: Please set LastEditors
+ * @Description: In User Settings Edit
+ * @FilePath: /react-code/question/reactQS.md
+-->
 # 1、setState 是异步还是同步？以及如何实现多个state合并处理的
 ```javascript
    this.setState({
@@ -54,6 +62,7 @@
 # 5、hooks 为什么不能放在条件判断里？
 
 # 6、fiber 是什么？
+    Fiber是React 16中新的协调引擎，它主要目的是使Virtual DOM 可以进行增量式渲染。
     fiber是一个链表数据结构，能解决以前diff时间过长导致的卡顿问题，它用类似requestIdleCallback的机制做异步diff算法，方便做中断和恢复操作
  
 6、聊一聊 diff 算法
