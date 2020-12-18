@@ -214,6 +214,7 @@ if (
   };
 
   const performWorkUntilDeadline = () => {
+    debugger;
     if (enableMessageLoopImplementation) {
       if (scheduledHostCallback !== null) {
         const currentTime = getCurrentTime();

@@ -134,6 +134,7 @@ function flushWork(hasTimeRemaining, initialTime) {
 
   isPerformingWork = true;
   const previousPriorityLevel = currentPriorityLevel;
+  debugger;
   try {
     if (enableProfiling) {
       try {
@@ -356,6 +357,7 @@ function unstable_scheduleCallback(priorityLevel, callback, options) {
     // wait until the next time we yield.
     if (!isHostCallbackScheduled && !isPerformingWork) {
       isHostCallbackScheduled = true;
+      debugger;
       requestHostCallback(flushWork);
     }
   }

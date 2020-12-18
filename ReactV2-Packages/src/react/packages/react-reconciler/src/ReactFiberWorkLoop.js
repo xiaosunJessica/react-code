@@ -1501,6 +1501,7 @@ function commitRoot(root) {
   );
   // If there are passive effects, schedule a callback to flush them. This goes
   // outside commitRootImpl so that it inherits the priority of the render.
+  debugger;
   if (rootWithPendingPassiveEffects !== null) {
     scheduleCallback(NormalPriority, () => {
       flushPassiveEffects();
