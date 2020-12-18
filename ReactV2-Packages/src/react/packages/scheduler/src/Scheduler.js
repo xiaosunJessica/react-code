@@ -295,6 +295,7 @@ function timeoutForPriorityLevel(priorityLevel) {
 }
 
 function unstable_scheduleCallback(priorityLevel, callback, options) {
+  debugger
   var currentTime = getCurrentTime();
 
   var startTime;

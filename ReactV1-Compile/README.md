@@ -40,6 +40,7 @@ setState 浅拷贝
 evenPluginOrder=["ResponderEventPlugin",  "SimpleEventPlugin", "EnterLeaveEventPlugin", "ChangeEventPlugin", "SelectEventPlugin", "BeforeInputEventPlugin"]
 
 5. hooks
+  useState/useEffect/useCallback/useMemo
 
 6. requestIdle...
 

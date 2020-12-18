@@ -121,7 +121,6 @@ export function runWithPriority<T>(
   reactPriorityLevel: ReactPriorityLevel,
   fn: () => T,
 ): T {
-  debugger;
   const priorityLevel = reactPriorityToSchedulerPriority(reactPriorityLevel);
   return Scheduler_runWithPriority(priorityLevel, fn);
 }
@@ -132,7 +131,6 @@ export function scheduleCallback(
   options: SchedulerCallbackOptions | void | null,
 ) {
   const priorityLevel = reactPriorityToSchedulerPriority(reactPriorityLevel);
-  debugger;
   // sun-调度
   return Scheduler_scheduleCallback(priorityLevel, callback, options);
 }

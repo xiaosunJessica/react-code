@@ -714,9 +714,9 @@ export function unbatchedUpdates<A, R>(fn: (a: A) => R, a: A): R {
   executionContext &= ~BatchedContext;
   executionContext |= LegacyUnbatchedContext;
   try {
-    debugger;
     return fn(a);
   } finally {
+    debugger;
     executionContext = prevExecutionContext;
     if (executionContext === NoContext) {
       // Flush the immediate callbacks that were scheduled during this batch
