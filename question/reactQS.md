@@ -46,10 +46,16 @@
 ![avatar](./useEffect模拟componentDidMount.png, 'useEffect模拟componentDidMount')
 
 # 4、useEffect和useLayoutEffect的差异？
-  它们调用时机不同
+  它们调用时机不同, useEffect是在浏览器渲染和绘制之后才执行，但useLayoutEffect和componentDidMount/componentDidUpdate等一样，在第一次执行commitLayoutEffects的时候执行，是在浏览器渲染和绘制之前执行的。
+  在执行commitMutationEffects的时候，DOM变更完成，此时同步调用effect读取DOM布局并同步触发重渲染，尽可能使用标准的useEffect以避免阻塞视觉更新。
+
+  useEffect会在浏览器绘制后延迟执行，在组件更新前刷新上一轮渲染effect.
 
 # 5、hooks 为什么不能放在条件判断里？
-5、fiber 是什么？
+
+# 6、fiber 是什么？
+    fiber是一个链表数据结构，能解决以前diff时间过长导致的卡顿问题，它用类似requestIdleCallback的机制做异步diff算法，方便做中断和恢复操作
+ 
 6、聊一聊 diff 算法
 7、调用 setState 之后发生了什么？
 8、为什么虚拟dom 会提高性能?
@@ -60,6 +66,7 @@
 13、React有哪些优化性能的手段?
 14、为什么 React 元素有一个 $$typeof 属性？
 15、React 如何区分 Class组件 和 Function组件？
+isSimpleFunctionComponent
 16、HTML 和 React 事件处理有什么区别?
 17、什么是 suspense 组件?
 18、为什么 JSX 中的组件名要以大写字母开头？
@@ -71,3 +78,4 @@
 
 # 参考链家
 [1](https://zhuanlan.zhihu.com/p/304213203)
+[2](https://developers.google.cn/web/fundamentals/performance/rendering)浏览器渲染
