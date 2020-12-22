@@ -60,6 +60,7 @@
   useEffect会在浏览器绘制后延迟执行，在组件更新前刷新上一轮渲染effect.
 
 # 5、hooks 为什么不能放在条件判断里？
+  在React内部，hooks是以链表的形式存在memoizeState属性中的，update阶段，每次执行setXX方法，链表会执行next向后移动，如果setXX写在条件判断中，条件判断不成立时，没有执行setXX方法，会导致取值出现偏移
 
 # 6、fiber 是什么？
     Fiber是React 16中新的协调引擎，它主要目的是使Virtual DOM 可以进行增量式渲染。
