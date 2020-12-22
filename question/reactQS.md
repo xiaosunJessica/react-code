@@ -30,16 +30,16 @@
     
 
   ## setState同步情况：
-        setTimeout/原生事件（window.addEventListener）
+    setTimeout/原生事件（window.addEventListener）
 
   ## setState异步情况：
-        合成事件/钩子函数， 异步的处理是为了多个state进行合并，优化性能。它所谓的异步，只是执行顺序的问题
+     合成事件/钩子函数， 异步的处理是为了多个state进行合并，优化性能。它所谓的异步，只是执行顺序的问题
 
   ## 多个setState合并问题：
-       执行setState,都是进行组件Component.prototype.setState方法的执行，它先进行enqueue
-       Update，将所有更新的payload的update添加到当前的updateQuene里面，执行scheduleWork的时候，其实就是执行scheduleCallbackForRoot，它会根据当前root节点的root.callbackExpirationTime和expirationTime进行对比，只存一次
-       runRootCallback方法到syncQueue中，之后进行一次renderRoot，先进行fiber处理，其中会执行processUpdateQueue方法，它就是将update链表的state进行object.assign的合并，之后进行commitWork渲染
-     
+    执行setState,都是进行组件Component.prototype.setState方法的执行，它先进行enqueue
+    Update，将所有更新的payload的update添加到当前的updateQuene里面，执行scheduleWork的时候，其实就是执行scheduleCallbackForRoot，它会根据当前root节点的root.callbackExpirationTime和expirationTime进行对比，只存一次
+    runRootCallback方法到syncQueue中，之后进行一次renderRoot，先进行fiber处理，其中会执行processUpdateQueue方法，它就是将update链表的state进行object.assign的合并，之后进行commitWork渲染
+  
   ![avatar](../assets/多个setState，是如何进行合并处理的.png， '多个setState合并')
     
    
@@ -65,12 +65,27 @@
 # 6、fiber 是什么？
     Fiber是React 16中新的协调引擎，它主要目的是使Virtual DOM 可以进行增量式渲染。
     fiber是一个链表数据结构，能解决以前diff时间过长导致的卡顿问题，它用类似requestIdleCallback的机制做异步diff算法，方便做中断和恢复操作
- 
-6、聊一聊 diff 算法
-7、调用 setState 之后发生了什么？
-8、为什么虚拟dom 会提高性能?
-9、错误边界是什么？它有什么用？
+# 7、[聊一聊 diff 算法](https://zh-hans.reactjs.org/docs/reconciliation.html#the-diffing-algorithm)
+   1. 对比不同类型的元素： 当根节点为不同类型的元素时，会拆卸原有的树并建立新的树， React销毁原组件，建立新组件
+   2. 对比同一类型的元素： 当对比同类型的元素时，React会保留DOM节点，仅对比更新有改变的属性，处理完当前节点后，React继续对子节点进行递归
+   3. 对比同类型的组件元素：当组件更新时，组件实例保持不变，React调用相关放过更新props,下一步，调用render方法，diff算法将在之前的结果及新的结果中进行递归
+   4. 对子节点进行递归：在默认条件下，递归DOM节点的子元素时，React会遍历两个子元素列表，当产生差异时会生成一个mutation. 但是React没有意识是否该保留原有的子元素
+   5. keys： 为了解决上面问题，采用key属性，当子元素拥有key时，React使用key来匹配原有树上的子元素和最新树上子元素
+
+# 8、调用 setState 之后发生了什么？
+   1. 加入更新队列：调用setState时，其实就是调用的Component.prototype.updateState, 将更新的update对象加入到updateQueue, 
+   2. fiber协调：调用scheduleWork，进行fiber节点的协调，执行reconcileChild，生成新的fiber数。
+   3. 执行scheduler相关方法，根据优先级高低具体调用相关方法，在fiber协调的过程中会对比新旧节点，并打上增删改查的相关tag
+   4. 协调方法执行完成后，执行performUnitOfWork，会对新节点生成对应的dom, 同时回溯执行上面的方法
+   5. 但performUnitOfWork执行完毕后，进入commitRoot阶段，根据前面的tag对DOM进行更新操作。
+# 9、为什么虚拟dom 会提高性能?
+   1. 真实DOM挂在的属性较多，比较比较耗时，虚拟DOM的属性较少
+   2. 虚拟DOM相当于在js 和真实DOM中添加一个缓存，利用diff 算法避免没必要的dom操作，从而提高性能
+   
+# 10、错误边界是什么？它有什么用？
+   错误边界解决js错误导致整个应用崩溃的问题，它是React组件，可以捕获并打印发生在其子组件树任何位置的js错误，并渲染出备用UI,而不是渲染哪些崩溃的子组件树，它无法处理一下场景：事件处理／异步代码／服务端渲染／它自身的错误
 10、什么是 Portals？
+17、什么是 suspense 组件?
 11、React 组件间有那些通信方式?
 12、React 父组件如何调用子组件中的方法？
 13、React有哪些优化性能的手段?
@@ -78,7 +93,6 @@
 15、React 如何区分 Class组件 和 Function组件？
 isSimpleFunctionComponent
 16、HTML 和 React 事件处理有什么区别?
-17、什么是 suspense 组件?
 18、为什么 JSX 中的组件名要以大写字母开头？
 19、redux 是什么？
 20、react-redux 的实现原理？
