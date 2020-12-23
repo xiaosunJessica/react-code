@@ -1,7 +1,7 @@
 <!--
  * @Author: your name
  * @Date: 2020-12-21 10:04:17
- * @LastEditTime: 2020-12-21 14:44:17
+ * @LastEditTime: 2020-12-23 11:16:46
  * @LastEditors: Please set LastEditors
  * @Description: In User Settings Edit
  * @FilePath: /react-code/question/reactQS.md
@@ -84,19 +84,64 @@
    
 # 10、错误边界是什么？它有什么用？
    错误边界解决js错误导致整个应用崩溃的问题，它是React组件，可以捕获并打印发生在其子组件树任何位置的js错误，并渲染出备用UI,而不是渲染哪些崩溃的子组件树，它无法处理一下场景：事件处理／异步代码／服务端渲染／它自身的错误
-10、什么是 Portals？
-17、什么是 suspense 组件?
-11、React 组件间有那些通信方式?
-12、React 父组件如何调用子组件中的方法？
-13、React有哪些优化性能的手段?
-14、为什么 React 元素有一个 $$typeof 属性？
-15、React 如何区分 Class组件 和 Function组件？
-isSimpleFunctionComponent
-16、HTML 和 React 事件处理有什么区别?
-18、为什么 JSX 中的组件名要以大写字母开头？
+# 11、什么是 Portals？
+  Portal提供一种将子节点渲染到存在于父组件以外的DOM节点
+  ```javascript
+  ReactDOM.createPortal(child, container)
+  ```
+# 12、什么是 suspense 组件?
+  Suspense是一个机制，让组件“等待”某个异步操作，直到该异步操作结束即可渲染。也可以用于懒加载
+# 13、React 组件间有那些通信方式?
+  1. props （父组件向子组件通信）
+  2. 回调（子组件向父组件通信）
+  3. context （跨层级通信）
+  4. react-redux／mobx等
+  5. 发布订阅模式
+# 14、React 父组件如何调用子组件中的方法？
+  通过ref获取到子组件对象
+
+# 15、React有哪些优化性能的手段?
+  类组件
+  1. React.memo，props进行浅比较
+  2. PureComponent
+  3. shouldComponentUpdate自定义渲染逻辑
+
+  hook
+  1. useCallback/useMemo 通过【记住】上一次计算结果的方式在多次渲染的之间缓存计算结果
+  
+  其它
+  1. 使用id作为key
+  2. 通过css隐藏显示组件，而不是通过条件隐藏组件
+  3. 懒加载
+
+# 16、hook和class对比
+  1. hook避免class的额外开支，像创建类实例和构造函数中绑定事件处理器的成本
+  2. hook不需要很深的组件树嵌套，组件树小了，React的工作量随之减少
+  传统上认为，react使用內联函数对性能的影响，每次渲染传递新的回调会破坏子组件shouldComponentUpdate优化，hook从三个方面解决了这个问题
+  3. useCallback, 允许你在重新渲染之间保持对相同回调引用， 
+  4. useMemo 使得控制具体子节点何时更新变得更容易，减少对纯组件的需要，
+  5. useReducer 减少对深层传递回调的依赖
+
+# 17、为什么 React 元素有一个 $$typeof 属性？
+  目的是为了防止XSS攻击，因为Symbol 无法被序列化，
+
+# 18、React 如何区分 Class组件 和 Function组件？
+  isSimpleFunctionComponent
+
+# 19、HTML 和 React 事件处理有什么区别?
+  1. HTML是原生事件，React是复合事件
+  2. HTML事件名小写，React事件名驼峰
+  3. HTML事件挂在当前节点，React事件都是挂在Document上
+# 20、React合成事件的好处
+  1. 兼容浏览器监听写法
+  2. 避免大量节点绑定事件占用内存，将事件委托到document上，有统一的事件处理函数，等事件冒泡到document上，React从target节点往上遍历父元素，判断有没有元素绑定对应事件，有则触发
+
+# 21、为什么 JSX 中的组件名要以大写字母开头？
+  判断渲染的是组件还是HTML元素
+  
 19、redux 是什么？
 20、react-redux 的实现原理？
-21、reudx 和 mobx 的区别？
+21、redux 和 mobx 的区别？
 22、redux 异步中间件有什么什么作用?
 23、redux 有哪些异步中间件？
 
