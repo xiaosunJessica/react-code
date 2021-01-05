@@ -118,7 +118,7 @@ function releaseTopLevelCallbackBookKeeping(
   instance.nativeEvent = null;
   instance.targetInst = null;
   instance.ancestors.length = 0;
-  debugger;
+  
   console.log(callbackBookkeepingPool, 'booking------')
   if (callbackBookkeepingPool.length < CALLBACK_BOOKKEEPING_POOL_SIZE) {
     callbackBookkeepingPool.push(instance);
@@ -262,7 +262,7 @@ function trapEventForPluginEventSystem(
 }
 
 function dispatchDiscreteEvent(topLevelType, eventSystemFlags, nativeEvent) {
-  debugger;
+  
   flushDiscreteUpdatesIfNeeded(nativeEvent.timeStamp);
   discreteUpdates(dispatchEvent, topLevelType, eventSystemFlags, nativeEvent);
 }

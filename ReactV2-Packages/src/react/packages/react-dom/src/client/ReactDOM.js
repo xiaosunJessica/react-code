@@ -680,7 +680,6 @@ const ReactDOM: Object = {
     container: DOMContainer,
     callback: ?Function,
   ) {
-    debugger;
     return legacyRenderSubtreeIntoContainer(
       null,
       element,

@@ -134,7 +134,7 @@ function flushWork(hasTimeRemaining, initialTime) {
 
   isPerformingWork = true;
   const previousPriorityLevel = currentPriorityLevel;
-  debugger;
+  
   try {
     if (enableProfiling) {
       try {
@@ -163,7 +163,7 @@ function flushWork(hasTimeRemaining, initialTime) {
 }
 
 function workLoop(hasTimeRemaining, initialTime) {
-  debugger;
+  
   // 看下是否有执行过这里
   let currentTime = initialTime;
   advanceTimers(currentTime);
@@ -296,7 +296,6 @@ function timeoutForPriorityLevel(priorityLevel) {
 }
 
 function unstable_scheduleCallback(priorityLevel, callback, options) {
-  debugger
   var currentTime = getCurrentTime();
 
   var startTime;
@@ -357,7 +356,7 @@ function unstable_scheduleCallback(priorityLevel, callback, options) {
     // wait until the next time we yield.
     if (!isHostCallbackScheduled && !isPerformingWork) {
       isHostCallbackScheduled = true;
-      debugger;
+      
       requestHostCallback(flushWork);
     }
   }

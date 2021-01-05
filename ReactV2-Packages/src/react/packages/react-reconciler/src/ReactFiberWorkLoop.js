@@ -560,7 +560,7 @@ function runRootCallback(root, callback, isSync) {
   try {
     continuation = callback(isSync);
     if (continuation !== null) {
-      debugger;
+      
       return runRootCallback.bind(null, root, continuation);
     } else {
       return null;
@@ -716,7 +716,7 @@ export function unbatchedUpdates<A, R>(fn: (a: A) => R, a: A): R {
   try {
     return fn(a);
   } finally {
-    debugger;
+    
     executionContext = prevExecutionContext;
     if (executionContext === NoContext) {
       // Flush the immediate callbacks that were scheduled during this batch
@@ -1501,7 +1501,7 @@ function commitRoot(root) {
   );
   // If there are passive effects, schedule a callback to flush them. This goes
   // outside commitRootImpl so that it inherits the priority of the render.
-  debugger;
+  
   if (rootWithPendingPassiveEffects !== null) {
     scheduleCallback(NormalPriority, () => {
       flushPassiveEffects();
@@ -1514,7 +1514,7 @@ function commitRoot(root) {
 function commitRootImpl(root, renderPriorityLevel) {
   flushPassiveEffects();
   flushRenderPhaseStrictModeWarningsInDEV();
-  debugger;
+  
 
   invariant(
     (executionContext & (RenderContext | CommitContext)) === NoContext,

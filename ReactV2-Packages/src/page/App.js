@@ -1,5 +1,5 @@
 import React from '../react/packages/react';
-import Receive from './receive';
+// import { connect } from '../react-redux/index';
 import { connect } from 'react-redux';
 class App extends React.Component {
   state = {
