@@ -1,5 +1,6 @@
 import React from '../react/packages/react';
 import Receive from './receive';
+import { connect } from 'react-redux';
 class App extends React.Component {
   state = {
     count: 1
@@ -33,6 +34,7 @@ class App extends React.Component {
   //   console.log('---getSnapshotBeforeUpdategetSnapshotBeforeUpdate-')
   // }
   render() {
+    console.log(this.props, 'this.propsthis.propsthis.props')
     return (
       <div>
         {/* {this.state.count === 1 && <Receive count={this.state.count}  />} */}
@@ -43,5 +45,10 @@ class App extends React.Component {
   }
 }
 
+const mapStateToProps = (state) => {
+  console.log(state, '----state-----')
+  return {}
+}
 
-export default App;
+
+export default connect(mapStateToProps, null)(App);
