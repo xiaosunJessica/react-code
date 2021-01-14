@@ -66,9 +66,10 @@
     Fiber是React 16中新的协调引擎，它主要目的是使Virtual DOM 可以进行增量式渲染。
     fiber是一个链表数据结构，能解决以前diff时间过长导致的卡顿问题，它用类似requestIdleCallback的机制做异步diff算法，方便做中断和恢复操作
 # 7、[聊一聊 diff 算法](https://zh-hans.reactjs.org/docs/reconciliation.html#the-diffing-algorithm)
+   （元素/组件/key,  type/props）
    1. 对比不同类型的元素： 当根节点为不同类型的元素时，会拆卸原有的树并建立新的树， React销毁原组件，建立新组件
    2. 对比同一类型的元素： 当对比同类型的元素时，React会保留DOM节点，仅对比更新有改变的属性，处理完当前节点后，React继续对子节点进行递归
-   3. 对比同类型的组件元素：当组件更新时，组件实例保持不变，React调用相关放过更新props,下一步，调用render方法，diff算法将在之前的结果及新的结果中进行递归
+   3. 对比同类型的组件元素：当组件更新时，组件实例保持不变，React调用相关方法更新props,下一步，调用render方法，diff算法将在之前的结果及新的结果中进行递归
    4. 对子节点进行递归：在默认条件下，递归DOM节点的子元素时，React会遍历两个子元素列表，当产生差异时会生成一个mutation. 但是React没有意识是否该保留原有的子元素
    5. keys： 为了解决上面问题，采用key属性，当子元素拥有key时，React使用key来匹配原有树上的子元素和最新树上子元素
 
@@ -140,12 +141,21 @@
   判断渲染的是组件还是HTML元素
   
 19、redux 是什么？
+    Redux是JavaScript的状态容器，提供可预测的状态管理。优点：解决跨层级的数据交互；缺点：内容比较复杂不易上手。
 20、react-redux 的实现原理？
+    react-redux的的主要API包括Provider/connect, 其中Provider 是结合context来实现的，将store传入Provider作为当前Context值，使用发布订阅Subscription的模式来监听store的变化；connect监听store变化，使组件响应state变化。
+    1. Subscription类实现了发布订阅逻辑；
+    2. Provider传入store作为Context,便于下面组件获取，并订阅store的变化subscription.onStateChange
+    3. connnect高阶组件: 获取要注入到组件中的值，将它们注入到Props；订阅Props变化并更新组件
+    4. selector, 负责获取store中的state
 21、redux 和 mobx 的区别？
 22、redux 异步中间件有什么什么作用?
 23、redux 有哪些异步中间件？
+24、同构
+   同构为了解决SPA首屏和SEO的问题，
 
 # 参考链家
 [1](https://zhuanlan.zhihu.com/p/304213203)
 [2](https://developers.google.cn/web/fundamentals/performance/rendering)浏览器渲染
-[3] how browsers work (浏览器渲染)
+[3] how browsers work (浏览器渲染) https://www.cnblogs.com/xuxg/articles/3432950.html
+[4]https://www.w3.org/TR/navigation-timing-2/
