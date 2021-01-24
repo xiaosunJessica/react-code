@@ -1,52 +1,37 @@
 import React from '../react/packages/react';
 // import { connect } from '../react-redux/index';
 import { connect } from 'react-redux';
+import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
+import AsyncRouter, { RouterHooks } from '../lazyRouter/routerHooks'
+const A = AsyncRouter(() => import('./A'))
+const B = AsyncRouter(() => import('./B'))
+const TestMemo = AsyncRouter(() => import('./testMemo'))
+const VisualDOM = AsyncRouter(() => import('./visualDom'));
+// import A from './A';
+// import B from './B';
 class App extends React.Component {
-  state = {
-    count: 1
-  }
-  componentDidMount= () => {
-    this.setState({
-      count: 2
+  componentDidMount() {
+    RouterHooks.beforeRouterComponentLoad((history) => {
+      console.log('当前激活的路由是', history)
     })
   }
-  // click = () => {
-  //   debugger;
-  //   this.setState({
-  //     count: 2
-  //   })
-  //   this.setState({
-  //     count: 3
-  //   })
-  //   console.log(this.state.count, 'before setTumeout')
-  //   setTimeout(() => {
-  //     this.setState({
-  //       count: 4
-  //     })
-  //     console.log(this.state.count, 'after setTimeout')
-  //   })
-  // }
-  // shouldComponentUpdate = () => {
-  //   return false
-  // }
-  // getSnapshotBeforeUpdate = () => {
-  //   debugger
-  //   console.log('---getSnapshotBeforeUpdategetSnapshotBeforeUpdate-')
-  // }
   render() {
-    console.log(this.props, 'this.propsthis.propsthis.props')
     return (
       <div>
-        {/* {this.state.count === 1 && <Receive count={this.state.count}  />} */}
-        {this.state.count}
-        {/* <span onClick={this.click}>add</span> */}
+       <Router>
+         <Switch>
+           <Route path="/a" component={A} />
+           <Route path="/b" component={B} />
+           <Route path="/testMemo" component={TestMemo} />
+           <Route path="/visualDom" component={VisualDOM} />
+         </Switch>
+       </Router>
       </div>
     )
   }
 }
 
 const mapStateToProps = (state) => {
-  console.log(state, '----state-----')
   return {}
 }
 

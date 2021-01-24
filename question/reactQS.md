@@ -54,7 +54,8 @@
 ![avatar](./useEffect模拟componentDidMount.png, 'useEffect模拟componentDidMount')
 
 # 4、useEffect和useLayoutEffect的差异？
-  它们调用时机不同, useEffect是在浏览器渲染和绘制之后才执行，但useLayoutEffect和componentDidMount/componentDidUpdate等一样，在第一次执行commitLayoutEffects的时候执行，是在浏览器渲染和绘制之前执行的。
+  useLayoutEffect早于useEffect执行。
+  它们调用时机不同, useEffect是在浏览器渲染（layout）和绘制(paint)之后才执行，但useLayoutEffect和componentDidMount/componentDidUpdate等一样，在第一次执行commitLayoutEffects的时候执行，是在浏览器渲染和绘制之前执行的。
   在执行commitMutationEffects的时候，DOM变更完成，此时同步调用effect读取DOM布局并同步触发重渲染，尽可能使用标准的useEffect以避免阻塞视觉更新。
 
   useEffect会在浏览器绘制后延迟执行，在组件更新前刷新上一轮渲染effect.
@@ -159,3 +160,4 @@
 [2](https://developers.google.cn/web/fundamentals/performance/rendering)浏览器渲染
 [3] how browsers work (浏览器渲染) https://www.cnblogs.com/xuxg/articles/3432950.html
 [4]https://www.w3.org/TR/navigation-timing-2/
+[5]hooks:https://www.bilibili.com/video/av75221043?p=8
