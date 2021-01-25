@@ -24,7 +24,8 @@ class B extends PureComponent {
   }
 
   render() {
-    return <div>{this.props.value}<Link to="/a">AA</Link></div>
+    console.log('render----B')
+    return <div>{this.props.value}<Link to="/a">BB</Link></div>
   }
 }
 
