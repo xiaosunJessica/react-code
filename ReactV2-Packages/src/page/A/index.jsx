@@ -56,7 +56,7 @@ class A extends PureComponent {
         test: Math.random()
       })
     }}>add</div>
-    <Link to="/a">AA</Link>
+    <Link to="/b">BB</Link>
     <B />
     </div>
   }

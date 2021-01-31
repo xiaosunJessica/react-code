@@ -9,10 +9,12 @@ const B = AsyncRouter(() => import('./B'))
 const TestMemo = AsyncRouter(() => import('./testMemo'))
 const VisualDOM = AsyncRouter(() => import('./visualDom'));
 const LargeDom = AsyncRouter(() => import('./visualDom/largeDom'))
+const Fangdouyin = AsyncRouter(() => import('./fangdouyin'))
 // import A from './A';
 // import B from './B';
 class App extends React.Component {
   componentDidMount() {
+    console.log('----====App ComponentDidMount---')
     RouterHooks.beforeRouterComponentLoad((history) => {
       console.log('当前激活的路由是', history)
     })
@@ -22,11 +24,13 @@ class App extends React.Component {
       <div>
        <Router>
          <Switch>
+           <Route exact path="/" component={A} />
            <Route exact path="/a" component={A} />
            <Route path="/b" component={B} />
            <Route path="/testMemo" component={TestMemo} />
            <Route path="/visualDom" component={VisualDOM} />
            <Route path="/largeDom" component={LargeDom} />
+           <Route path="/fangdouyin" component={Fangdouyin} />
          </Switch>
        </Router>
       </div>
