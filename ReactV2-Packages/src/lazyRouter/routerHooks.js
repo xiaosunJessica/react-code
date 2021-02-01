@@ -32,8 +32,10 @@ export default function AsyncRouter(loadRouter) {
     }
 
     dispatchRouterQueue(type) {
-      const { history } = this.props
+      const { history } = this.props;
+      console.log(routerObserveQueue, 'dispatchRouterQueue')
       routerObserveQueue.forEach(item => {
+        console.log(history, '-----hisotry------', item.type === type)
         if (item.type === type) item.callback(history)
       })
     }
@@ -41,9 +43,11 @@ export default function AsyncRouter(loadRouter) {
     componentDidMount() {
       if (this.state.Component) return;
       loadRouter().then(module => module.default)
-      .then(Component => this.setState({Component}), () => {
-        // 触发每个路由加载之后钩子函数
-        this.dispatchRouterQueue('after')
+      .then(Component => {
+        this.setState({Component}), () => {
+          // 触发每个路由加载之后钩子函数
+          this.dispatchRouterQueue('after')
+        }
       })
     }
 
