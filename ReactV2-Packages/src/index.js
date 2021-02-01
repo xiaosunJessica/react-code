@@ -1,8 +1,9 @@
 import React from 'react';
 import { Provider } from 'react-redux';
 import ReactDOM from './react/packages/react-dom';
-import App from './page/App';
+// import App from './page/App';
 // import App from './page/AppHooks';
+import App from './page/router/App'
 import thunkMiddleware from "redux-thunk";
 import {createStore, applyMiddleware, compose} from 'redux'
 // import * as serviceWorker from './serviceWorker';
