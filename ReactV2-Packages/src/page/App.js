@@ -1,10 +1,10 @@
 import React from '../react/packages/react';
 // import { connect } from '../react-redux/index';
 import { connect } from 'react-redux';
-// import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
-import Router from './router/react-router-dom/BrowserRouter';
-import Route from './router/react-router/Route';
-import Switch from './router/react-router/Switch';
+import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
+// import Router from './router/react-router-dom/BrowserRouter';
+// import Route from './router/react-router/Route';
+// import Switch from './router/react-router/Switch';
 import AsyncRouter, { RouterHooks } from '../lazyRouter/routerHooks'
 // const A = AsyncRouter(() => import('./A'))
 // const B = AsyncRouter(() => import('./B'))
@@ -19,6 +19,7 @@ const TestMemo = AsyncRouter(() => import('./testMemo'))
 const VisualDOM = AsyncRouter(() => import('./visualDom'));
 const LargeDom = AsyncRouter(() => import('./visualDom/largeDom'))
 const Fangdouyin = AsyncRouter(() => import('./fangdouyin'))
+const Param = AsyncRouter(() => import('./param'));
 // import A from './A';
 // import B from './B';
 class App extends React.Component {
@@ -33,22 +34,13 @@ class App extends React.Component {
       <div>
        <Router>
          <Switch>
-<<<<<<< HEAD
-           <Route path="/" component={A} />
-           <Route path="/a" component={A} />
-=======
            <Route exact path="/" component={A} />
            <Route exact path="/a" component={A} />
->>>>>>> 5f8df4e42458b8256be94cd26b0aceda56d87f4f
            <Route path="/b" component={B} />
-           {/* <Route path="/testMemo" component={TestMemo} />
+           <Route path="/testMemo" component={TestMemo} />
            <Route path="/visualDom" component={VisualDOM} />
-<<<<<<< HEAD
-           <Route path="/largeDom" component={LargeDom} /> */}
-=======
            <Route path="/largeDom" component={LargeDom} />
-           <Route path="/fangdouyin" component={Fangdouyin} />
->>>>>>> 5f8df4e42458b8256be94cd26b0aceda56d87f4f
+           <Route path="/param" component={Param} />
          </Switch>
        </Router>
       </div>

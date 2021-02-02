@@ -26,7 +26,7 @@
 // export default Comment;
 
 import React, { PureComponent } from 'react'
-import Link from "../router/react-router-dom/Link";
+import {Link} from "react-router-dom";
 import B from '../B';
 class A extends PureComponent {
   constructor(props) {
