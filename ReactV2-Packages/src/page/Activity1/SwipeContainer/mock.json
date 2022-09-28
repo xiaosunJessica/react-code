@@ -1,0 +1,109 @@
+{
+  "status": 0,
+  "message": "success",
+  "data": {
+    "pageNo": 1,
+    "data": [
+      {
+        "id": 3,
+        "title": "上海-滨江前滩CG圈",
+        "address": "上海市.中海国际大厦B座",
+        "createTime": 1611821547432,
+        "avatar": "http://hytx-upload-images.oss-cn-beijing.aliyuncs.com/hytx/images/190216/1550309603269_141809.jpeg",
+        "list": "[{\"img\":\"http://video.jishiyoo.com/3720932b9b474f51a4cf79f245325118/913d4790b8f046bfa1c9a966cd75099f-8ef4af9b34003bd0bc0261cda372521f-ld.mp4\",\"txt\":\" \"},{\"img\":\"http://hytx-upload-images.oss-cn-beijing.aliyuncs.com/hytx/images/190216/1550309612120_268431.jpeg\",\"txt\":\" \"},{\"img\":\"http://hytx-upload-images.oss-cn-beijing.aliyuncs.com/hytx/images/190216/1550309620877_420073.jpeg\",\"txt\":\" \"},{\"img\":\"http://hytx-upload-images.oss-cn-beijing.aliyuncs.com/hytx/images/190216/1550309630826_736252.jpeg\",\"txt\":\" \"},{\"img\":\"http://hytx-upload-images.oss-cn-beijing.aliyuncs.com/hytx/images/190216/1550309638436_931238.jpeg\",\"txt\":\" \"},{\"img\":\"http://hytx-upload-images.oss-cn-beijing.aliyuncs.com/hytx/images/190216/1550309645541_168434.jpeg\",\"txt\":\" \"}]",
+        "content": "今天参加了XX的晨会，今天参加了XX的晨会，，，，，史蒂夫煞风景大煞风景煞风景",
+        "score": 10,
+        "type": "集体晨会"
+      },
+      {
+        "id": 2,
+        "title": "北京天安门",
+        "address": "北京市.犄角旮旯的某个地",
+        "createTime": 1611821547432,
+        "avatar": "http://hytx-upload-images.oss-cn-beijing.aliyuncs.com/hytx/images/190216/1550309391840_346049.jpeg",
+        "list": "[{\"img\":\"http://hytx-upload-images.oss-cn-beijing.aliyuncs.com/hytx/images/190216/1550309391840_346049.jpeg\",\"txt\":\" \"},{\"img\":\"http://hytx-upload-images.oss-cn-beijing.aliyuncs.com/hytx/images/190216/1550309398600_831977.jpeg\",\"txt\":\" \"},{\"img\":\"http://hytx-upload-images.oss-cn-beijing.aliyuncs.com/hytx/images/190216/1550309405214_736461.jpeg\",\"txt\":\" \"},{\"img\":\"http://hytx-upload-images.oss-cn-beijing.aliyuncs.com/hytx/images/190216/1550309412440_878134.jpeg\",\"txt\":\" \"},{\"img\":\"http://hytx-upload-images.oss-cn-beijing.aliyuncs.com/hytx/images/190216/1550309418628_444191.jpeg\",\"txt\":\" \"},{\"img\":\"http://hytx-upload-images.oss-cn-beijing.aliyuncs.com/hytx/images/190216/1550309424672_735952.jpeg\",\"txt\":\" \"}]",
+        "content": "去北京爬长城，逛天安门，吃吃喝喝世界经济激动激动激动激动大家都到家",
+        "score": 5.5,
+        "type": "集体晨会"
+      },
+      {
+        "id": 3,
+        "title": "深圳-海滩",
+        "address": "深圳.边边角角的",
+        "createTime": 1611821547432,
+        "avatar": "http://hytx-upload-images.oss-cn-beijing.aliyuncs.com/hytx/images/190216/1550309391840_346049.jpeg",
+        "list": "[{\"img\":\"http://hytx-upload-images.oss-cn-beijing.aliyuncs.com/hytx/images/190216/1550309391840_346049.jpeg\",\"txt\":\" \"},{\"img\":\"http://hytx-upload-images.oss-cn-beijing.aliyuncs.com/hytx/images/190216/1550309398600_831977.jpeg\",\"txt\":\" \"},{\"img\":\"http://hytx-upload-images.oss-cn-beijing.aliyuncs.com/hytx/images/190216/1550309405214_736461.jpeg\",\"txt\":\" \"},{\"img\":\"http://hytx-upload-images.oss-cn-beijing.aliyuncs.com/hytx/images/190216/1550309412440_878134.jpeg\",\"txt\":\" \"},{\"img\":\"http://hytx-upload-images.oss-cn-beijing.aliyuncs.com/hytx/images/190216/1550309418628_444191.jpeg\",\"txt\":\" \"},{\"img\":\"http://hytx-upload-images.oss-cn-beijing.aliyuncs.com/hytx/images/190216/1550309424672_735952.jpeg\",\"txt\":\" \"}]",
+        "content": "深圳有啥好吃好喝的推荐蜜语是打发时间和健身房",
+        "score": 0,
+        "type": "集体晨会"
+      },
+      {
+        "id": 4,
+        "title": "4上海-滨江前滩CG圈",
+        "address": "上海市.中海国际大厦B座",
+        "createTime": 1611821547432,
+        "avatar": "http://hytx-upload-images.oss-cn-beijing.aliyuncs.com/hytx/images/190216/1550309603269_141809.jpeg",
+        "list": "[{\"img\":\"http://video.jishiyoo.com/3720932b9b474f51a4cf79f245325118/913d4790b8f046bfa1c9a966cd75099f-8ef4af9b34003bd0bc0261cda372521f-ld.mp4\",\"txt\":\" \"},{\"img\":\"http://hytx-upload-images.oss-cn-beijing.aliyuncs.com/hytx/images/190216/1550309612120_268431.jpeg\",\"txt\":\" \"},{\"img\":\"http://hytx-upload-images.oss-cn-beijing.aliyuncs.com/hytx/images/190216/1550309620877_420073.jpeg\",\"txt\":\" \"},{\"img\":\"http://hytx-upload-images.oss-cn-beijing.aliyuncs.com/hytx/images/190216/1550309630826_736252.jpeg\",\"txt\":\" \"},{\"img\":\"http://hytx-upload-images.oss-cn-beijing.aliyuncs.com/hytx/images/190216/1550309638436_931238.jpeg\",\"txt\":\" \"},{\"img\":\"http://hytx-upload-images.oss-cn-beijing.aliyuncs.com/hytx/images/190216/1550309645541_168434.jpeg\",\"txt\":\" \"}]",
+        "content": "今天参加了XX的晨会，今天参加了XX的晨会，，，，，史蒂夫煞风景大煞风景煞风景",
+        "score": 10,
+        "type": "集体晨会"
+      },
+      {
+        "id": 5,
+        "title": "5北京天安门",
+        "address": "北京市.犄角旮旯的某个地",
+        "createTime": 1611821547432,
+        "avatar": "http://hytx-upload-images.oss-cn-beijing.aliyuncs.com/hytx/images/190216/1550309391840_346049.jpeg",
+        "list": "[{\"img\":\"http://hytx-upload-images.oss-cn-beijing.aliyuncs.com/hytx/images/190216/1550309391840_346049.jpeg\",\"txt\":\" \"},{\"img\":\"http://hytx-upload-images.oss-cn-beijing.aliyuncs.com/hytx/images/190216/1550309398600_831977.jpeg\",\"txt\":\" \"},{\"img\":\"http://hytx-upload-images.oss-cn-beijing.aliyuncs.com/hytx/images/190216/1550309405214_736461.jpeg\",\"txt\":\" \"},{\"img\":\"http://hytx-upload-images.oss-cn-beijing.aliyuncs.com/hytx/images/190216/1550309412440_878134.jpeg\",\"txt\":\" \"},{\"img\":\"http://hytx-upload-images.oss-cn-beijing.aliyuncs.com/hytx/images/190216/1550309418628_444191.jpeg\",\"txt\":\" \"},{\"img\":\"http://hytx-upload-images.oss-cn-beijing.aliyuncs.com/hytx/images/190216/1550309424672_735952.jpeg\",\"txt\":\" \"}]",
+        "content": "去北京爬长城，逛天安门，吃吃喝喝世界经济激动激动激动激动大家都到家",
+        "score": 5.5,
+        "type": "集体晨会"
+      },
+      {
+        "id": 6,
+        "title": "6深圳-海滩",
+        "address": "深圳.边边角角的",
+        "createTime": 1611821547432,
+        "avatar": "http://hytx-upload-images.oss-cn-beijing.aliyuncs.com/hytx/images/190216/1550309391840_346049.jpeg",
+        "list": "[{\"img\":\"http://hytx-upload-images.oss-cn-beijing.aliyuncs.com/hytx/images/190216/1550309391840_346049.jpeg\",\"txt\":\" \"},{\"img\":\"http://hytx-upload-images.oss-cn-beijing.aliyuncs.com/hytx/images/190216/1550309398600_831977.jpeg\",\"txt\":\" \"},{\"img\":\"http://hytx-upload-images.oss-cn-beijing.aliyuncs.com/hytx/images/190216/1550309405214_736461.jpeg\",\"txt\":\" \"},{\"img\":\"http://hytx-upload-images.oss-cn-beijing.aliyuncs.com/hytx/images/190216/1550309412440_878134.jpeg\",\"txt\":\" \"},{\"img\":\"http://hytx-upload-images.oss-cn-beijing.aliyuncs.com/hytx/images/190216/1550309418628_444191.jpeg\",\"txt\":\" \"},{\"img\":\"http://hytx-upload-images.oss-cn-beijing.aliyuncs.com/hytx/images/190216/1550309424672_735952.jpeg\",\"txt\":\" \"}]",
+        "content": "深圳有啥好吃好喝的推荐蜜语是打发时间和健身房",
+        "score": 0,
+        "type": "集体晨会"
+      },
+      {
+        "id": 7,
+        "title": "7上海-滨江前滩CG圈",
+        "address": "上海市.中海国际大厦B座",
+        "createTime": 1611821547432,
+        "avatar": "http://hytx-upload-images.oss-cn-beijing.aliyuncs.com/hytx/images/190216/1550309603269_141809.jpeg",
+        "list": "[{\"img\":\"http://video.jishiyoo.com/3720932b9b474f51a4cf79f245325118/913d4790b8f046bfa1c9a966cd75099f-8ef4af9b34003bd0bc0261cda372521f-ld.mp4\",\"txt\":\" \"},{\"img\":\"http://hytx-upload-images.oss-cn-beijing.aliyuncs.com/hytx/images/190216/1550309612120_268431.jpeg\",\"txt\":\" \"},{\"img\":\"http://hytx-upload-images.oss-cn-beijing.aliyuncs.com/hytx/images/190216/1550309620877_420073.jpeg\",\"txt\":\" \"},{\"img\":\"http://hytx-upload-images.oss-cn-beijing.aliyuncs.com/hytx/images/190216/1550309630826_736252.jpeg\",\"txt\":\" \"},{\"img\":\"http://hytx-upload-images.oss-cn-beijing.aliyuncs.com/hytx/images/190216/1550309638436_931238.jpeg\",\"txt\":\" \"},{\"img\":\"http://hytx-upload-images.oss-cn-beijing.aliyuncs.com/hytx/images/190216/1550309645541_168434.jpeg\",\"txt\":\" \"}]",
+        "content": "今天参加了XX的晨会，今天参加了XX的晨会，，，，，史蒂夫煞风景大煞风景煞风景",
+        "score": 10,
+        "type": "集体晨会"
+      },
+      {
+        "id": 8,
+        "title": "8北京天安门",
+        "address": "北京市.犄角旮旯的某个地",
+        "createTime": 1611821547432,
+        "avatar": "http://hytx-upload-images.oss-cn-beijing.aliyuncs.com/hytx/images/190216/1550309391840_346049.jpeg",
+        "list": "[{\"img\":\"http://hytx-upload-images.oss-cn-beijing.aliyuncs.com/hytx/images/190216/1550309391840_346049.jpeg\",\"txt\":\" \"},{\"img\":\"http://hytx-upload-images.oss-cn-beijing.aliyuncs.com/hytx/images/190216/1550309398600_831977.jpeg\",\"txt\":\" \"},{\"img\":\"http://hytx-upload-images.oss-cn-beijing.aliyuncs.com/hytx/images/190216/1550309405214_736461.jpeg\",\"txt\":\" \"},{\"img\":\"http://hytx-upload-images.oss-cn-beijing.aliyuncs.com/hytx/images/190216/1550309412440_878134.jpeg\",\"txt\":\" \"},{\"img\":\"http://hytx-upload-images.oss-cn-beijing.aliyuncs.com/hytx/images/190216/1550309418628_444191.jpeg\",\"txt\":\" \"},{\"img\":\"http://hytx-upload-images.oss-cn-beijing.aliyuncs.com/hytx/images/190216/1550309424672_735952.jpeg\",\"txt\":\" \"}]",
+        "content": "去北京爬长城，逛天安门，吃吃喝喝世界经济激动激动激动激动大家都到家",
+        "score": 5.5,
+        "type": "集体晨会"
+      },
+      {
+        "id": 9,
+        "title": "9深圳-海滩",
+        "address": "深圳.边边角角的",
+        "createTime": 1611821547432,
+        "avatar": "http://hytx-upload-images.oss-cn-beijing.aliyuncs.com/hytx/images/190216/1550309391840_346049.jpeg",
+        "list": "[{\"img\":\"http://hytx-upload-images.oss-cn-beijing.aliyuncs.com/hytx/images/190216/1550309391840_346049.jpeg\",\"txt\":\" \"},{\"img\":\"http://hytx-upload-images.oss-cn-beijing.aliyuncs.com/hytx/images/190216/1550309398600_831977.jpeg\",\"txt\":\" \"},{\"img\":\"http://hytx-upload-images.oss-cn-beijing.aliyuncs.com/hytx/images/190216/1550309405214_736461.jpeg\",\"txt\":\" \"},{\"img\":\"http://hytx-upload-images.oss-cn-beijing.aliyuncs.com/hytx/images/190216/1550309412440_878134.jpeg\",\"txt\":\" \"},{\"img\":\"http://hytx-upload-images.oss-cn-beijing.aliyuncs.com/hytx/images/190216/1550309418628_444191.jpeg\",\"txt\":\" \"},{\"img\":\"http://hytx-upload-images.oss-cn-beijing.aliyuncs.com/hytx/images/190216/1550309424672_735952.jpeg\",\"txt\":\" \"}]",
+        "content": "深圳有啥好吃好喝的推荐蜜语是打发时间和健身房",
+        "score": 0,
+        "type": "集体晨会"
+      }
+    ],
+    "total": 9
+  }
+}

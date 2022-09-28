@@ -15,7 +15,6 @@ class B extends PureComponent {
 
   componentDidMount() {
     console.log('componentDidMountBBBB')
-
   }
 
   shouldComponentUpdate() {

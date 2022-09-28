@@ -1,0 +1,109 @@
+.comment {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  top: 0;
+  z-index: 1100;
+  background: rgba(0, 0, 0, 0.69);
+  .cmtWrapper {
+    position: absolute;
+    bottom: 0;
+    background-color: #ffffff;
+    border-radius: 0.20rem 0.20rem 0px 0px;
+    padding: 0.24rem 0.16rem;
+    max-height: 85%;
+    .header {
+      > p {
+        font-size: 0.18rem;
+        font-family: PingFangSC-Medium, PingFang SC;
+        font-weight: 500;
+        color: #222222;
+        line-height: 0.15rem;
+      }
+      .close {
+        position: absolute;
+        right: 0.16rem;
+        top: 0.24rem;
+      }
+    }
+  }
+}
+
+.list {
+  margin-bottom: 0.80rem;
+}
+
+.commentTextarea {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 0.80rem;
+  padding: 0.12rem 0.16rem;
+  background: #FFFFFF;
+  box-shadow: 0px 1px 0px 0px #F0F0F0;
+  .textarea {
+    background: rgba(240, 240, 240, 0.8);
+    border-radius: 0.20rem;
+  }
+}
+
+.item {
+  display: flex;
+  justify-content: space-between;
+  .avatar {
+    width: 0.36rem;
+    height: 0.36rem;
+    overflow: hidden;
+    border-radius: 50%;
+    >img {
+      width: 100%;
+    }
+  }
+  .itemWrapper {
+    flex: 1;
+    .header {
+      .name {
+        font-size: 0.12rem;
+        font-family: PingFangSC-Regular, PingFang SC;
+        font-weight: 400;
+        color: #666666;
+      }
+      .userCode,
+      .type {
+        font-size: 0.12rem;
+        font-family: PingFangSC-Regular, PingFang SC;
+        font-weight: 400;
+        color: #999999;
+        line-height: 0.13rem;
+      }
+    }
+    .cmtContent {
+      font-size: 0.14rem;
+      font-family: PingFangSC-Regular, PingFang SC;
+      font-weight: 400;
+      color: #222222;
+      line-height: 0.20rem;
+      margin-top: 0.08rem;
+    }
+    .footer {
+      margin-top: 0.04rem;
+      .time {
+        font-size: 0.11rem;
+        font-family: PingFangSC-Regular, PingFang SC;
+        font-weight: 400;
+        color: #999999;
+        line-height: 0.16rem;
+      }
+      .reply {
+        font-size: 0.11rem;
+        font-family: PingFangSC-Regular, PingFang SC;
+        font-weight: 400;
+        color: #666666;
+        line-height: 0.16rem;
+        margin-left: 0.16rem;
+      }
+    }
+  }
+}

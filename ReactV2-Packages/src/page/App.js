@@ -7,7 +7,8 @@ const A = AsyncRouter(() => import('./A'))
 const B = AsyncRouter(() => import('./B'))
 // import A from './A'
 const TestMemo = AsyncRouter(() => import('./testMemo'))
-const VisualDOM = AsyncRouter(() => import('./visualDom'));
+const VisualDOM = AsyncRouter(() => import('./visualDom/index1'));
+const SwipeContainer = AsyncRouter(() => import('./SwipeContainer'));
 const LargeDom = AsyncRouter(() => import('./visualDom/largeDom'))
 const Fangdouyin = AsyncRouter(() => import('./fangdouyin'))
 // import A from './A';
@@ -31,6 +32,7 @@ class App extends React.Component {
            <Route path="/visualDom" component={VisualDOM} />
            <Route path="/largeDom" component={LargeDom} />
            <Route path="/fangdouyin" component={Fangdouyin} />
+           <Route path="/swipe" component={SwipeContainer} />
          </Switch>
        </Router>
       </div>

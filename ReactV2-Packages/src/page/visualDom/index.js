@@ -1,80 +1,83 @@
 import React from '../../react/packages/react';
+import { useEffect, useRef, useState } from '../../react/packages/react/src/ReactHooks';
 let num = 0;
-class Index extends React.Component{
-  state = {
-    list: new Array(9999).fill(0).map(() => num++),
-    scrollBoxHeight: 500, // 容器初始化高度
+
+const Index = () => {
+  const [visualParams, setVisualParams ] = useState({
+    list: new Array(999).fill(0).map(() => num++),
+    scrollBoxHeight: document.body.clientHeight, // 容器初始化高度
     renderList: [], // 渲染列表
-    itemHeight: 60, // 每一个列表高度
+    itemHeight: document.body.clientHeight, // 每一个列表高度
     bufferCount: 8, // 缓冲个数 上下4个
     renderCount: 0,  //渲染数量
     start: 0, // 起始索引
     end: 0, // 终止索引
-  }
-  listBox = null;
-  scrollBox = null;
-  scrollContent = null;
-  componentDidMount() {
-    const { itemHeight, bufferCount } = this.state;
+  })
+
+  const listBox = useRef(null);
+  const scrollBox = useRef(null);
+  const scrollContent = useRef(null);
+
+  useEffect(() => {
+    console.log('--------useEffect')
+    const { itemHeight, bufferCount } = visualParams;
     //计算容器高度
-    const scrollBoxHeight = this.listBox.offsetHeight;
+    const scrollBoxHeight = listBox.offsetHeight || 0;
+    console.log(listBox.offsetHeight, 'listBoxlistBoxlistBox')
     const renderCount = Math.ceil(scrollBoxHeight/itemHeight) + bufferCount;
-    const end = renderCount + 1;
-    this.setState({
+    const end = 10;
+    setVisualParams(params => ({
+      ...params,
       scrollBoxHeight,
       end,
       renderCount
-    })
-  }
+    }))
+  }, [!!listBox.offsetHeight])
 
-  handleScroll = () => {
-    const { scrollTop } = this.scrollBox;
-    const { itemHeight, renderCount } = this.state;
+  const handleScroll = () => {
+    const { scrollTop } = scrollBox;
+    const { itemHeight, renderCount } = visualParams;
     // console.log(scrollTop % itemHeight, 'scrollTop % itemHeight', scrollTop ,itemHeight)
     const currentOffset = scrollTop - (scrollTop % itemHeight);
     /** translate3d 开启CSS CPU 加速 */
-    this.scrollContent.style.transform = `translate3d(0, ${scrollTop}px, 0)`
+    scrollContent.style.transform = `translate3d(0, ${scrollTop}px, 0)`
     const start = Math.floor(scrollTop / itemHeight)
     const end = Math.floor(scrollTop / itemHeight + renderCount + 1)
-    this.setState({
+    setVisualParams(params => ({
+      ...params,
       start,
       end,
-   })
+    }))
   }
 
-  /* 性能优化：只有在列表start 和 end 改变的时候在渲染列表 */
-  shouldComponentUpdate(_nextProps, _nextState){
-      const { start , end } = _nextState
-      return start !== this.state.start || end !==this.state.end 
-  }
-  render(){
-    const { list, scrollBoxHeight, itemHeight, start, end } = this.state
-    const renderList = list.slice(start, end);
-    return (
-      <div 
-        className="list_box"
-        ref={(node) => this.listBox = node}>
-        <div
-          style={{ height: scrollBoxHeight, overflow: 'scroll', position: 'relative'}}
-          ref={(node) => this.scrollBox = node}
-          onScroll={this.handleScroll}>
-          {/*占位作用 */}
-          <div style={{ height: `${list.length * itemHeight}px`, position: 'absolute', left: 0, top: 0, right: 0}}></div>
+  const { list, scrollBoxHeight, itemHeight, start, end } = visualParams
+  const renderList = list.slice(start, end);
+  console.log(list, '--list-----', start, end)
+  return (
+    <div 
+      className="list_box"
+      ref={listBox}>
+      <div
+        style={{ height: scrollBoxHeight, overflow: 'scroll', position: 'relative'}}
+        ref={scrollBox}
+        onScroll={handleScroll}>
+        {/*占位作用 */}
+        <div style={{ height: `${list.length * itemHeight}px`, position: 'absolute', left: 0, top: 0, right: 0}}></div>
 
-          {/*显示区 */}
-          <div ref={(node) => this.scrollContent = node} style={{ position: 'relative', left: 0, top: 0, right: 0}}>
-            {
-              renderList.map((item, index) => (
-                <div className="list" key={index}>
-                  {item + ''}Item
-                </div>
-              ))
-            }
-          </div>
+        {/*显示区 */}
+        <div ref={scrollContent} style={{ position: 'relative', left: 0, top: 0, right: 0}}>
+          {
+            renderList.map((item, index) => (
+              <div className="list" key={index}>
+                {item + ''}Item
+              </div>
+            ))
+          }
         </div>
       </div>
-    )
-  }
+    </div>
+  )
 }
+
 
 export default Index;

@@ -6,7 +6,7 @@
  * @Description: In User Settings Edit
  * @FilePath: /react-code/question/reactQS.md
 -->
-# 1、setState 是异步还是同步？以及如何实现多个state合并处理的
+# 1、setState 是异步还是同步？（https://www.yuque.com/stickmyc/react-analysis/xeo8tr）以及如何实现多个state合并处理的
 ```javascript
    this.setState({
       count: 2
@@ -39,6 +39,20 @@
     执行setState,都是进行组件Component.prototype.setState方法的执行，它先进行enqueue
     Update，将所有更新的payload的update添加到当前的updateQuene里面，执行scheduleWork的时候，其实就是执行scheduleCallbackForRoot，它会根据当前root节点的root.callbackExpirationTime和expirationTime进行对比，只存一次
     runRootCallback方法到syncQueue中，之后进行一次renderRoot，先进行fiber处理，其中会执行processUpdateQueue方法，它就是将update链表的state进行object.assign的合并，之后进行commitWork渲染
+  ## 是否每次setState都会合并
+     答案是否， 1， 2 在事件内所以是异步的，二者只会触发一次 render 操作，3， 4 是同步的，3，4 分别都会触发一次 render。
+     ```
+     function onClick(event) {
+        setState({a: 1}); // 1
+        setState({a: 2}); // 2
+        setTimeout(() => {
+            setState({a: 3}); // 3
+            setState({a: 4}); // 4
+        }， 0);
+      }
+
+     ```
+
   
   ![avatar](../assets/多个setState，是如何进行合并处理的.png， '多个setState合并')
     
@@ -47,6 +61,11 @@
 # 2、聊聊 react的生命周期(新旧)
 ![avatar](../assets/React16.3.0之前生命周期, 'React16.3.0之前生命周期')
 ![avatar](../assets/React16.3.0之后生命周期.png, 'React16.3.0之后生命周期')
+
+  父子组件的生命周期执行顺序
+  由于父组件先进入，子组件完成后才会挂载父组件。
+  mounting阶段：父组件的componentWillMount在子组件的componentWillMount之前调用，父组件的componentDidMount在子组件componentDidMount之后调用
+  update阶段：父组件的componentWillUpdate在子组件的componentWillUpdate之前调用，父组件的componentDidUpdate在子组件的componentDidUpdate之后调用。
 
 # 3、useEffect(fn, []) 和 componentDidMount 有什么差异？
   useEffect(fn, [])实现了componentDidMount的功能，但是与componentDidMount不同的是，componentDidMount在第一次执行commitLayoutEffects时就执行了componentDidMount，此时是在浏览器完成布局和绘制前进行的。 useEffect(fn, [])是在浏览器完成布局与绘制后，通过scheduler调度执行的。这样useEffect比较适合用于许多常见的副作用场景，比如设置订阅和事件处理等情况，因此在useEffect不应该执行阻塞浏览器更新屏幕的操作。

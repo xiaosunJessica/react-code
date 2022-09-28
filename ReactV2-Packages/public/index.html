@@ -1,43 +1,51 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <link rel="shortcut icon" href="%PUBLIC_URL%/favicon.ico" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="theme-color" content="#000000" />
-    <meta
-      name="description"
-      content="Web site created using create-react-app"
-    />
-    <link rel="apple-touch-icon" href="logo192.png" />
-    <!--
-      manifest.json provides metadata used when your web app is installed on a
-      user's mobile device or desktop. See https://developers.google.com/web/fundamentals/web-app-manifest/
-    -->
-    <link rel="manifest" href="%PUBLIC_URL%/manifest.json" />
-    <!--
-      Notice the use of %PUBLIC_URL% in the tags above.
-      It will be replaced with the URL of the `public` folder during the build.
-      Only files inside the `public` folder can be referenced from the HTML.
+	<head>
+		<title>three.js webgl - fly controls - earth</title>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+	
+	</head>
 
-      Unlike "/favicon.ico" or "favicon.ico", "%PUBLIC_URL%/favicon.ico" will
-      work correctly both with client-side routing and a non-root public URL.
-      Learn how to configure a non-root public URL by running `npm run build`.
-    -->
-    <title>React App</title>
-  </head>
-  <body>
-    <noscript>You need to enable JavaScript to run this app.</noscript>
+	<body>
+
+    <a href="https://threejs.org" target="_blank" rel="noopener">three.js</a> - sprites
     <div id="root"></div>
-    <!--
-      This HTML file is a template.
-      If you open it directly in the browser, you will see an empty page.
+    <script src="./js/three.js"></script>
+    <script src="http://aevideo.oss-cn-shanghai.aliyuncs.com/3d/TrackballControls.js"></script>
+    <script>
 
-      You can add webfonts, meta tags, or analytics to this file.
-      The build step will place the bundled scripts into the <body> tag.
+var w = window.innerWidth;
+var h = window.innerHeight;
 
-      To begin the development, run `npm start` or `yarn start`.
-      To create a production bundle, use `npm run build` or `yarn build`.
-    -->
-  </body>
+var renderer = new THREE.WebGLRenderer();		// 鍒涘缓娓叉煋鍣�
+renderer.setSize(w, h);							// 璁剧疆娓叉煋鍣ㄤ负鍏ㄥ睆
+document.body.appendChild(renderer.domElement);	// 灏嗘覆鏌撳櫒娣诲姞鍒癰ody涓�
+
+var loader = new THREE.TextureLoader();							// 鍒涘缓绾圭悊鍔犺浇鍣紝鐢ㄤ簬寮傛鍔犺浇鍥剧墖
+var camera = new THREE.PerspectiveCamera(45, w / h, 0.01, 1000);// 鍒涘缓鎽勫儚鏈猴紝琛ㄧず浜虹溂鐨勬柟鍚�
+camera.position.x = 4;
+var controls = new THREE.TrackballControls(camera);				// 鍒涘缓鎺у埗鍣紝鐢ㄦ潵鎺у埗鎽勫儚鏈�
+
+var earth_mate = { map : loader.load('textures/earth_map1.jpeg'), side : THREE.FrontSide };								// 鍦扮悆鐨勮〃闈紝涓€寮�4096x2048鐨勫浘鐗�
+var earth_mesh = new THREE.Mesh(new THREE.SphereGeometry(1.5, 32, 32), new THREE.MeshBasicMaterial(earth_mate));// 鍦扮悆鐨勬ā鍨嬶紝鐩村緞1.0锛岀粡绾悇32鍒囩墖锛屾彁鍗囨晥鏋�
+
+var stars_mate = { map : loader.load('textures/stars_map.png'), side : THREE.BackSide };									// 鏄熺┖鐨勮〃闈紝涓€寮�4096x2048鐨勫浘鐗�
+var stars_mesh = new THREE.Mesh(new THREE.SphereGeometry(100, 04, 04), new THREE.MeshBasicMaterial(stars_mate));// 鏄熺┖鐨勬ā鍨嬶紝鐩村緞100锛岀粡绾悇04鍒囩墖锛屾彁鍗囨€ц兘
+
+
+var scene = new THREE.Scene();				// 鍒涘缓鍦烘櫙
+scene.add(earth_mesh);						// 娣诲姞鍦扮悆
+scene.add(stars_mesh);						// 娣诲姞鏄熺┖
+scene.add(new THREE.AmbientLight(0xFFFFFF));// 鍒涘缓鐜鍏�
+
+animate();
+function animate() {
+	requestAnimationFrame(animate);	// 涓嬩竴甯у洖璋�
+	earth_mesh.rotation.y += 0.002;	// 缁昚杞存棆杞�
+	controls.update();				// 鎺у埗鍣ㄦ洿鏂�
+	renderer.render(scene, camera);	// 鍒锋柊鏁翠釜瑙嗗浘
+}
+    </script>
+	</body>
 </html>

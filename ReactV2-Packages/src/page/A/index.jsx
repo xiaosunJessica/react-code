@@ -35,26 +35,37 @@ class A extends PureComponent {
   }
 
   componentWillMount(){
-    console.log('componentWillMountBBBB')
+    console.log('componentWillMountAAA')
   }
 
   componentDidMount() {
-    console.log('componentDidMountBBBB')
+    console.log('componentDidMountAAA')
 
   }
 
+  componentWillUpdate() {
+    console.log('componentWillUpdateAAA')
+  }
+
   shouldComponentUpdate() {
-    console.log('shouldComponentUpdateBBBB')
-    return false
+    console.log('shouldComponentUpdateAAA')
+    // return false
+    return true
+  }
+
+  componentDidUpdate() {
+    console.log('componentDidUpdateAAA')
   }
 
   render() {
     console.log('----render---A')
     return <div>{this.props.value}
     <div onClick={() => {
+      debugger;
       this.setState({
         test: Math.random()
       })
+      console.log(123)
     }}>add</div>
     <Link to="/b">BB</Link>
     <B />
