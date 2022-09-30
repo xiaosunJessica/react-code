@@ -80,8 +80,11 @@ update 阶段：父组件的 componentWillUpdate 在子组件的 componentWillUp
 # 3、useEffect(fn, []) 和 componentDidMount 有什么差异？
 
 useEffect(fn, [])实现了 componentDidMount 的功能，但是与 componentDidMount 不同的是，componentDidMount 在第一次执行 commitLayoutEffects 时就执行了 componentDidMount，此时是在浏览器完成布局和绘制前进行的。 useEffect(fn, [])是在浏览器完成布局与绘制后，通过 scheduler 调度执行的。这样 useEffect 比较适合用于许多常见的副作用场景，比如设置订阅和事件处理等情况，因此在 useEffect 不应该执行阻塞浏览器更新屏幕的操作。
-![avatar](./componentDidMount.png, "componentDidMount")
-![avatar](./useEffect模拟componentDidMount.png, "useEffect模拟componentDidMount")
+
+<!-- ![avatar](./componentDidMount.png, "componentDidMount") -->
+<img src="https://github.com/xiaosunJessica/react-code/blob/master/assets/componentDidMount.png?raw=true" alt="GitHub" title="componentDidMount" width="300" height="300" />
+<!-- ![avatar](./useEffect模拟componentDidMount.png, "useEffect模拟componentDidMount") -->
+<img src="https://github.com/xiaosunJessica/react-code/blob/master/assets/useEffect%E6%A8%A1%E6%8B%9FcomponentDidMount.png?raw=true" alt="GitHub" title="useEffect模拟componentDidMount" width="300" height="300" />
 
 # 4、useEffect 和 useLayoutEffect 的差异？
 
