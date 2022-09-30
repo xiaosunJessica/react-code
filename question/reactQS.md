@@ -27,7 +27,7 @@ setTimeout(() => {
 
     上面代码的执行过程是第一个setState/第二个setState/before setTimeout输出/setTimeout方法（但里面的setState排队等候），执行完成后进行fiber协调和commitwork提交，渲染count为3，根据scheduler策略进入setTimeout方法的执行，执行setState的fiber和commitwork。
 
-<img src="https://github.com/xiaosunJessica/react-code/blob/master/question/setState%E5%90%8C%E6%AD%A5%E5%92%8C%E5%BC%82%E6%AD%A5%E5%8C%BA%E5%88%AB.png" alt="GitHub" title="同步与异步" width="300" height="300" />  
+<img src="https://github.com/xiaosunJessica/react-code/blob/master/question/setState%E5%90%8C%E6%AD%A5%E5%92%8C%E5%BC%82%E6%AD%A5%E5%8C%BA%E5%88%AB.png?raw=true" alt="GitHub" title="同步与异步" width="300" height="300" />  
 discreteUpdates 方法会修改 executionContext 的值,同步与异步的区别是在 ScheduleUpdateOnFiber 函数中，executionContext 是否为 0，为 0 的时候执行 flushSyncCallbackQueue，此时是进行 fiber 协调和 commitWork 等，之心完成后才完成 ScheduleUpdateOnFiber, 也就完成 setStaTe 工作。否者是先完成 setState，进行往下执行 console 和 setTimeout，click 方法完成后通过 scheduler 进入到 flushSyncCallbackQueue 流程，然后进行 fiber 和 commitWork.
 
 ## setState 同步情况：
