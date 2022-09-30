@@ -7,7 +7,7 @@ import React, { memo, useMemo, useState } from '../../react/packages/react'
     setValue(e.target.value);
     notifyFatherChange && notifyFatherChange(e.target.value)
   }, [])
-  return  <input  value={value}  onChange={ (e)=> handerChange(e) } />
+  return  <input value={value}  onChange={ (e)=> handerChange(e) } />
 })
 
 export default ComponentInput

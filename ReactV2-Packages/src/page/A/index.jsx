@@ -1,12 +1,15 @@
 // import React, { useState } from "react";
 // import {  Link } from "react-router-dom";
 // function Comment() {
-//   const [counts, setCounts] = useState([1, 2]);
+//   const [counts, setCounts] = useState(0);
 //   const handleAdd = () => {
-//     const randomCount = Math.round(Math.random()*100)
-//     counts.push(randomCount)
-//     console.log(counts, 'countscountscounts')
-//     setCounts(counts)
+//     // const randomCount = Math.round(Math.random()*100)
+//     // counts.push(randomCount)
+//     // console.log(counts, 'countscountscounts')
+//     // setCounts(counts)
+//     setTimeout(() => {
+//       alert('count:', count)
+//     }, 1000)
 //   }
 //   console.log(counts, 'countscounts----')
 //   return (
@@ -23,7 +26,7 @@
 // export default Comment;
 
 import React, { PureComponent } from 'react'
-import { Link } from "react-router-dom";
+import {Link} from "react-router-dom";
 import B from '../B';
 class A extends PureComponent {
   constructor(props) {
